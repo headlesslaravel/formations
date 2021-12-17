@@ -162,7 +162,7 @@ class Routes
         }
 
         return array_filter($endpoints, function($endpoint) {
-            return ! in_array($endpoint['type'], $this->types);
+            return in_array($endpoint['type'], $this->types);
         });
     }
 
