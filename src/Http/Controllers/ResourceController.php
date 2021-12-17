@@ -2,6 +2,8 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
+use HeadlessLaravel\Formations\Manager;
+
 class ResourceController extends Controller
 {
     public function index()

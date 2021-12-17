@@ -40,7 +40,7 @@ class Manager
     public function register(array $resource)
     {
         if($resource['parent'] && is_null($this->resource($resource['parent']))) {
-            throw new UnregisteredFormation();
+            throw new UnregisteredFormation("Unknown parent formation: {$resource['parent']}");
         }
 
         $this->resources[] = $resource;
@@ -105,7 +105,7 @@ class Manager
             }
         }
 
-        return null;
+        abort(500, "No resource with route name: $name");
     }
 
     public function hasParent()
