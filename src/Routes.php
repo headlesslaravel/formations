@@ -207,6 +207,7 @@ class Routes
         $r = $this->resourceRouteKey();
 
         return [
+            ['type' => 'count', 'verb' => ['GET', 'HEAD'], 'endpoint' => "$this->parent/{{$p}}/$this->resource/count"],
             ['type' => 'index', 'verb' => ['GET', 'HEAD'], 'endpoint' => "$this->parent/{{$p}}/$this->resource"],
             ['type' => 'show', 'verb' => ['GET', 'HEAD'], 'endpoint' => "$this->parent/{{$p}}/$this->resource/{{$r}}"],
             ['type' => 'sync', 'verb' => 'POST', 'endpoint' => "$this->parent/{{$p}}/$this->resource/sync"],

@@ -26,6 +26,23 @@ class PivotTest extends TestCase
         config()->set('formations.mode', 'api');
     }
 
+    public function test_pivot_count()
+    {
+        Tag::factory()->create();
+        
+        $post = Post::factory()->create();
+
+        $post->tags()->attach([
+            Tag::factory()->create()->id,
+            Tag::factory()->create()->id,
+            Tag::factory()->create()->id,
+        ]);
+
+        $this->get("posts/$post->id/tags/count")
+            ->assertOk()
+            ->assertJsonPath('count', 3);
+    }
+
     public function test_pivot_index()
     {
         Post::factory()->create()->tags()->attach(

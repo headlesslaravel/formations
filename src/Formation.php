@@ -163,8 +163,11 @@ class Formation
             return $this->results;
         }
 
-        $this->results = $this
-            ->newBuilder()
+        $query = $this->builder();
+
+        $this->indexQuery($query);
+
+        $this->results = $query
             ->paginate($this->perPage())
             ->withQueryString();
 
@@ -217,18 +220,16 @@ class Formation
      *
      * @return Builder
      */
-    private function newBuilder()
+    public function builder()
     {
         $this->applyDefaults();
 
         $query = app($this->model)->query();
         $query = $this->applySort($query);
         $query = $this->applySearch($query);
-        $query = $this->applySelect($query);
         $query = $this->applyFilters($query);
+        $query = $this->applySelect($query);
         $query = $this->applyConditions($query);
-
-        $this->indexQuery($query);
 
         return $query;
     }
