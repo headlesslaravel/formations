@@ -11,6 +11,13 @@ class PivotController extends Controller
         return $this->response('index', $formation->results());
     }
 
+    public function count()
+    {
+        $formation = $this->formationWithPivot();
+
+        return ['count' => $formation->builder()->count()];
+    }
+
     public function show()
     {
         return $this->response('show', $this->resource());
