@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
+use HeadlessLaravel\Formations\Http\Controllers\PivotController;
 use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
 use HeadlessLaravel\Formations\Http\Resources\Resource;
 use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
@@ -90,6 +91,13 @@ class Formation
      * @var string
      */
     public $nestedController = NestedController::class;
+
+    /**
+     * The pivot resource controller.
+     *
+     * @var string
+     */
+    public $pivotController = PivotController::class;
 
     /**
      * The default create request.
@@ -280,12 +288,8 @@ class Formation
      */
     protected function applyConditions($query)
     {
-        foreach($this->conditions as $key => $value) {
-            if(is_callable($value)) {
-                $value($query);
-            } else {
-                $query->where($key, $value);
-            }
+        foreach($this->conditions as $arguments) {
+            $query->where(...$arguments);
         }
 
         return $query;
@@ -392,6 +396,11 @@ class Formation
         }
     }
 
+    public function rules(): array
+    {
+        return [];
+    }
+
     public function rulesForIndexing(): array
     {
         return [];
@@ -399,25 +408,31 @@ class Formation
 
     public function rulesForCreating(): array
     {
-        return [];
+        return $this->rules();
     }
 
     public function rulesForUpdating(): array
     {
-        return [];
+        return $this->rules();
     }
-
 
     public function filters(): array
     {
         return [];
     }
 
-    public function where($key, $value): Formation
+    public function where(...$arguments): Formation
     {
-        $this->conditions[$key] = $value;
+        $this->conditions[] = $arguments;
 
         return $this;
+    }
+
+    public function whereRelation($relation, $column, $operator, $value): Formation
+    {
+        return $this->where(function($query) use($relation, $column, $operator, $value) {
+            $query->whereRelation($relation, $column, $operator, $value);
+        });
     }
 
     public function nest(Formation $formation, $value): Formation

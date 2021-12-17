@@ -66,7 +66,7 @@ class Controller extends BaseController
     {
         $method = $this->controllerMethod();
 
-        return ! in_array($method, ['index', 'create', 'store']);
+        return ! in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach']);
     }
 
     protected function resolveParentBinding()
@@ -134,6 +134,16 @@ class Controller extends BaseController
         return app($this->current['formation']);
     }
 
+    public function formationWithPivot()
+    {
+        return $this->formation()->whereRelation(
+            $this->parentRelationName(),
+            $this->parentModel()->getQualifiedKeyName(),
+            '=',
+            $this->parentValue()
+        );
+    }
+
     public function parentFormation()
     {
         $segments = Request::segments();
@@ -146,6 +156,23 @@ class Controller extends BaseController
         }
 
         return app(Manager::class)->formation($segments[0]);
+    }
+
+    public function parentRelation()
+    {
+        $relation = $this->resourceRelationName();
+
+        return $this->parent()->$relation();
+    }
+
+    public function resourceRelationName()
+    {
+        return $this->terms('resource.camelPlural');
+    }
+
+    public function parentRelationName()
+    {
+        return $this->terms('parent.camelPlural');
     }
 
     public function model()
@@ -174,9 +201,13 @@ class Controller extends BaseController
             return $this->resolvedResource;
         }
 
+        if(is_a($this, PivotController::class)) {
+            return $this->pivotResource();
+        }
+
         $query = $this->model()->where(
             $this->model()->getKeyName(),
-            $this->getResourceValue()
+            $this->resourceValue()
         );
 
         if($this->resolvedParent) {
@@ -186,14 +217,22 @@ class Controller extends BaseController
             ]);
         }
 
-        if (Request::route()->allowsTrashedBindings()) {
-            $query = $query->withTrashed();
-        }
+        $query = $this->withTrashed($query);
 
         $method = $this->controllerMethod();
 
         $this->formation()->queryCallback($method, $query);
 
+        return $query->firstOrFail();
+    }
+
+    public function pivotResource()
+    {
+        $query = $this->parentRelation();
+
+        $query = $this->withTrashed($query);
+
+        // TODO: determine queryCallback
         return $query->firstOrFail();
     }
 
@@ -208,15 +247,11 @@ class Controller extends BaseController
         }
 
         $query = $this->parentModel();
-
-        if (Request::route()->allowsTrashedBindings()
-            && method_exists($query, 'bootSoftDeletes')) {
-            $query = $query->withTrashed();
-        }
+        $query = $this->withTrashed($query);
 
         $query = $query->where(
             $this->parentModel()->getKeyName(),
-            $this->getParentValue()
+            $this->parentValue()
         );
 
         // TODO: determine if it should be showQuery
@@ -228,6 +263,19 @@ class Controller extends BaseController
         return $query->firstOrFail();
     }
 
+    private function withTrashed($query)
+    {
+        $subject = is_a($query, Model::class)
+            ? $query
+            : $query->getModel();
+
+        if (Request::route()->allowsTrashedBindings()
+            && method_exists($subject, 'bootSoftDeletes')) {
+            return $query->withTrashed();
+        }
+
+        return $query;
+    }
     public function route($key)
     {
         $route = collect($this->current['routes'])->firstWhere('type', $key);
@@ -279,21 +327,17 @@ class Controller extends BaseController
         }
 
         if ($this->shouldRedirect($type)) {
-            return $this->redirectResponse($type, $props);
+            return $this->redirect($type, $props);
         }
 
-        if ($this->mode() === 'api') {
-            return $this->apiResponse($type, $props);
-        }
-
-        if ($this->mode() === 'inertia') {
-            return $this->inertiaResponse($type, $props);
-        }
-
-        return $this->bladeResponse($type, $props);
+        return match ($this->mode()) {
+            'api' => $this->api($type, $props),
+            'inertia' => $this->inertia($type, $props),
+            'blade' => $this->blade($type, $props)
+        };
     }
 
-    public function apiResponse($type, $props = null)
+    public function api($type, $props = null)
     {
         $data = $this->formation()->dataCallback($type, [], $props);
 
@@ -320,7 +364,7 @@ class Controller extends BaseController
         return $this->transform($props, $data);
     }
 
-    public function inertiaResponse($type, $props = null)
+    public function inertia($type, $props = null)
     {
         $term = null;
 
@@ -343,7 +387,7 @@ class Controller extends BaseController
         return Inertia::render($view, $data);
     }
 
-    public function bladeResponse($type, $props = null): mixed
+    public function blade($type, $props = null): mixed
     {
         $view = $this->terms('resource.slugPlural').'.'.$type;
 
@@ -368,7 +412,7 @@ class Controller extends BaseController
         return View::make($view)->with($data);
     }
 
-    public function redirectResponse($type, $props)
+    public function redirect($type, $props)
     {
         if (in_array($type, ['store', 'update', 'restore'])) {
             if($this->resolvedParent) {
@@ -418,6 +462,9 @@ class Controller extends BaseController
     {
         if (empty($this->terms)) {
             $this->terms['resource'] = $this->getTerms($this->current['resource']);
+            if(isset($this->current['parent'])) {
+                $this->terms['parent'] = $this->getTerms($this->current['parent']);
+            }
         }
 
         return Arr::get($this->terms, $key);
@@ -463,14 +510,14 @@ class Controller extends BaseController
         return Arr::get($this->current, 'resource_route_key');
     }
 
-    protected function getParentValue()
+    protected function parentValue()
     {
-        return Request::route($this->parentKey());
+        return Route::current()->originalParameter($this->parentKey());
     }
 
-    protected function getResourceValue()
+    protected function resourceValue()
     {
-        return Request::route($this->resourceKey());
+        return Route::current()->originalParameter($this->resourceKey());
     }
 
     protected function mode(): string
