@@ -570,8 +570,8 @@ class Filter
     /**
      * Set rules for current filter.
      *
-     * @param null $rules
-     * @param null $modifier
+     * @param mixed $rules
+     * @param string $modifier
      * @return $this|array
      */
     public function rules($rules, $modifier = null)
@@ -592,8 +592,8 @@ class Filter
     /**
      * Append rules for current filter.
      *
-     * @param null $rules
-     * @param null $modifier
+     * @param mixed $rules
+     * @param string $key
      * @return $this|array
      */
     public function withRules($rules, $key = null)
