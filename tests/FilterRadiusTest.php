@@ -78,9 +78,9 @@ class FilterRadiusTest extends TestCase
 
     public function test_radius_max_distance()
     {
-        $this->get('posts?distance=101&latitude=40.76850772506696&longitude=-73.97186950177363')
+        $this->get('posts?distance=1011&latitude=40.76850772506696&longitude=-73.97186950177363')
             ->assertSessionHasErrors([
-                'distance' => 'The distance must be less than or equal 100.',
+                'distance' => 'The distance must be less than or equal to 100.',
             ]);
     }
 }

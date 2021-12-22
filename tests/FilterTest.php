@@ -734,12 +734,13 @@ class FilterTest extends TestCase
     public function test_filtering_with_search_terms()
     {
         Post::factory()->create();
-        $post = Post::factory()->create();
+        $post = Post::factory()->create(['title' => 'Correct']);
         Post::factory()->create();
 
         $this->get('/posts?written-by='.$post->author->name)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.author_id', (string) $post->author_id);
+            ->assertJsonPath('data.0.title', 'Correct');
+
     }
 
     public function test_filtering_auth_required()

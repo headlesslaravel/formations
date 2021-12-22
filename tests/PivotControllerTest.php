@@ -93,8 +93,7 @@ class PivotControllerTest extends TestCase
             ->assertJsonPath('post.title', $post->title)
             ->assertJsonPath('tag.id', $tag->id)
             ->assertJsonPath('tag.title', $tag->title)
-            ->assertJsonPath('tag.pivot.post_id', "$post->id")
-            ->assertJsonPath('tag.pivot.tag_id', "$tag->id");
+            ->assertJsonCount(2, 'tag.pivot');
     }
 
     public function test_pivot_404_if_not_attached()
