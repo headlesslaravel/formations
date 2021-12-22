@@ -1,14 +1,13 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\FilterTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 
-class BoundsTest extends TestCase
+class FilterBoundsTest extends TestCase
 {
     use RefreshDatabase;
 

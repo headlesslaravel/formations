@@ -1,22 +1,20 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\FilterTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exceptions\ReservedException;
 use HeadlessLaravel\Formations\Exceptions\UnauthorizedException;
 use HeadlessLaravel\Formations\Filter;
-use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Comment;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Like;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-class GeneralTest extends TestCase
+class FilterTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -736,12 +734,13 @@ class GeneralTest extends TestCase
     public function test_filtering_with_search_terms()
     {
         Post::factory()->create();
-        $post = Post::factory()->create();
+        $post = Post::factory()->create(['title' => 'Correct']);
         Post::factory()->create();
 
         $this->get('/posts?written-by='.$post->author->name)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.author_id', (string) $post->author_id);
+            ->assertJsonPath('data.0.title', 'Correct');
+
     }
 
     public function test_filtering_auth_required()

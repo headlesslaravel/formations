@@ -36,16 +36,6 @@ class {{ class }} extends Formation
     public $sort = ['created_at'];
 
     /**
-     * Define the query.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scope(Builder $query)
-    {
-        return $query;
-    }
-
-    /**
      * Define the filters.
      *
      * @return array
@@ -61,17 +51,14 @@ class {{ class }} extends Formation
     }
 
     /**
-     * Define the actions.
+     * Define the includes.
      *
      * @return array
      */
-    public function actions()
+    public function includes()
     {
         return [
-            Action::make('delete')->job(Delete::class),
-            Action::make('restore')->job(Restore::class),
-            Action::make('force-delete')->job(ForceDelete::class),
-            //
+            // Includes::make('author'),
         ];
     }
 }

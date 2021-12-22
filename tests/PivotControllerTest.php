@@ -1,6 +1,6 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\ControllerTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
 use HeadlessLaravel\Formations\Manager;
@@ -13,7 +13,7 @@ use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 
-class PivotTest extends TestCase
+class PivotControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -29,7 +29,7 @@ class PivotTest extends TestCase
     public function test_pivot_count()
     {
         Tag::factory()->create();
-        
+
         $post = Post::factory()->create();
 
         $post->tags()->attach([
@@ -93,8 +93,7 @@ class PivotTest extends TestCase
             ->assertJsonPath('post.title', $post->title)
             ->assertJsonPath('tag.id', $tag->id)
             ->assertJsonPath('tag.title', $tag->title)
-            ->assertJsonPath('tag.pivot.post_id', "$post->id")
-            ->assertJsonPath('tag.pivot.tag_id', "$tag->id");
+            ->assertJsonCount(2, 'tag.pivot');
     }
 
     public function test_pivot_404_if_not_attached()

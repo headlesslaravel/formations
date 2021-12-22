@@ -1,6 +1,6 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\ControllerTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
 use HeadlessLaravel\Formations\Manager;
@@ -11,7 +11,7 @@ use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 
-class NestedTest extends TestCase
+class NestedControllerTest extends TestCase
 {
     use RefreshDatabase;
 

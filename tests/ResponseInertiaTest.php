@@ -1,6 +1,6 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\ControllerTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\TestCase;
