@@ -12,6 +12,7 @@ class IncludesTest extends TestCase
 
     public function test_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('author')
         $author = User::factory()->create();
@@ -24,6 +25,7 @@ class IncludesTest extends TestCase
 
     public function test_value_on_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('author_name', 'author.name')
         // example: post.author.name posts?includes=author_name
@@ -36,6 +38,7 @@ class IncludesTest extends TestCase
 
     public function test_value_on_nested_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('author_post_titles', 'author.posts.title')
         // post.author.posts.title posts?includes=author_post_titles
@@ -48,6 +51,7 @@ class IncludesTest extends TestCase
 
     public function test_scope_on_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('comments')->scope('approved')
         // post.comments /posts?includes=comments
@@ -56,6 +60,7 @@ class IncludesTest extends TestCase
 
     public function test_scope_with_required_parameter_on_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('comments')
             // ->scope('status', Request::input('status'))
@@ -73,6 +78,7 @@ class IncludesTest extends TestCase
 
     public function test_scope_with_optional_parameter_on_relationship_include()
     {
+        $this->markTestIncomplete();
         // PostFormation
         // Includes::make('comments')
             // ->scope('status', Request::input('status'))
@@ -86,6 +92,7 @@ class IncludesTest extends TestCase
 
     public function test_scope_with_required_parameter_on_relationship_include_with_validation_error()
     {
+        $this->markTestIncomplete();
         // post.comments ?status=invalid
         // ->scope('status', Request::input('status'))
         // ->rule('status', ['required', 'in:approved,draft'])
@@ -95,6 +102,7 @@ class IncludesTest extends TestCase
 
     public function test_no_includes_in_response_when_not_authorized()
     {
+        $this->markTestIncomplete();
          Gate::define('viewAuthor', function () {
             return true;
          });
@@ -115,6 +123,7 @@ class IncludesTest extends TestCase
 
     public function test_an_includes_with_an_api_resource_response()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-resources
         // Includes::make('author')->resource(AuthorResource::class),
         // /posts?includes=author
@@ -131,6 +140,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_count_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#counting-related-models
         // Include::make('comments')->count()
         // create a post with two comments
@@ -139,6 +149,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_count_aggregate_with_scope()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#counting-related-models
         // Include::make('approved_comments', 'comments')->scope('approved')->count()
         // create a post with two comments, one approved one not
@@ -147,6 +158,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_min_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#other-aggregate-functions
         // Include::make('min_comment_id', 'comments')->min('id')
         // create a post with two comments
@@ -156,6 +168,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_max_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#other-aggregate-functions
         // Include::make('max_comment_id', 'comments')->max('id')
         // create a post with two comments
@@ -165,6 +178,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_avg_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#other-aggregate-functions
         // Include::make('max_comment_id', 'comments')->avg('rating')
         // create 2 posts with three comments each with different ratings
@@ -173,6 +187,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_sum_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#other-aggregate-functions
         // Include::make('rating_sum', 'comments')->sum('rating')
         // create 2 posts with three comments each with different ratings
@@ -181,6 +196,7 @@ class IncludesTest extends TestCase
 
     public function test_includes_exists_aggregate()
     {
+        $this->markTestIncomplete();
         // https://laravel.com/docs/8.x/eloquent-relationships#other-aggregate-functions
         // Include::make('is_liked', 'likes')->exists()
         // create 1 posts with 1 like
@@ -192,6 +208,7 @@ class IncludesTest extends TestCase
 
     public function test_exception_for_aggregate_on_non_collection_relationship()
     {
+        $this->markTestIncomplete();
         // abort_if BelongsTo, HasOne, HasOneThrough,MorphOne
     }
 }
