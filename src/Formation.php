@@ -227,6 +227,7 @@ class Formation
         $query = app($this->model)->query();
         $query = $this->applySort($query);
         $query = $this->applySearch($query);
+        $query = $this->applyIncludes($query);
         $query = $this->applyFilters($query);
         $query = $this->applySelect($query);
         $query = $this->applyConditions($query);
@@ -276,6 +277,23 @@ class Formation
         foreach ($this->filters() as $filter) {
             $filter->setRequest(request());
             $filter->apply($query);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Apply includes to the query.
+     *
+     * @var Builder
+     * @return Builder
+     */
+    protected function applyIncludes($query)
+    {
+        foreach($this->includes() as $include) {
+            if($include->isActive()) {
+                $include->apply($query);
+            }
         }
 
         return $query;
