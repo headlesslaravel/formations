@@ -1,12 +1,12 @@
 <?php
 
-namespace HeadlessLaravel\Formations\Tests\ControllerTests;
+namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ResourceAuthorizationTest extends TestCase
+class ResourceControllerAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 

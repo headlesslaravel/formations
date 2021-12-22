@@ -2,8 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Manager;
-
 class ResourceController extends Controller
 {
     public function index()
@@ -29,7 +27,9 @@ class ResourceController extends Controller
     {
         $this->check('create', $this->model());
 
-        $resource = $this->model()->create($this->values());
+        $resource = $this->formation()->create($this->model(), $this->values());
+
+        $this->formation()->created($resource);
 
         return $this->response('store', $resource);
     }
@@ -58,7 +58,9 @@ class ResourceController extends Controller
 
         $this->check('update', $resource);
 
-        $resource->update($this->values());
+        $resource = $this->formation()->update($resource, $this->values());
+
+        $this->formation()->updated($resource);
 
         return $this->response('update', $resource);
     }
@@ -69,7 +71,7 @@ class ResourceController extends Controller
 
         $this->check('delete', $resource);
 
-        $resource->delete();
+        $this->formation()->delete($resource);
 
         return $this->response('destroy', $resource);
     }
@@ -80,7 +82,7 @@ class ResourceController extends Controller
 
         $this->check('restore', $resource);
 
-        $resource->restore();
+        $this->formation()->restore($resource);
 
         return $this->response('restore', $resource);
     }
@@ -91,7 +93,7 @@ class ResourceController extends Controller
 
         $this->check('forceDelete', $resource);
 
-        $resource->forceDelete();
+        $this->formation()->forceDelete($resource);
 
         return $this->response('force-delete', $resource);
     }

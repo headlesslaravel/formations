@@ -417,7 +417,49 @@ class Formation
         return $this->rules();
     }
 
+    public function create($model, array $values)
+    {
+        return $model->create($values);
+    }
+
+    public function update($model, array $values)
+    {
+        $model->update($values);
+
+        return $model;
+    }
+
+    public function restore($model)
+    {
+        $model->restore();
+    }
+
+    public function delete($model)
+    {
+        $model->delete();
+    }
+
+    public function forceDelete($model)
+    {
+        $model->forceDelete();
+    }
+
+    public function created($model)
+    {
+        //
+    }
+
+    public function updated($model)
+    {
+        //
+    }
+
     public function filters(): array
+    {
+        return [];
+    }
+
+    public function includes(): array
     {
         return [];
     }
