@@ -39,7 +39,11 @@ class FormationProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/formations.php' => config_path('formations.php'),
-        ], 'formations');
+        ], 'formations-config');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/formations'),
+        ], 'formations-lang');
 
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'formations');
 
