@@ -59,7 +59,7 @@ class FormationMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace.'\Formations';
+        return $rootNamespace.'\Http\Formations';
     }
 
     /**

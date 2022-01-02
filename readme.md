@@ -27,8 +27,15 @@ Add to a Laravel project using composer:
 composer require headlesslaravel/formations
 ```
 
+Publish assets (config etc)
+
+```
+php artisan vendor:publish --provider="HeadlessLaravel\Formations\FormationProvider"
+```
+
 Create a formation class using artisan:
 
 ```
 php artisan make:formation ArticleFormation
 ```
+
