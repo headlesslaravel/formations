@@ -31,7 +31,7 @@ class MakeCommandTest extends TestCase
     public function test_make_command()
     {
         $this->artisan('make:formation ArticleFormation');
-        $this->assertTrue(file_exists(base_path('app/Formations/ArticleFormation.php')));
+        $this->assertTrue(file_exists(base_path('app/Http/Formations/ArticleFormation.php')));
     }
 
     public function test_make_command_custom_stub()
@@ -39,7 +39,7 @@ class MakeCommandTest extends TestCase
         mkdir(base_path('stubs'));
         file_put_contents(base_path('stubs/formation.stub'), 'hello');
         $this->artisan('make:formation ArticleFormation');
-        $this->assertTrue(file_exists(base_path('app/Formations/ArticleFormation.php')));
-        $this->assertEquals('hello', file_get_contents(base_path('app/Formations/ArticleFormation.php')));
+        $this->assertTrue(file_exists(base_path('app/Http/Formations/ArticleFormation.php')));
+        $this->assertEquals('hello', file_get_contents(base_path('app/Http/Formations/ArticleFormation.php')));
     }
 }
