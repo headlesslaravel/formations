@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Formations\Exceptions\ReservedException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 
@@ -41,7 +42,12 @@ class Includes
         return in_array($this->key, $includes);
     }
 
-    public function make($key, $path = null): self
+    public static function make($key, $path = null)
+    {
+        return (new self)->init($key, $path);
+    }
+
+    public function init($key, $path = null): self
     {
         $this->key = $key;
 
