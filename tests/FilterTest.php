@@ -9,6 +9,7 @@ use HeadlessLaravel\Formations\Tests\Fixtures\Models\Comment;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Like;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
+use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -192,9 +193,34 @@ class FilterTest extends TestCase
 
         $post = Post::create();
 
+        dd($this->get('/posts?id='.$post->id)->dd());
         $this->get('/posts?id='.$post->id)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.id', $post->id);
+    }
+
+    public function test_sorting_belongs_to_relationship_values_alphabetically()
+    {
+        $abby = User::factory()->create(['name' => 'abby']);
+        $brad = User::factory()->create(['name' => 'brad']);
+        $casey = User::factory()->create(['name' => 'casey']);
+
+        $abbyPost = Post::factory()->create(['author_id' => $abby->id]);
+//        $bradPost = Post::factory()->create(['author_id' => $brad->id]);
+//        $caseyPost = Post::factory()->create(['author_id' => $casey->id]);
+        
+        dd($this->get('/posts?sort-desc=author_name')->dd());
+
+//        $this->get('/posts?sort-desc=author_name')
+//            ->assertJsonPath('data.2.id', $caseyPost->id)
+//            ->assertJsonPath('data.1.id', $bradPost->id)
+//            ->assertJsonPath('data.0.id', $abbyPost->id);
+        
+
+        $this->get('/posts?sort=author_name')
+            ->assertJsonPath('data.0.id', $abbyPost->id)
+            ->assertJsonPath('data.1.id', $brad->id);
+//            ->assertJsonPath('data.2.id', $caseyPost->id);
     }
 
     public function test_filtering_multiple_default()
