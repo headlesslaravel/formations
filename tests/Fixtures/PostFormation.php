@@ -23,6 +23,7 @@ class PostFormation extends Formation
         'comments',
         'comments.upvotes',
         'comments.downvotes as disliked',
+        'author.name as author_name',
     ];
 
     public $defaults = [
