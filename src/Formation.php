@@ -344,20 +344,19 @@ class Formation
         }
 
         if (! empty($sortable['relationship'])) {
-            $relation = $query->getModel()->{$sortable['relationship']}();
+
+            $relation = $query->getModel()->{$sortable['relationship']}(); // comments
+
+            $subquery = $relation->getModel() // Comment
+                ->select($sortable['column'])  // upvotes
+                ->whereColumn(
+                    $relation->getQualifiedForeignKeyName(), // comments.post_id
+                    $query->getModel()->getQualifiedKeyName() // posts.id
+                )->take(1);
 
             $query->addSelect([
-                $relation->getModel()->getTable().'.'.$relation->getLocalKeyName(), // comments.id
-                $relation->getQualifiedForeignKeyName(), // comments.post_id
-                $relation->getModel()->getTable().'.'.$sortable['column'], // comments.upvotes
+                $sortable['column'] => $subquery  // upvotes
             ]);
-
-            $query->join(
-                $relation->getModel()->getTable(),
-                $relation->getQualifiedForeignKeyName(),
-                '=',
-                $relation->getQualifiedParentKeyName()
-            );
         } elseif (method_exists($query->getModel(), $sortable['column'])) {
             $query->withCount($sortable['column']);
             $sortable['column'] = $sortable['column'].'_count';
@@ -370,11 +369,6 @@ class Formation
 
     public function getSortable(): array
     {
-        $sortable = [
-            'relationship' => null,
-            'alias' => null,
-        ];
-
         if (Request::filled('sort')) {
             $sortable = [
                 'column' => Request::input('sort'),
@@ -385,9 +379,7 @@ class Formation
                 'column' => Request::input('sort-desc'),
                 'direction'=> 'desc',
             ];
-        }
-
-        if (! isset($sortable['column'])) {
+        } else {
             return [];
         }
 

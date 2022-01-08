@@ -152,22 +152,26 @@ class FilterTest extends TestCase
     public function test_sorting_relationship_columns()
     {
         $twoUpvote = Post::factory()->create();
+        $sixUpvote = Post::factory()->create(['title' => 'six upvotes post']);
         $oneUpvote = Post::factory()->create();
-        $sixUpvote = Post::factory()->create();
 
+        $sixUpvote->comments()->create(['upvotes' => 6]);
         $twoUpvote->comments()->create(['upvotes' => 2]);
         $oneUpvote->comments()->create(['upvotes' => 1]);
-        $sixUpvote->comments()->create(['upvotes' => 6]);
 
         $this->get('/posts?sort-desc=upvotes')
             ->assertJsonPath('data.0.id', $sixUpvote->id)
             ->assertJsonPath('data.1.id', $twoUpvote->id)
-            ->assertJsonPath('data.2.id', $oneUpvote->id);
+            ->assertJsonPath('data.2.id', $oneUpvote->id)
+            ->assertJsonPath('data.0.title', 'six upvotes post')
+            ->assertJson(['data' => [['upvotes' => 6]]]);
 
         $this->get('/posts?sort=upvotes')
             ->assertJsonPath('data.0.id', $oneUpvote->id)
             ->assertJsonPath('data.1.id', $twoUpvote->id)
-            ->assertJsonPath('data.2.id', $sixUpvote->id);
+            ->assertJsonPath('data.2.id', $sixUpvote->id)
+            ->assertJsonPath('data.2.title', 'six upvotes post')
+            ->assertJson(['data' => [['upvotes' => 1]]]);
     }
 
     public function test_sorting_relationship_column_with_alias()
