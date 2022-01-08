@@ -164,14 +164,14 @@ class FilterTest extends TestCase
             ->assertJsonPath('data.1.id', $twoUpvote->id)
             ->assertJsonPath('data.2.id', $oneUpvote->id)
             ->assertJsonPath('data.0.title', 'six upvotes post')
-            ->assertJsonPath('data.0.upvotes', '6');
+            ->assertJson(['data' => [['upvotes' => 6]]]);
 
         $this->get('/posts?sort=upvotes')
             ->assertJsonPath('data.0.id', $oneUpvote->id)
             ->assertJsonPath('data.1.id', $twoUpvote->id)
             ->assertJsonPath('data.2.id', $sixUpvote->id)
             ->assertJsonPath('data.2.title', 'six upvotes post')
-            ->assertJsonPath('data.2.upvotes', '6');
+            ->assertJson(['data' => [['upvotes' => 1]]]);
     }
 
     public function test_sorting_relationship_column_with_alias()
