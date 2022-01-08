@@ -164,7 +164,7 @@ class FilterTest extends TestCase
             ->assertJsonPath('data.1.id', $twoUpvote->id)
             ->assertJsonPath('data.2.id', $oneUpvote->id)
             ->assertJsonPath('data.0.title', 'six upvotes post')
-            ->assertJsonPath('data.0.upvotes', 6);
+            ->assertJsonPath('data.0.upvotes', '6');
 
         $this->get('/posts?sort=upvotes')
             ->assertJsonPath('data.0.id', $oneUpvote->id)
