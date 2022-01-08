@@ -2,9 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Concerns;
 
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait HasData
@@ -12,7 +9,7 @@ trait HasData
     /**
      * Override the index method's data.
      *
-     * @param LengthAwarePaginator $collection
+     * @param $collection
      * @return array
      */
     public function indexData($collection):array
@@ -110,7 +107,7 @@ trait HasData
     /**
      * Append the index method's data.
      *
-     * @param LengthAwarePaginator $collection
+     * @param $collection
      * @return array
      */
     public function extraIndexData($collection):array

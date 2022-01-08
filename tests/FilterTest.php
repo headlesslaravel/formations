@@ -9,6 +9,7 @@ use HeadlessLaravel\Formations\Tests\Fixtures\Models\Comment;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Like;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
+use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -935,6 +936,8 @@ class FilterTest extends TestCase
 
     public function test_calling_results_twice_is_cached()
     {
+        ray()->newScreen();
+        ray()->showQueries();
         $count = 0;
 
         DB::listen(function ($query) use (&$count) {

@@ -9,9 +9,9 @@ trait HasQueries
     /**
      * Adjust index method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function indexQuery($query):void
+    public function indexQuery(Builder $query)
     {
         //
     }
@@ -19,9 +19,9 @@ trait HasQueries
     /**
      * Adjust show method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function showQuery($query):void
+    public function showQuery(Builder $query)
     {
         //
     }
@@ -29,9 +29,9 @@ trait HasQueries
     /**
      * Adjust edit method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function editQuery($query):void
+    public function editQuery(Builder $query)
     {
         //
     }
@@ -39,9 +39,9 @@ trait HasQueries
     /**
      * Adjust update method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function updateQuery($query):void
+    public function updateQuery(Builder $query)
     {
         //
     }
@@ -49,9 +49,9 @@ trait HasQueries
     /**
      * Adjust restore method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function restoreQuery($query):void
+    public function restoreQuery(Builder $query)
     {
         //
     }
@@ -59,9 +59,9 @@ trait HasQueries
     /**
      * Adjust destroy method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function destroyQuery($query):void
+    public function destroyQuery(Builder $query)
     {
         //
     }
@@ -69,9 +69,9 @@ trait HasQueries
     /**
      * Adjust force delete method query.
      *
-     * @param mixed $query
+     * @param Builder $query
      */
-    public function forceDeleteQuery($query):void
+    public function forceDeleteQuery(Builder $query)
     {
         //
     }
@@ -82,7 +82,7 @@ trait HasQueries
      * @param string $method
      * @param Builder $query
      */
-    public function queryCallback(string $method, Builder $query):void
+    public function queryCallback(string $method, Builder $query)
     {
         $method = $method . 'Query';
 
