@@ -9,6 +9,7 @@ use HeadlessLaravel\Formations\Tests\Fixtures\Models\Comment;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Like;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
+use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -152,22 +153,26 @@ class FilterTest extends TestCase
     public function test_sorting_relationship_columns()
     {
         $twoUpvote = Post::factory()->create();
+        $sixUpvote = Post::factory()->create(['title' => 'six upvotes post']);
         $oneUpvote = Post::factory()->create();
-        $sixUpvote = Post::factory()->create();
 
+        $sixUpvote->comments()->create(['upvotes' => 6]);
         $twoUpvote->comments()->create(['upvotes' => 2]);
         $oneUpvote->comments()->create(['upvotes' => 1]);
-        $sixUpvote->comments()->create(['upvotes' => 6]);
 
         $this->get('/posts?sort-desc=upvotes')
             ->assertJsonPath('data.0.id', $sixUpvote->id)
             ->assertJsonPath('data.1.id', $twoUpvote->id)
-            ->assertJsonPath('data.2.id', $oneUpvote->id);
+            ->assertJsonPath('data.2.id', $oneUpvote->id)
+            ->assertJsonPath('data.0.title', 'six upvotes post')
+            ->assertJsonPath('data.0.upvotes', '6');
 
         $this->get('/posts?sort=upvotes')
             ->assertJsonPath('data.0.id', $oneUpvote->id)
             ->assertJsonPath('data.1.id', $twoUpvote->id)
-            ->assertJsonPath('data.2.id', $sixUpvote->id);
+            ->assertJsonPath('data.2.id', $sixUpvote->id)
+            ->assertJsonPath('data.2.title', 'six upvotes post')
+            ->assertJsonPath('data.2.upvotes', '6');
     }
 
     public function test_sorting_relationship_column_with_alias()
@@ -931,6 +936,8 @@ class FilterTest extends TestCase
 
     public function test_calling_results_twice_is_cached()
     {
+        ray()->newScreen();
+        ray()->showQueries();
         $count = 0;
 
         DB::listen(function ($query) use (&$count) {
