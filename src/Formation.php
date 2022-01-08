@@ -335,7 +335,7 @@ class Formation
      * @var Builder
      * @return Builder
      */
-    protected function applySort(Builder $query)
+    protected function applySort($query)
     {
         $sortable = $this->getSortable();
 
