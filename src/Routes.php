@@ -124,7 +124,7 @@ class Routes
         }
     }
 
-    public function create():self
+    public function create():array
     {
         $routes = $this->make();
 
@@ -144,7 +144,7 @@ class Routes
             'routes' => $routes,
         ]);
 
-        return $this;
+        return $routes;
     }
 
     public function endpoints(): array
