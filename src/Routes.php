@@ -56,7 +56,7 @@ class Routes
 
     public function setTypes(array $types = [])
     {
-        $this->types = $types;
+        $this->types['only'] = $types;
 
         return $this;
     }
@@ -135,6 +135,8 @@ class Routes
                 ->withTrashed($route['with-trashed']);
         }
 
+        $this->router->getRoutes()->refreshNameLookups();
+
         $this->manager->register([
             'formation' => $this->formation,
             'resource' => $this->resource,
@@ -161,9 +163,21 @@ class Routes
             return $endpoints;
         }
 
-        return array_filter($endpoints, function($endpoint) {
-            return in_array($endpoint['type'], $this->types);
-        });
+        if (isset($this->types['only']) and count($this->types['only'])) {
+            $only = $this->types['only'];
+            $endpoints = array_filter($endpoints, function($endpoint) use ($only) {
+                return in_array($endpoint['type'], $only);
+            });
+        }
+
+        if (isset($this->types['except']) and count($this->types['except'])) {
+            $except = $this->types['except'];
+            $endpoints = array_filter($endpoints, function($endpoint) use ($except) {
+                return !in_array($endpoint['type'], $except);
+            });
+        }
+
+        return $endpoints;
     }
 
     private function resourceEndpoints(): array
@@ -235,6 +249,36 @@ class Routes
     public function pivot(): self
     {
         $this->pivot = true;
+
+        return $this;
+    }
+
+    /**
+     * @param array|string $types
+     * @return $this
+     */
+    public function only($types)
+    {
+        if (is_string($types)) {
+            $types = [$types];
+        }
+
+        $this->types['only'] = $types;
+
+        return $this;
+    }
+
+    /**
+     * @param array|string $types
+     * @return $this
+     */
+    public function except($types)
+    {
+        if (is_string($types)) {
+            $types = [$types];
+        }
+
+        $this->types['except'] = $types;
 
         return $this;
     }
