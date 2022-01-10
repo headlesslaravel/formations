@@ -9,9 +9,9 @@ trait HasQueries
     /**
      * Adjust index method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function indexQuery(Builder $query)
+    public function indexQuery($query):void
     {
         //
     }
@@ -19,9 +19,9 @@ trait HasQueries
     /**
      * Adjust show method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function showQuery(Builder $query)
+    public function showQuery($query):void
     {
         //
     }
@@ -29,9 +29,9 @@ trait HasQueries
     /**
      * Adjust edit method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function editQuery(Builder $query)
+    public function editQuery($query):void
     {
         //
     }
@@ -39,9 +39,9 @@ trait HasQueries
     /**
      * Adjust update method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function updateQuery(Builder $query)
+    public function updateQuery($query):void
     {
         //
     }
@@ -49,9 +49,9 @@ trait HasQueries
     /**
      * Adjust restore method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function restoreQuery(Builder $query)
+    public function restoreQuery($query):void
     {
         //
     }
@@ -59,9 +59,9 @@ trait HasQueries
     /**
      * Adjust destroy method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function destroyQuery(Builder $query)
+    public function destroyQuery($query):void
     {
         //
     }
@@ -69,9 +69,9 @@ trait HasQueries
     /**
      * Adjust force delete method query.
      *
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function forceDeleteQuery(Builder $query)
+    public function forceDeleteQuery($query):void
     {
         //
     }
@@ -80,9 +80,9 @@ trait HasQueries
      * Call the proper query callback.
      *
      * @param string $method
-     * @param Builder $query
+     * @param mixed $query
      */
-    public function queryCallback(string $method, Builder $query)
+    public function queryCallback(string $method, Builder $query):void
     {
         $method = $method . 'Query';
 
