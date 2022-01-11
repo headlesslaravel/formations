@@ -7,7 +7,7 @@ use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 
 class SeekerTest extends TestCase
 {
-    public function test_seeker_and_performing_a_global_search()
+    public function test_seeker_global_search()
     {
         $post = Post::factory()->create(['title' => 'Hi post']);
         $author = User::factory()->create(['name' => 'Hi author']);
