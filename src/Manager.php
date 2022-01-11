@@ -5,6 +5,8 @@ namespace HeadlessLaravel\Formations;
 use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class Manager
 {
@@ -21,6 +23,13 @@ class Manager
      * @var array
      */
     protected $resources = [];
+
+    /**
+     * The global search endpoints.
+     *
+     * @var array
+     */
+    protected $seekers = [];
 
     /**
      * Retrieve all resources.
@@ -106,6 +115,22 @@ class Manager
         }
 
         abort(500, "No resource with route name: $name");
+    }
+
+    public function seeker(string $endpoint, array $formations):self
+    {
+        $this->seekers[$endpoint] = $formations;
+
+        return $this;
+    }
+
+    public function getSeekerFormations():array
+    {
+        $prefix = Request::route()->getPrefix();
+        $endpoint = Request::route()->uri();
+        $endpoint = Str::after($endpoint, "$prefix/");
+
+        return Arr::get($this->seekers, $endpoint, []);
     }
 
     public function hasParent()

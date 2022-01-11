@@ -79,6 +79,12 @@ class Formation
     public $model;
 
     /**
+     * The detail route name.
+     *
+     */
+    public $detailRouteName;
+
+    /**
      * The resource controller.
      *
      * @var string
@@ -405,6 +411,26 @@ class Formation
         if (Request::input('page') > $this->results->lastPage()) {
             throw new PageExceededException();
         }
+    }
+
+    public function seekerMeta()
+    {
+        $name = Str::of(class_basename($this))
+            ->replace('Formation', '')
+            ->snake()
+            ->slug()
+            ->plural();
+
+        if($this->detailRouteName) {
+            $route = $this->detailRouteName;
+        } else {
+            $route = $name->append('.show');
+        }
+
+        return [
+            'route' => $route,
+            'group' => $name,
+        ];
     }
 
     public function rules(): array

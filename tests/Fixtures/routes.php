@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('login')->name('login');
 
+Route::seeker('search', [
+    PostFormation::class,
+    AuthorFormation::class
+]);
+
 Route::formation('posts', PostFormation::class);
 Route::formation('authors', AuthorFormation::class);
 Route::formation('authors.posts', PostFormation::class);
