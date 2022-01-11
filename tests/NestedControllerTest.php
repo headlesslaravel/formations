@@ -3,11 +3,9 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
-use HeadlessLaravel\Formations\Manager;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 

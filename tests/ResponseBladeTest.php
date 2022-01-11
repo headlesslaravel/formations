@@ -3,10 +3,8 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Request;
 use Illuminate\View\View;
 
 class ResponseBladeTest extends TestCase
@@ -98,12 +96,12 @@ class ResponseBladeTest extends TestCase
 
         $this->withHeader('Wants-Json', true);
 
-       $response = $this->post('posts/new', [
+        $response = $this->post('posts/new', [
             'title' => 'Blog title',
         ]);
 
-       $response->assertCreated();
-       $response->assertJsonPath('post.title', 'Blog title');
+        $response->assertCreated();
+        $response->assertJsonPath('post.title', 'Blog title');
     }
 
     public function test_edit_blade_responses()

@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use App\Http\Resources\AddressResource;
 use HeadlessLaravel\Formations\Http\Resources\Resource;
 use HeadlessLaravel\Formations\Manager;
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +12,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +21,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Controller extends BaseController
 {
@@ -37,7 +32,9 @@ class Controller extends BaseController
 
     protected $resolvedResource;
 
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
 
     public function __construct(Manager $manager)
     {
@@ -62,11 +59,11 @@ class Controller extends BaseController
         }
     }
 
-    public function shouldResolveResource():bool
+    public function shouldResolveResource(): bool
     {
         $method = $this->controllerMethod();
 
-        return ! in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach']);
+        return !in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach']);
     }
 
     protected function resolveParentBinding()
@@ -75,7 +72,7 @@ class Controller extends BaseController
 
         $this->resolvedParent = $this->parent();
 
-        if(! $this->resolvedParent) {
+        if (!$this->resolvedParent) {
             return;
         }
 
@@ -89,21 +86,21 @@ class Controller extends BaseController
     {
         $method = $this->controllerMethod();
 
-        if($this->resolvedParent) {
+        if ($this->resolvedParent) {
             Request::merge([
-                $this->parentForeignKey()
-                => $this->resolvedParent->getKey()
+                $this->parentForeignKey() => $this->resolvedParent->getKey(),
             ]);
         }
 
-        if($method === 'store') {
+        if ($method === 'store') {
             $request = $this->createRequest();
         } else {
             $request = $this->updateRequest();
         }
 
-        if (! empty($request->rules())) {
+        if (!empty($request->rules())) {
             $request->validateResolved();
+
             return $request->validated();
         }
 //        if($method === 'store' && count($this->createRequestRules())) {
@@ -148,8 +145,8 @@ class Controller extends BaseController
     {
         $segments = Request::segments();
 
-        if($prefix = Route::getCurrentRoute()->getPrefix()) {
-            if($segments[0] == $prefix) {
+        if ($prefix = Route::getCurrentRoute()->getPrefix()) {
+            if ($segments[0] == $prefix) {
                 unset($segments[0]);
                 $segments = array_values($segments);
             }
@@ -201,7 +198,7 @@ class Controller extends BaseController
             return $this->resolvedResource;
         }
 
-        if(is_a($this, PivotController::class)) {
+        if (is_a($this, PivotController::class)) {
             return $this->pivotResource();
         }
 
@@ -210,10 +207,9 @@ class Controller extends BaseController
             $this->resourceValue()
         );
 
-        if($this->resolvedParent) {
+        if ($this->resolvedParent) {
             $query->where([
-                $this->parentForeignKey()
-                => $this->resolvedParent->getKey(),
+                $this->parentForeignKey() => $this->resolvedParent->getKey(),
             ]);
         }
 
@@ -238,7 +234,7 @@ class Controller extends BaseController
 
     public function parent()
     {
-        if(! app(Manager::class)->hasParent()) {
+        if (!app(Manager::class)->hasParent()) {
             return null;
         }
 
@@ -276,6 +272,7 @@ class Controller extends BaseController
 
         return $query;
     }
+
     public function route($key)
     {
         $route = collect($this->current['routes'])->firstWhere('type', $key);
@@ -302,9 +299,9 @@ class Controller extends BaseController
 
     protected function applyResource($resource, $attributes, $extra = [])
     {
-        if($this->mode() === 'api' && $this->controllerMethod() == 'index') {
+        if ($this->mode() === 'api' && $this->controllerMethod() == 'index') {
             $resource::wrap($this->terms('resource.slugPlural'));
-        } else if($this->mode() === 'api') {
+        } elseif ($this->mode() === 'api') {
             $resource::wrap($this->terms('resource.slug'));
         }
 //        else if($this->mode() === 'inertia' && $this->controllerMethod() == 'index') {
@@ -322,7 +319,7 @@ class Controller extends BaseController
 
     public function response(string $type, $props = null)
     {
-        if($this->shouldFlash($type)) {
+        if ($this->shouldFlash($type)) {
             $this->flash($type, $props);
         }
 
@@ -331,9 +328,9 @@ class Controller extends BaseController
         }
 
         return match ($this->mode()) {
-            'api' => $this->api($type, $props),
+            'api'     => $this->api($type, $props),
             'inertia' => $this->inertia($type, $props),
-            'blade' => $this->blade($type, $props)
+            'blade'   => $this->blade($type, $props)
         };
     }
 
@@ -341,20 +338,20 @@ class Controller extends BaseController
     {
         $data = $this->formation()->dataCallback($type, [], $props);
 
-        if($data === $props) {
+        if ($data === $props) {
             $data = [];
         }
 
-        if($this->resolvedParent) {
+        if ($this->resolvedParent) {
             $extra = array_merge([
-                $this->parentKey() => $this->transformParent($this->resolvedParent)
+                $this->parentKey() => $this->transformParent($this->resolvedParent),
             ], $data);
 
-            if(is_a($props, AbstractPaginator::class)) {
+            if (is_a($props, AbstractPaginator::class)) {
                 return JsonResource::collection($props)->additional($extra);
-            } else if(is_a($props, Model::class)) {
+            } elseif (is_a($props, Model::class)) {
                 return JsonResource::make($props)->additional($extra);
-            } else if(is_array($props)) {
+            } elseif (is_array($props)) {
                 return array_merge($props, $extra);
             } else {
                 return $extra;
@@ -377,7 +374,7 @@ class Controller extends BaseController
         $data = [];
 
         if ($term) {
-            $data = [ $this->terms($term) => $this->transform($props) ];
+            $data = [$this->terms($term) => $this->transform($props)];
         }
 
         $data = $this->formation()->dataCallback($type, $data, $props);
@@ -391,21 +388,21 @@ class Controller extends BaseController
     {
         $view = $this->terms('resource.slugPlural').'.'.$type;
 
-        if(app()->environment('testing')) {
+        if (app()->environment('testing')) {
             $view = "testing::$view";
         }
 
         $data = [];
 
-        if($type === 'index') {
-            $data = [ $this->terms('resource.slugPlural') => $props];
-        } else if (in_array($type, ['show', 'edit'])) {
-            $data = [ $this->terms('resource.slug') => $props];
+        if ($type === 'index') {
+            $data = [$this->terms('resource.slugPlural') => $props];
+        } elseif (in_array($type, ['show', 'edit'])) {
+            $data = [$this->terms('resource.slug') => $props];
         }
 
         $data = $this->formation()->dataCallback($type, $data, $props);
 
-        if(is_null($data)) {
+        if (is_null($data)) {
             return View::make($view);
         }
 
@@ -415,7 +412,7 @@ class Controller extends BaseController
     public function redirect($type, $props)
     {
         if (in_array($type, ['store', 'update', 'restore'])) {
-            if($this->resolvedParent) {
+            if ($this->resolvedParent) {
                 $props = [$this->resolvedParent, $props];
             }
             $redirect = [
@@ -427,7 +424,7 @@ class Controller extends BaseController
             ];
         }
 
-        if(Request::hasHeader('Show-Redirect-Url')) {
+        if (Request::hasHeader('Show-Redirect-Url')) {
             return response()->json($redirect);
         }
 
@@ -462,7 +459,7 @@ class Controller extends BaseController
     {
         if (empty($this->terms)) {
             $this->terms['resource'] = $this->getTerms($this->current['resource']);
-            if(isset($this->current['parent'])) {
+            if (isset($this->current['parent'])) {
                 $this->terms['parent'] = $this->getTerms($this->current['parent']);
             }
         }
@@ -474,10 +471,10 @@ class Controller extends BaseController
     {
         $display = $this->formation()->display;
         $display = Arr::get($resource, $display, 'a resource');
-        $message = trans('formations::flash.'. $type, ['resource' => $display]);
+        $message = trans('formations::flash.'.$type, ['resource' => $display]);
 
         Session::flash('flash', [
-            'type' => $type,
+            'type'    => $type,
             'message' => $message,
         ]);
     }
@@ -487,16 +484,16 @@ class Controller extends BaseController
         $resource = Str::of($resource)->replace('-', ' ')->lower();
 
         return [
-            'lower' => (string) $resource,
-            'lowerPlural' => (string) Str::of($resource)->plural(),
-            'studly' => (string) Str::of($resource)->singular()->studly(),
+            'lower'        => (string) $resource,
+            'lowerPlural'  => (string) Str::of($resource)->plural(),
+            'studly'       => (string) Str::of($resource)->singular()->studly(),
             'studlyPlural' => (string) Str::of($resource)->plural()->studly(),
-            'snake' => (string) Str::of($resource)->singular()->snake(),
-            'snakePlural' => (string) Str::of($resource)->snake()->plural(),
-            'slug' => (string) Str::of($resource)->singular()->slug(),
-            'slugPlural' => (string) Str::of($resource)->slug()->plural(),
-            'camel' => (string) Str::of($resource)->singular()->camel(),
-            'camelPlural' => (string) Str::of($resource)->camel()->plural(),
+            'snake'        => (string) Str::of($resource)->singular()->snake(),
+            'snakePlural'  => (string) Str::of($resource)->snake()->plural(),
+            'slug'         => (string) Str::of($resource)->singular()->slug(),
+            'slugPlural'   => (string) Str::of($resource)->slug()->plural(),
+            'camel'        => (string) Str::of($resource)->singular()->camel(),
+            'camelPlural'  => (string) Str::of($resource)->camel()->plural(),
         ];
     }
 
@@ -522,7 +519,7 @@ class Controller extends BaseController
 
     protected function mode(): string
     {
-        if(Request::hasHeader('Wants-Json')) {
+        if (Request::hasHeader('Wants-Json')) {
             return 'api';
         }
 

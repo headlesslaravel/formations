@@ -3,7 +3,6 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;

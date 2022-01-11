@@ -23,14 +23,14 @@ class FilterBoundsTest extends TestCase
     public function test_filtering_bounds_north_west()
     {
         $building = Post::create([
-            'title' => 'Chrysler Building',
-            'latitude' => '40.75178128662803',
+            'title'     => 'Chrysler Building',
+            'latitude'  => '40.75178128662803',
             'longitude' => '-73.97552835820437',
         ]);
 
         $zoo = Post::create([
-            'title' => 'Central Park Zoo',
-            'latitude' => '40.76850772506696',
+            'title'     => 'Central Park Zoo',
+            'latitude'  => '40.76850772506696',
             'longitude' => '-73.97186950177363',
         ]);
 
@@ -52,14 +52,14 @@ class FilterBoundsTest extends TestCase
     public function test_filtering_bounds_south_west()
     {
         $building = Post::create([
-            'title' => 'Juan B. Castagnino Fine Arts Museum',
-            'latitude' => '-32.953003735023934',
+            'title'     => 'Juan B. Castagnino Fine Arts Museum',
+            'latitude'  => '-32.953003735023934',
             'longitude' => '-60.65654316932009',
         ]);
 
         $park = Post::create([
-            'title' => 'Parque Nacional Los Glaciares',
-            'latitude' => '-50.33040490491672',
+            'title'     => 'Parque Nacional Los Glaciares',
+            'latitude'  => '-50.33040490491672',
             'longitude' => '-73.2336946329897',
         ]);
 
@@ -81,14 +81,14 @@ class FilterBoundsTest extends TestCase
     public function test_filtering_bounds_north_east()
     {
         $building = Post::create([
-            'title' => 'The Great Pyramid of Giza',
-            'latitude' => '29.9795194199079',
+            'title'     => 'The Great Pyramid of Giza',
+            'latitude'  => '29.9795194199079',
             'longitude' => '31.134130933576174',
         ]);
 
         $monument = Post::create([
-            'title' => 'Great Sphinx of Giza',
-            'latitude' => '29.975470588406807',
+            'title'     => 'Great Sphinx of Giza',
+            'latitude'  => '29.975470588406807',
             'longitude' => '31.1376029386518',
         ]);
 
@@ -110,14 +110,14 @@ class FilterBoundsTest extends TestCase
     public function test_filtering_bounds_south_east()
     {
         $building = Post::create([
-            'title' => 'Sydney Opera House',
-            'latitude' => '-33.856242636716274',
+            'title'     => 'Sydney Opera House',
+            'latitude'  => '-33.856242636716274',
             'longitude' => '151.21514577056155',
         ]);
 
         $monument = Post::create([
-            'title' => 'Mrs Macquarie\'s Chair',
-            'latitude' => '-33.85947869493282',
+            'title'     => 'Mrs Macquarie\'s Chair',
+            'latitude'  => '-33.85947869493282',
             'longitude' => '151.22258714189954',
         ]);
 

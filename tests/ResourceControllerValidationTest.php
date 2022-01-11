@@ -3,10 +3,7 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
-use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 
 class ResourceControllerValidationTest extends TestCase
 {
@@ -17,7 +14,7 @@ class ResourceControllerValidationTest extends TestCase
         $this->authUser();
 
         $this->post('/posts/new', [
-            'title' => null
+            'title' => null,
         ])->assertInvalid(['title' => 'The title field is required.']);
     }
 
@@ -28,7 +25,7 @@ class ResourceControllerValidationTest extends TestCase
         $post = Post::factory()->create();
 
         $this->put("/posts/$post->id/edit", [
-            'title' => 'only 6'
+            'title' => 'only 6',
         ])->assertInvalid(['title' => 'The title must be at least 10 characters.']);
     }
 }

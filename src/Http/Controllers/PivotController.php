@@ -35,7 +35,7 @@ class PivotController extends Controller
         $this->parentRelation()->attach($attach);
 
         return [
-            'attached' => $attach
+            'attached' => $attach,
         ];
     }
 
@@ -46,7 +46,7 @@ class PivotController extends Controller
         $this->parentRelation()->detach($detach);
 
         return [
-            'detached' => $detach
+            'detached' => $detach,
         ];
     }
 

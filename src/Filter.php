@@ -115,6 +115,7 @@ class Filter
      *
      * @param $public
      * @param $internal
+     *
      * @return Filter
      */
     public static function make($public, $internal = null)
@@ -123,7 +124,7 @@ class Filter
             throw new ReservedException();
         }
 
-        return (new self)->init($public, $internal);
+        return (new self())->init($public, $internal);
     }
 
     /**
@@ -131,6 +132,7 @@ class Filter
      *
      * @param $public
      * @param $internal
+     *
      * @return $this
      */
     protected function init($public, $internal = null)
@@ -147,6 +149,7 @@ class Filter
      *
      * @param $value
      * @param $callback
+     *
      * @return $this
      */
     public function when($value, $callback)
@@ -302,7 +305,7 @@ class Filter
      */
     public function between($name, array $range)
     {
-        $this->withQuery(function ($query) use($name, $range) {
+        $this->withQuery(function ($query) use ($name, $range) {
             if ($this->value === $name) {
                 sort($range);
                 $query->whereBetween($this->key, $range);
@@ -365,6 +368,7 @@ class Filter
      * Make a relationship exists filter type.
      *
      * @param null $relationship
+     *
      * @return $this
      */
     public function exists($relationship = null)
@@ -438,18 +442,18 @@ class Filter
         $this->withRules('nullable');
 
         $this->withQuery(function ($query) {
-
             $this->validateMultiple();
 
             $relation = $query->getModel()->{$this->key}();
 
-            if(is_a($relation, BelongsTo::class)) {
+            if (is_a($relation, BelongsTo::class)) {
                 $key = $relation->getForeignKeyName();
                 $query->whereIn($key, Arr::wrap($this->value));
+
                 return $query;
             }
 
-            $query->whereHas($this->key, function($query) use($relation) {
+            $query->whereHas($this->key, function ($query) use ($relation) {
                 $query->whereIn(
                     $relation->getQualifiedRelatedKeyName(),
                     Arr::wrap($this->value)
@@ -501,13 +505,13 @@ class Filter
      */
     public static function radius($maxDistance = 100)
     {
-        $filter = (new self)->make(['latitude', 'longitude', 'distance']);
+        $filter = (new self())->make(['latitude', 'longitude', 'distance']);
 
         $filter->withRules(['numeric', 'required_with:longitude,latitude', "lte:$maxDistance"], 'distance');
         $filter->withRules(['numeric', 'required_with:latitude,distance'], 'longitude');
         $filter->withRules(['numeric', 'required_with:longitude,distance'], 'latitude');
 
-        $filter->withQuery(function ($query) use($filter) {
+        $filter->withQuery(function ($query) use ($filter) {
             $distance = $filter->value['distance'];
             $method = 'ST_Distance_Sphere(Point(longitude, latitude), Point(?, ?))';
             $conversion = '* 0.000621371192';
@@ -528,27 +532,25 @@ class Filter
      */
     public static function bounds()
     {
-        $filter = (new self)->make(['sw_lat', 'sw_lng', 'ne_lat', 'ne_lng']);
+        $filter = (new self())->make(['sw_lat', 'sw_lng', 'ne_lat', 'ne_lng']);
 
         $filter->withRules(['numeric', 'required_with:sw_lng,ne_lat,ne_lng'], 'sw_lat');
         $filter->withRules(['numeric', 'required_with:sw_lat,ne_lat,ne_lng'], 'sw_lng');
         $filter->withRules(['numeric', 'required_with:sw_lat,sw_lng,ne_lng'], 'ne_lat');
         $filter->withRules(['numeric', 'required_with:sw_lat,sw_lng,ne_lat'], 'ne_lng');
 
-        $filter->withQuery(function ($query) use($filter) {
-
+        $filter->withQuery(function ($query) use ($filter) {
             $range = ($filter->value['sw_lat'] < $filter->value['ne_lat'])
-                ? [ $filter->value['sw_lat'], $filter->value['ne_lat'] ]
-                : [ $filter->value['ne_lat'], $filter->value['sw_lat'] ];
+                ? [$filter->value['sw_lat'], $filter->value['ne_lat']]
+                : [$filter->value['ne_lat'], $filter->value['sw_lat']];
 
             $query->whereBetween('latitude', $range);
 
             $range = ($filter->value['sw_lng'] < $filter->value['ne_lng'])
-                ? [ $filter->value['sw_lng'], $filter->value['ne_lng'] ]
-                : [ $filter->value['ne_lng'], $filter->value['sw_lng'] ];
+                ? [$filter->value['sw_lng'], $filter->value['ne_lng']]
+                : [$filter->value['ne_lng'], $filter->value['sw_lng']];
 
             $query->whereBetween('longitude', $range);
-
         });
 
         return $filter;
@@ -558,6 +560,7 @@ class Filter
      * Register a modifier.
      *
      * @param $modifier
+     *
      * @return $this
      */
     public function modifier($modifier)
@@ -570,13 +573,14 @@ class Filter
     /**
      * Set rules for current filter.
      *
-     * @param mixed $rules
+     * @param mixed  $rules
      * @param string $modifier
+     *
      * @return $this|array
      */
     public function rules($rules, $modifier = null)
     {
-        if (! is_array($rules)) {
+        if (!is_array($rules)) {
             $rules = explode('|', $rules);
         }
 
@@ -592,13 +596,14 @@ class Filter
     /**
      * Append rules for current filter.
      *
-     * @param mixed $rules
+     * @param mixed  $rules
      * @param string $key
+     *
      * @return $this|array
      */
     public function withRules($rules, $key = null)
     {
-        if (! is_array($rules)) {
+        if (!is_array($rules)) {
             $rules = explode('|', $rules);
         }
 
@@ -684,6 +689,7 @@ class Filter
      * Set the query callback.
      *
      * @param $callback
+     *
      * @return $this
      */
     public function query($callback)
@@ -699,6 +705,7 @@ class Filter
      * Add a callback to the query builder.
      *
      * @param $callback
+     *
      * @return $this
      */
     public function withQuery($callback)
@@ -723,11 +730,11 @@ class Filter
             return;
         }
 
-        if ($this->authenticated && ! auth()->check()) {
+        if ($this->authenticated && !auth()->check()) {
             throw new UnauthorizedException();
         }
 
-        if (! $this->filterMethodCalled) {
+        if (!$this->filterMethodCalled) {
             $this->query = $this->defaultQueryCallback($query);
             $this->applyConditionals($query);
 
@@ -768,6 +775,7 @@ class Filter
 
         if (is_array($this->publicKey)) {
             $this->value = $parameters;
+
             return;
         }
 
@@ -775,6 +783,7 @@ class Filter
             $this->modifier = array_keys($parameters)[0];
             $this->value = array_values($parameters)[0];
             $this->value = $this->applyCents($this->value);
+
             return; // no array values needed because its a single value
         }
 
@@ -791,6 +800,7 @@ class Filter
      * Apply default where.
      *
      * @param $query
+     *
      * @return Builder;
      */
     protected function defaultQueryCallback($query)
@@ -804,6 +814,7 @@ class Filter
      * Apply conditionals.
      *
      * @param $query
+     *
      * @return Builder;
      */
     protected function applyConditionals($query)
@@ -821,19 +832,20 @@ class Filter
      * Apply cents.
      *
      * @param $query
+     *
      * @return Builder;
      */
     protected function applyCents($value)
     {
-        if(!$this->cents) {
+        if (!$this->cents) {
             return $value;
         }
 
-        if(!is_array($value)) {
+        if (!is_array($value)) {
             return $value * 100;
         }
 
-        foreach($value as $k => $v) {
+        foreach ($value as $k => $v) {
             $value[$k] = $v * 100;
         }
 
@@ -845,7 +857,7 @@ class Filter
      */
     protected function validateMultiple()
     {
-        if (! $this->multiple && is_array($this->value)) {
+        if (!$this->multiple && is_array($this->value)) {
             throw ValidationException::withMessages([
                 $this->publicKey => 'Multiple not permitted.',
             ]);
@@ -856,6 +868,7 @@ class Filter
      * Convert truthy / falsy values.
      *
      * @param $value
+     *
      * @return int
      */
     public function resolveBoolean($value)
@@ -867,6 +880,7 @@ class Filter
      * Set the request.
      *
      * @param $request
+     *
      * @return $this
      */
     public function setRequest($request)
