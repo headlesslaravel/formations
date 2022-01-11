@@ -16,18 +16,19 @@ class FilterRadiusTest extends TestCase
 
         Route::get('/posts', function (PostFormation $request) {
             $request->validate();
+
             return $request->results();
         });
 
         $this->building = Post::create([
-            'title' => 'Chrysler Building',
-            'latitude' => 40.75178128662803,
+            'title'     => 'Chrysler Building',
+            'latitude'  => 40.75178128662803,
             'longitude' => -73.97552835820437,
         ]);
 
         $this->zoo = Post::create([
-            'title' => 'Central Park Zoo',
-            'latitude' => 40.76850772506696,
+            'title'     => 'Central Park Zoo',
+            'latitude'  => 40.76850772506696,
             'longitude' => -73.97186950177363,
         ]);
     }
@@ -70,9 +71,9 @@ class FilterRadiusTest extends TestCase
     {
         $this->get('posts?distance=A&latitude=B&longitude=C')
             ->assertSessionHasErrors([
-                'latitude' => 'The latitude must be a number.',
+                'latitude'  => 'The latitude must be a number.',
                 'longitude' => 'The longitude must be a number.',
-                'distance' => 'The distance must be a number.',
+                'distance'  => 'The distance must be a number.',
             ]);
     }
 

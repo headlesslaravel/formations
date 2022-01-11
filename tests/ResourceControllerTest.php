@@ -6,7 +6,6 @@ use HeadlessLaravel\Formations\Http\Controllers\Controller;
 use HeadlessLaravel\Formations\Manager;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ResourceControllerTest extends TestCase

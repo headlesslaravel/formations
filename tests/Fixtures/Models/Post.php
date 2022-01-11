@@ -2,13 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures\Models;
 
-use function HeadlessLaravel\Formations\Tests\Fixtures\auth;
 use HeadlessLaravel\Formations\Tests\Fixtures\Database\Factories\PostFactory;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\Comment;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\Like;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\PostTag;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

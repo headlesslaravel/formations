@@ -2,8 +2,8 @@
 
 namespace HeadlessLaravel\Formations\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use HeadlessLaravel\Formations\Manager;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
 {

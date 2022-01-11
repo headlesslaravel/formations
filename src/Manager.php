@@ -5,7 +5,6 @@ namespace HeadlessLaravel\Formations;
 use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class Manager
@@ -48,7 +47,7 @@ class Manager
      */
     public function register(array $resource)
     {
-        if($resource['parent'] && is_null($this->resource($resource['parent']))) {
+        if ($resource['parent'] && is_null($this->resource($resource['parent']))) {
             throw new UnregisteredFormation("Unknown parent formation: {$resource['parent']}");
         }
 
@@ -56,15 +55,16 @@ class Manager
     }
 
     /**
-     * Find a resource by key
+     * Find a resource by key.
      *
      * @param $key
+     *
      * @return ?array
      */
     public function resource($key): ?array
     {
         foreach ($this->resources as $resource) {
-            if($resource['resource'] === $key) {
+            if ($resource['resource'] === $key) {
                 return $resource;
             }
         }
@@ -79,12 +79,12 @@ class Manager
      */
     public function formation($key = null): ?Formation
     {
-        if(is_null($key)) {
+        if (is_null($key)) {
             return app(Arr::get($this->current(), 'formation'));
         }
 
         foreach ($this->resources as $resource) {
-            if($resource['resource'] === $key) {
+            if ($resource['resource'] === $key) {
                 return app($resource['formation']);
             }
         }
@@ -99,7 +99,7 @@ class Manager
      */
     public function current()
     {
-        if($this->current) {
+        if ($this->current) {
             return $this->current;
         }
 
@@ -109,6 +109,7 @@ class Manager
             foreach ($resource['routes'] as $route) {
                 if ($route['key'] === $name) {
                     $this->current = $resource;
+
                     return $resource;
                 }
             }
@@ -117,14 +118,14 @@ class Manager
         abort(500, "No resource with route name: $name");
     }
 
-    public function seeker(string $endpoint, array $formations):self
+    public function seeker(string $endpoint, array $formations): self
     {
         $this->seekers[$endpoint] = $formations;
 
         return $this;
     }
 
-    public function getSeekerFormations():array
+    public function getSeekerFormations(): array
     {
         $prefix = Request::route()->getPrefix();
         $endpoint = Request::route()->uri();

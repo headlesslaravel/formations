@@ -20,7 +20,6 @@ class IncludesTest extends TestCase
         $this->get('posts?includes=author')
             ->assertJsonPath('data.0.author.id', $author->id)
             ->assertJsonPath('data.1.author.id', $author->id);
-
     }
 
     public function test_value_on_relationship_include()
@@ -63,8 +62,8 @@ class IncludesTest extends TestCase
         $this->markTestIncomplete();
         // PostFormation
         // Includes::make('comments')
-            // ->scope('status', Request::input('status'))
-            // ->rule('status', ['required'])
+        // ->scope('status', Request::input('status'))
+        // ->rule('status', ['required'])
         // post.comments /posts?includes=comments&comment_status=approved
         // public function scopeStatus($query, $status) {}
         $this->get('posts?includes=comments&status=approved')
@@ -81,8 +80,8 @@ class IncludesTest extends TestCase
         $this->markTestIncomplete();
         // PostFormation
         // Includes::make('comments')
-            // ->scope('status', Request::input('status'))
-            // ->rule('status', ['nullable'])
+        // ->scope('status', Request::input('status'))
+        // ->rule('status', ['nullable'])
         // public function scopeStatus($query, $status = null) { if($status) { $query->thing(); }}
         // post with coment with status approved
         // post with coment with status draft
@@ -103,13 +102,13 @@ class IncludesTest extends TestCase
     public function test_no_includes_in_response_when_not_authorized()
     {
         $this->markTestIncomplete();
-         Gate::define('viewAuthor', function () {
+        Gate::define('viewAuthor', function () {
             return true;
-         });
+        });
 
-         Gate::define('viewComments', function () {
+        Gate::define('viewComments', function () {
             return false;
-         });
+        });
 
         // Includes::make('author')->can('viewAuthor'),
         // Includes::make('coments')->can('viewComments'),

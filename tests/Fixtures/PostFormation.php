@@ -30,7 +30,7 @@ class PostFormation extends Formation
         'sort-desc' => 'body',
     ];
 
-    public function rulesForIndexing():array
+    public function rulesForIndexing(): array
     {
         return [
             'rule_test' => 'nullable|in:allowed-value',
@@ -40,23 +40,23 @@ class PostFormation extends Formation
     public function rulesForCreating(): array
     {
         return [
-            'title' => ['required'],
-            'author_id' => ['exists:users,id']
+            'title'     => ['required'],
+            'author_id' => ['exists:users,id'],
         ];
     }
 
     public function rulesForUpdating(): array
     {
         return [
-            'title' => ['required', 'min:10'],
-            'author_id' => ['exists:users,id']
+            'title'     => ['required', 'min:10'],
+            'author_id' => ['exists:users,id'],
         ];
     }
 
     public function editData($model): array
     {
         return [
-            'id' => $model->id,
+            'id'       => $model->id,
             'override' => 'populated from override method',
         ];
     }
@@ -68,7 +68,7 @@ class PostFormation extends Formation
         ];
     }
 
-    public function filters():array
+    public function filters(): array
     {
         return [
             Filter::make('id'),

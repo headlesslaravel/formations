@@ -3,7 +3,6 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ResourceControllerAuthorizationTest extends TestCase
@@ -39,7 +38,7 @@ class ResourceControllerAuthorizationTest extends TestCase
         $this->post('posts/new')->assertForbidden();
         $this->updateAbilities(['create']);
         $this->post('posts/new', [
-            'title' => 'Blog title'
+            'title' => 'Blog title',
         ])->assertRedirect();
     }
 
@@ -68,7 +67,7 @@ class ResourceControllerAuthorizationTest extends TestCase
         $this->put("posts/$post->id/edit")->assertForbidden();
         $this->updateAbilities(['update']);
         $this->put("posts/$post->id/edit", [
-            'title' => 'new title'
+            'title' => 'new title',
         ])->assertRedirect();
     }
 
@@ -86,7 +85,7 @@ class ResourceControllerAuthorizationTest extends TestCase
         $post = Post::factory()->create();
         $this->updateAbilities([]);
         $this->put("posts/$post->id/restore")->assertForbidden();
-        $this->updateAbilities(['restore',]);
+        $this->updateAbilities(['restore']);
         $this->put("posts/$post->id/restore")->assertRedirect();
     }
 

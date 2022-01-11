@@ -5,7 +5,6 @@ namespace HeadlessLaravel\Formations\Tests\Fixtures;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class TestProvider extends ServiceProvider

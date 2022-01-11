@@ -10,6 +10,7 @@ class PageExceededException extends Exception
 {
     /**
      * The http status code.
+     *
      * @var int
      */
     protected $code = 302;
@@ -17,7 +18,8 @@ class PageExceededException extends Exception
     /**
      * Render the exception into an HTTP response.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return RedirectResponse
      */
     public function render($request)
