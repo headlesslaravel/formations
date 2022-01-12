@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Commands;
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
 class FormationMakeCommand extends GeneratorCommand
@@ -53,6 +54,60 @@ class FormationMakeCommand extends GeneratorCommand
     }
 
     /**
+     * Build the class with the given name.
+     *
+     * @param string $name
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return string
+     */
+    protected function buildClass($name)
+    {
+        $model = $this->option('model')
+            ? $this->option('model')
+            : $this->qualifyModel($this->guessModelName($name));
+
+        $replace = [
+            '{{ model }}'     => '\\'.$model,
+            '{{ namespace }}' => $this->getDefaultNamespace($this->rootNamespace()),
+        ];
+
+        return str_replace(
+            array_keys($replace),
+            array_values($replace),
+            parent::buildClass($name)
+        );
+    }
+
+    /**
+     * Guess the model name from the Factory name or return a default model name.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    protected function guessModelName($name)
+    {
+        if (Str::endsWith($name, 'Formation')) {
+            $name = substr($name, 0, -9);
+        }
+
+        $rootNamespace = $this->rootNamespace();
+        $modelName = $this->qualifyModel(Str::after($name, $this->getDefaultNamespace(trim($rootNamespace, '\\'))));
+        $modelFilePath = app_path('Models/'.class_basename($modelName).'.php');
+        if (class_exists($modelName) or file_exists($modelFilePath)) {
+            return $modelName;
+        }
+
+        if (is_dir(app_path('Models/'))) {
+            return $this->rootNamespace().'Models\Model';
+        }
+
+        return $this->rootNamespace().'Model';
+    }
+
+    /**
      * Get the default namespace for the class.
      *
      * @param string $rootNamespace
@@ -73,6 +128,7 @@ class FormationMakeCommand extends GeneratorCommand
     {
         return [
             ['force', null, InputOption::VALUE_NONE, 'Create the class even if the model already exists'],
+            ['model', null, InputOption::VALUE_OPTIONAL, 'Specify a Model to be used for the Formation'],
         ];
     }
 }
