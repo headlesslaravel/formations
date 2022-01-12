@@ -23,7 +23,7 @@ class RoutesTest extends TestCase
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();
 
-        $this->assertCount(($routesFilesRoutes+3), $routes);
+        $this->assertCount(($routesFilesRoutes + 3), $routes);
         $this->assertNotNull($routes->getByName('articles.index'));
         $this->assertNotNull($routes->getByName('articles.tags.index'));
         $this->assertNotNull($routes->getByName('articles.tags.sync'));
@@ -41,7 +41,7 @@ class RoutesTest extends TestCase
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();
 
-        $this->assertEquals(count($routes), (count($a)+count($b)+count($c)+$routesFilesRoutes));
+        $this->assertEquals(count($routes), (count($a) + count($b) + count($c) + $routesFilesRoutes));
         $this->assertNull($routes->getByName('articles.index'));
         $this->assertNull($routes->getByName('articles.tags.index'));
         $this->assertNull($routes->getByName('articles.tags.sync'));

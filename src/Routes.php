@@ -160,14 +160,14 @@ class Routes
 
         if (isset($this->types['only']) and count($this->types['only'])) {
             $only = $this->types['only'];
-            $endpoints = array_filter($endpoints, function($endpoint) use ($only) {
+            $endpoints = array_filter($endpoints, function ($endpoint) use ($only) {
                 return in_array($endpoint['type'], $only);
             });
         }
 
         if (isset($this->types['except']) and count($this->types['except'])) {
             $except = $this->types['except'];
-            $endpoints = array_filter($endpoints, function($endpoint) use ($except) {
+            $endpoints = array_filter($endpoints, function ($endpoint) use ($except) {
                 return !in_array($endpoint['type'], $except);
             });
         }
@@ -250,6 +250,7 @@ class Routes
 
     /**
      * @param array|string $types
+     *
      * @return $this
      */
     public function only($types)
@@ -265,6 +266,7 @@ class Routes
 
     /**
      * @param array|string $types
+     *
      * @return $this
      */
     public function except($types)
