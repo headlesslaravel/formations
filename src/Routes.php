@@ -135,8 +135,6 @@ class Routes
                 ->withTrashed($route['with-trashed']);
         }
 
-        $this->router->getRoutes()->refreshNameLookups();
-
         $this->manager->register([
             'formation' => $this->formation,
             'resource' => $this->resource,

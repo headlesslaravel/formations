@@ -18,6 +18,7 @@ class RoutesTest extends TestCase
         Route::formation('articles.tags', TagFormation::class)->pivot()->only(['sync']);
 
         $routes = Route::getRoutes();
+        $routes->refreshNameLookups();
 
         // preloaded from routes.php
         $routesFilesRoutes = 35;
@@ -30,19 +31,17 @@ class RoutesTest extends TestCase
 
     public function test_formation_routes_except()
     {
-        Route::formation('articles', PostFormation::class)->except('index');
-        Route::formation('articles.tags', TagFormation::class)->except(['index']);
-        Route::formation('articles.tags', TagFormation::class)->pivot()->except(['sync', 'index', 'show']);
+        $a = Route::formation('articles', PostFormation::class)->except('index')->create();
+        $b = Route::formation('articles.tags', TagFormation::class)->except(['index'])->create();
+        $c = Route::formation('articles.tags', TagFormation::class)->pivot()->except(['sync', 'index', 'show'])->create();
 
         $routes = Route::getRoutes();
+        $routes->refreshNameLookups();
 
         // preloaded from routes.php
         $routesFilesRoutes = 35;
-        $articleRoutes = 8;
-        $articleTagsRoutes = 8;
-        $articleTagsPivotRoutes = 4;
 
-        $this->assertEquals(count($routes), ($articleRoutes+$articleTagsRoutes+$articleTagsPivotRoutes+$routesFilesRoutes));
+        $this->assertEquals(count($routes), (count($a)+count($b)+count($c)+$routesFilesRoutes));
         $this->assertNull($routes->getByName('articles.index'));
         $this->assertNull($routes->getByName('articles.tags.index'));
         $this->assertNull($routes->getByName('articles.tags.sync'));
