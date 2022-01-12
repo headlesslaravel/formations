@@ -12,7 +12,7 @@ class {{ class }} extends Formation
      *
      * @var string
      */
-    public $model = \App\Models\Model::class;
+    public $model = {{ model }}::class;
 
     /**
      * The display column for options.
