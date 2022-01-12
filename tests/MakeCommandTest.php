@@ -16,7 +16,7 @@ class MakeCommandTest extends TestCase
             'autoload' => [
                 'psr-4' => [
                     'Testing\\' => realpath(base_path()),
-                    'App\\' => 'app/',
+                    'App\\'     => 'app/',
                 ],
             ],
         ]));
