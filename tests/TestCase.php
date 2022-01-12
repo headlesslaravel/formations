@@ -9,8 +9,6 @@ use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
 use HeadlessLaravel\Formations\Tests\Fixtures\TestProvider;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\LaravelRay\RayServiceProvider;
@@ -35,12 +33,12 @@ class TestCase extends Orchestra
 
     public function getEnvironmentSetUp($app)
     {
-        if (! $this->useMysql) {
+        if (!$this->useMysql) {
             $app['config']->set('database.default', 'sqlite');
             $app['config']->set('database.connections.sqlite', [
-                'driver' => 'sqlite',
+                'driver'   => 'sqlite',
                 'database' => ':memory:',
-                'prefix' => '',
+                'prefix'   => '',
             ]);
         }
 
@@ -67,9 +65,9 @@ class TestCase extends Orchestra
     public function authUser()
     {
         $user = User::forceCreate([
-            'name' => 'User',
-            'email' => 'user@example.com',
-            'password' => '$2y$10$MTibKZXWRvtO2gWpfpsngOp6FQXWUhHPTF9flhsaPdWvRtsyMUlC2',
+            'name'        => 'User',
+            'email'       => 'user@example.com',
+            'password'    => '$2y$10$MTibKZXWRvtO2gWpfpsngOp6FQXWUhHPTF9flhsaPdWvRtsyMUlC2',
             'permissions' => json_encode(['viewAny', 'view', 'create', 'update', 'delete', 'restore', 'forceDelete']),
         ]);
 
@@ -91,10 +89,10 @@ class TestCase extends Orchestra
         // avoid changing in two places or false positives
 
         $controller->current = [
-            'formation' => PostFormation::class,
-            'resource' => 'posts',
+            'formation'          => PostFormation::class,
+            'resource'           => 'posts',
             'resource_route_key' => 'post',
-            'routes' => [
+            'routes'             => [
                 ['type' => 'index', 'key' => 'posts.index'],
                 ['type' => 'show', 'key' => 'posts.show'],
                 ['type' => 'create', 'key' => 'posts.create'],

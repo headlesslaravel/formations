@@ -25,6 +25,7 @@ class FilterTest extends TestCase
 
         Route::get('/posts', function (PostFormation $formation) {
             $formation->validate();
+
             return $formation->results();
         });
     }
@@ -54,7 +55,7 @@ class FilterTest extends TestCase
         $expected = Post::factory()->create();
 
         Comment::factory()->create([
-            'body' => 'Laravel is an amazing framework',
+            'body'    => 'Laravel is an amazing framework',
             'post_id' => $expected->id,
         ]);
 
@@ -99,7 +100,7 @@ class FilterTest extends TestCase
     {
         $this->get('/posts?page=2&search=hello')
             ->assertRedirect('/posts?page=1&search=hello&sort-desc=body');
-            // sort comes from $defaults
+        // sort comes from $defaults
     }
 
     public function test_sorting_invalid_key()
@@ -766,7 +767,6 @@ class FilterTest extends TestCase
         $this->get('/posts?written-by='.$post->author->name)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.title', 'Correct');
-
     }
 
     public function test_filtering_auth_required()

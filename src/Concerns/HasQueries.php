@@ -11,7 +11,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function indexQuery($query):void
+    public function indexQuery($query): void
     {
         //
     }
@@ -21,7 +21,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function showQuery($query):void
+    public function showQuery($query): void
     {
         //
     }
@@ -31,7 +31,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function editQuery($query):void
+    public function editQuery($query): void
     {
         //
     }
@@ -41,7 +41,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function updateQuery($query):void
+    public function updateQuery($query): void
     {
         //
     }
@@ -51,7 +51,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function restoreQuery($query):void
+    public function restoreQuery($query): void
     {
         //
     }
@@ -61,7 +61,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function destroyQuery($query):void
+    public function destroyQuery($query): void
     {
         //
     }
@@ -71,7 +71,7 @@ trait HasQueries
      *
      * @param mixed $query
      */
-    public function forceDeleteQuery($query):void
+    public function forceDeleteQuery($query): void
     {
         //
     }
@@ -80,11 +80,11 @@ trait HasQueries
      * Call the proper query callback.
      *
      * @param string $method
-     * @param mixed $query
+     * @param mixed  $query
      */
-    public function queryCallback(string $method, Builder $query):void
+    public function queryCallback(string $method, Builder $query): void
     {
-        $method = $method . 'Query';
+        $method = $method.'Query';
 
         $this->$method($query);
     }

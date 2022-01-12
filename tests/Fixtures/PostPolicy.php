@@ -12,10 +12,11 @@ class PostPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function viewAny(User $user):bool
+    public function viewAny(User $user): bool
     {
         return $this->check($user, 'viewAny');
     }
@@ -23,10 +24,11 @@ class PostPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function view(User $user):bool
+    public function view(User $user): bool
     {
         return $this->check($user, 'view');
     }
@@ -34,10 +36,11 @@ class PostPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function create(User $user):bool
+    public function create(User $user): bool
     {
         return $this->check($user, 'create');
     }
@@ -45,10 +48,11 @@ class PostPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function update(User $user):bool
+    public function update(User $user): bool
     {
         return $this->check($user, 'update');
     }
@@ -56,10 +60,11 @@ class PostPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function delete(User $user):bool
+    public function delete(User $user): bool
     {
         return $this->check($user, 'delete');
     }
@@ -67,10 +72,11 @@ class PostPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function restore(User $user):bool
+    public function restore(User $user): bool
     {
         return $this->check($user, 'restore');
     }
@@ -78,10 +84,11 @@ class PostPolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  User  $user
+     * @param User $user
+     *
      * @return bool
      */
-    public function forceDelete(User $user):bool
+    public function forceDelete(User $user): bool
     {
         return $this->check($user, 'forceDelete');
     }
@@ -89,13 +96,14 @@ class PostPolicy
     /**
      * Determine whether the user can perform ability.
      *
-     * @param  User  $user
-     * @param  string  $ability
+     * @param User   $user
+     * @param string $ability
+     *
      * @return bool
      */
-    private function check($user, $ability):bool
+    private function check($user, $ability): bool
     {
-        if(!$user->permissions) {
+        if (!$user->permissions) {
             return false;
         }
 

@@ -2,16 +2,9 @@
 
 namespace HeadlessLaravel\Formations\Tests;
 
-use HeadlessLaravel\Formations\Exceptions\UnregisteredFormation;
-use HeadlessLaravel\Formations\Manager;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Tag;
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
-use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
-use HeadlessLaravel\Formations\Tests\Fixtures\TagFormation;
-use HeadlessLaravel\Formations\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 
 class PivotControllerTest extends TestCase
 {
@@ -50,7 +43,7 @@ class PivotControllerTest extends TestCase
         );
 
         $tag = Tag::factory()->create();
-        $post= Post::factory()->create();
+        $post = Post::factory()->create();
         $post->tags()->attach($tag);
 
         $this->get("posts/$post->id/tags")
@@ -67,7 +60,7 @@ class PivotControllerTest extends TestCase
 
         $vue = Tag::factory()->create(['title' => 'Vue']);
         $react = Tag::factory()->create(['title' => 'React']);
-        $post= Post::factory()->create();
+        $post = Post::factory()->create();
         $post->tags()->attach([$vue->id, $react->id]);
 
         $this->get("posts/$post->id/tags?search=vue")
@@ -84,7 +77,7 @@ class PivotControllerTest extends TestCase
     public function test_pivot_show()
     {
         $tag = Tag::factory()->create();
-        $post= Post::factory()->create();
+        $post = Post::factory()->create();
         $post->tags()->attach($tag);
 
         $this->get("posts/$post->id/tags/{$tag->id}")
@@ -99,7 +92,7 @@ class PivotControllerTest extends TestCase
     public function test_pivot_404_if_not_attached()
     {
         $tag = Tag::factory()->create();
-        $post= Post::factory()->create();
+        $post = Post::factory()->create();
 
         $this->get("posts/$post->id/tags/{$tag->id}")
             ->assertNotFound();
@@ -112,7 +105,7 @@ class PivotControllerTest extends TestCase
         $two = Tag::factory()->create();
 
         $response = $this->post("posts/$post->id/tags/sync", [
-            'selected' => [$one->id, $two->id]
+            'selected' => [$one->id, $two->id],
         ]);
 
         $response->assertOk();
@@ -130,7 +123,7 @@ class PivotControllerTest extends TestCase
         $two = Tag::factory()->create();
 
         $response = $this->post("posts/$post->id/tags/attach", [
-            'selected' => [$one->id, $two->id]
+            'selected' => [$one->id, $two->id],
         ]);
 
         $response->assertOk();
@@ -148,7 +141,7 @@ class PivotControllerTest extends TestCase
         $this->assertCount(2, $post->tags);
 
         $response = $this->delete("posts/$post->id/tags/detach", [
-            'selected' => [$one->id, $two->id]
+            'selected' => [$one->id, $two->id],
         ]);
 
         $response->assertOk();
@@ -167,7 +160,7 @@ class PivotControllerTest extends TestCase
         $post->tags()->attach([$one->id, $two->id]);
 
         $response = $this->post("posts/$post->id/tags/toggle", [
-            'selected' => [$one->id, $two->id, $three->id]
+            'selected' => [$one->id, $two->id, $three->id],
         ]);
 
         $response->assertOk();

@@ -10,9 +10,10 @@ trait HasData
      * Override the index method's data.
      *
      * @param $collection
+     *
      * @return array
      */
-    public function indexData($collection):array
+    public function indexData($collection): array
     {
         return [];
     }
@@ -21,19 +22,20 @@ trait HasData
      * Override the show method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function showData($model):array
+    public function showData($model): array
     {
         return [];
     }
 
     /**
      * Override the create method's data.
-     * @return array
      *
+     * @return array
      */
-    public function createData():array
+    public function createData(): array
     {
         return [];
     }
@@ -42,9 +44,10 @@ trait HasData
      * Override the store method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function storeData($model):array
+    public function storeData($model): array
     {
         return [];
     }
@@ -53,9 +56,10 @@ trait HasData
      * Override the edit method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function editData($model):array
+    public function editData($model): array
     {
         return [];
     }
@@ -64,9 +68,10 @@ trait HasData
      * Override the update method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function updateData($model):array
+    public function updateData($model): array
     {
         return [];
     }
@@ -75,9 +80,10 @@ trait HasData
      * Override the restore method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function restoreData($model):array
+    public function restoreData($model): array
     {
         return [];
     }
@@ -86,9 +92,10 @@ trait HasData
      * Override the destroy method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function destroyData($model):array
+    public function destroyData($model): array
     {
         return [];
     }
@@ -97,9 +104,10 @@ trait HasData
      * Override the force delete method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function forceDeleteData($model):array
+    public function forceDeleteData($model): array
     {
         return [];
     }
@@ -108,9 +116,10 @@ trait HasData
      * Append the index method's data.
      *
      * @param $collection
+     *
      * @return array
      */
-    public function extraIndexData($collection):array
+    public function extraIndexData($collection): array
     {
         return [];
     }
@@ -119,9 +128,10 @@ trait HasData
      * Append the show method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraShowData($model):array
+    public function extraShowData($model): array
     {
         return [];
     }
@@ -131,7 +141,7 @@ trait HasData
      *
      * @return array
      */
-    public function extraCreateData():array
+    public function extraCreateData(): array
     {
         return [];
     }
@@ -140,9 +150,10 @@ trait HasData
      * Append the edit method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraEditData($model):array
+    public function extraEditData($model): array
     {
         return [];
     }
@@ -151,9 +162,10 @@ trait HasData
      * Append the store method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraStoreData($model):array
+    public function extraStoreData($model): array
     {
         return [];
     }
@@ -162,9 +174,10 @@ trait HasData
      * Append the update method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraUpdateData($model):array
+    public function extraUpdateData($model): array
     {
         return [];
     }
@@ -173,9 +186,10 @@ trait HasData
      * Append the restore method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraRestoreData($model):array
+    public function extraRestoreData($model): array
     {
         return [];
     }
@@ -184,9 +198,10 @@ trait HasData
      * Append the destroy method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraDestroyData($model):array
+    public function extraDestroyData($model): array
     {
         return [];
     }
@@ -195,9 +210,10 @@ trait HasData
      * Append the force delete method's data.
      *
      * @param $model
+     *
      * @return array
      */
-    public function extraForceDeleteData($model):array
+    public function extraForceDeleteData($model): array
     {
         return [];
     }
@@ -208,25 +224,26 @@ trait HasData
      * @param $method
      * @param $data
      * @param $props
+     *
      * @return mixed
      */
     public function dataCallback($method, $data, $props)
     {
         $method = Str::of($method)->camel();
 
-        $override = $method . 'Data';
+        $override = $method.'Data';
 
         $output = $this->$override($props);
 
-        if(count($output)) {
+        if (count($output)) {
             return $output;
         }
 
-        $extra = 'extra' . ucfirst($method) . 'Data';
+        $extra = 'extra'.ucfirst($method).'Data';
 
         $output = array_merge($this->$extra($props), $data);
 
-        if(count($output)) {
+        if (count($output)) {
             return $output;
         }
 

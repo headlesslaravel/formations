@@ -9,8 +9,9 @@ class SearchScope
 {
     /**
      * @param Builder $query
-     * @param array $columns
-     * @param string $term
+     * @param array   $columns
+     * @param string  $term
+     *
      * @return Builder
      */
     public function apply($query, $columns, $term)

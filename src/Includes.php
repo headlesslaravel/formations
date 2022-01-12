@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations;
 
-use HeadlessLaravel\Formations\Exceptions\ReservedException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 
@@ -31,9 +30,9 @@ class Includes
         //
     }
 
-    public function isActive():bool
+    public function isActive(): bool
     {
-        if(! Request::filled('includes')) {
+        if (!Request::filled('includes')) {
             return false;
         }
 
@@ -44,21 +43,21 @@ class Includes
 
     public static function make($key, $path = null)
     {
-        return (new self)->init($key, $path);
+        return (new self())->init($key, $path);
     }
 
     public function init($key, $path = null): self
     {
         $this->key = $key;
 
-        if(is_null($path)) {
+        if (is_null($path)) {
             $this->path = $key;
         }
 
         return $this;
     }
 
-    public function scope($scope, $value = null):self
+    public function scope($scope, $value = null): self
     {
         $this->scope = $scope;
 
@@ -67,7 +66,7 @@ class Includes
         return $this;
     }
 
-    public function rule($requestKey, $rules):self
+    public function rule($requestKey, $rules): self
     {
         $this->rules[$requestKey] = $rules;
 

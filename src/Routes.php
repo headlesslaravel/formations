@@ -2,10 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class Routes
@@ -40,7 +37,7 @@ class Routes
         $this->parent = Str::before($resource, '.');
         $this->resource = Str::after($resource, '.');
 
-        if($this->parent === $this->resource) {
+        if ($this->parent === $this->resource) {
             $this->parent = null;
         }
 
@@ -61,7 +58,7 @@ class Routes
         return $this;
     }
 
-    public function setPrefix($prefix = null):self
+    public function setPrefix($prefix = null): self
     {
         $this->prefix = $prefix;
 
@@ -70,41 +67,41 @@ class Routes
 
     public function make()
     {
-        return array_map(function($endpoint) {
+        return array_map(function ($endpoint) {
             return array_merge($endpoint, [
                 'with-trashed' => $this->withTrashed($endpoint['type']),
-                'action' => $this->makeAction($endpoint['type']),
-                'name' => $this->makeName($endpoint['type']),
-                'key' => $this->makeKey($endpoint['type']),
+                'action'       => $this->makeAction($endpoint['type']),
+                'name'         => $this->makeName($endpoint['type']),
+                'key'          => $this->makeKey($endpoint['type']),
             ]);
         }, $this->endpoints());
     }
 
-    public function withTrashed($name):bool
+    public function withTrashed($name): bool
     {
         return true; // todo: determine parent and child trash state
+
         return in_array($name, ['show', 'restore', 'force-delete']);
     }
 
     public function makeName($name)
     {
-        if($this->parent) {
+        if ($this->parent) {
             return "$this->parent.$this->resource.$name";
         }
 
         return "$this->resource.$name";
     }
 
-    public function makeKey($name):string
+    public function makeKey($name): string
     {
         $output = "$this->resource.$name";
 
-        if($this->parent) {
+        if ($this->parent) {
             $output = "$this->parent.$output";
         }
 
-
-        if($this->prefix) {
+        if ($this->prefix) {
             $output = "$this->prefix.$output";
         }
 
@@ -115,16 +112,16 @@ class Routes
     {
         $name = Str::camel($name);
 
-        if($this->pivot) {
+        if ($this->pivot) {
             return [app($this->formation)->pivotController, $name];
-        } else if($this->parent) {
+        } elseif ($this->parent) {
             return [app($this->formation)->nestedController, $name];
         } else {
             return [app($this->formation)->controller, $name];
         }
     }
 
-    public function create():array
+    public function create(): array
     {
         $routes = $this->make();
 
@@ -136,12 +133,12 @@ class Routes
         }
 
         $this->manager->register([
-            'formation' => $this->formation,
-            'resource' => $this->resource,
-            'parent' => $this->parent,
+            'formation'          => $this->formation,
+            'resource'           => $this->resource,
+            'parent'             => $this->parent,
             'resource_route_key' => $this->resourceRouteKey(),
-            'parent_route_key' => $this->parentRouteKey(),
-            'routes' => $routes,
+            'parent_route_key'   => $this->parentRouteKey(),
+            'routes'             => $routes,
         ]);
 
         return $routes;
@@ -149,15 +146,15 @@ class Routes
 
     public function endpoints(): array
     {
-        if($this->pivot) {
+        if ($this->pivot) {
             $endpoints = $this->pivotEndpoints();
-        } else if($this->parent) {
+        } elseif ($this->parent) {
             $endpoints = $this->nestedEndpoints();
         } else {
             $endpoints = $this->resourceEndpoints();
         }
 
-        if(!$this->types) {
+        if (!$this->types) {
             return $endpoints;
         }
 

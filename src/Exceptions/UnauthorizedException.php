@@ -10,6 +10,7 @@ class UnauthorizedException extends Exception
 {
     /**
      * The http status code.
+     *
      * @var int
      */
     protected $code = 401;
@@ -17,7 +18,8 @@ class UnauthorizedException extends Exception
     /**
      * Render the exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function render($request)

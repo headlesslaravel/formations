@@ -3,10 +3,9 @@
 namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Commands\FormationMakeCommand;
-use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
+use HeadlessLaravel\Formations\Http\Controllers\SeekerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 
 class FormationProvider extends ServiceProvider
 {
@@ -52,6 +51,12 @@ class FormationProvider extends ServiceProvider
             return app(Routes::class)
                 ->setResource($resource)
                 ->setFormation($formation);
+        });
+
+        Route::macro('seeker', function ($endpoint, $formations = []) {
+            app(Manager::class)->seeker($endpoint, $formations);
+
+            Route::get($endpoint, [SeekerController::class, 'index']);
         });
     }
 }

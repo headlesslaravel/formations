@@ -2,13 +2,13 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
 use HeadlessLaravel\Formations\Http\Controllers\PivotController;
-use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
-use HeadlessLaravel\Formations\Http\Resources\Resource;
-use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
-use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
+use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
+use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
+use HeadlessLaravel\Formations\Http\Resources\Resource;
 use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -77,6 +77,11 @@ class Formation
      * @var Model
      */
     public $model;
+
+    /**
+     * The detail route name.
+     */
+    public $detailRouteName;
 
     /**
      * The resource controller.
@@ -194,12 +199,12 @@ class Formation
      *
      * @var array
      */
-    protected function getFilterRules():array
+    protected function getFilterRules(): array
     {
         $rules = [
-            'search' => 'nullable|string|min:1|max:64',
-            'per_page' => "nullable|integer|min:1,max:{$this->maxPerPage}",
-            'sort' => 'nullable|string|in:'.$this->getSortableKeys(),
+            'search'    => 'nullable|string|min:1|max:64',
+            'per_page'  => "nullable|integer|min:1,max:{$this->maxPerPage}",
+            'sort'      => 'nullable|string|in:'.$this->getSortableKeys(),
             'sort-desc' => 'nullable|string|in:'.$this->getSortableKeys(),
         ];
 
@@ -243,7 +248,7 @@ class Formation
     protected function applyDefaults(): self
     {
         foreach ($this->defaults as $key => $value) {
-            if (! Request::has($key)) {
+            if (!Request::has($key)) {
                 Request::merge([$key => $value]);
             }
         }
@@ -255,6 +260,7 @@ class Formation
      * Apply search to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applySearch($query)
@@ -270,6 +276,7 @@ class Formation
      * Apply filters to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applyFilters($query)
@@ -286,12 +293,13 @@ class Formation
      * Apply includes to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applyIncludes($query)
     {
-        foreach($this->includes() as $include) {
-            if($include->isActive()) {
+        foreach ($this->includes() as $include) {
+            if ($include->isActive()) {
                 $include->apply($query);
             }
         }
@@ -303,11 +311,12 @@ class Formation
      * Apply conditions to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applyConditions($query)
     {
-        foreach($this->conditions as $arguments) {
+        foreach ($this->conditions as $arguments) {
             $query->where(...$arguments);
         }
 
@@ -318,11 +327,12 @@ class Formation
      * Apply selects to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applySelect($query)
     {
-        if(count($this->select)) {
+        if (count($this->select)) {
             return $query->select($this->select);
         }
 
@@ -333,6 +343,7 @@ class Formation
      * Apply sort to the query.
      *
      * @var Builder
+     *
      * @return Builder
      */
     protected function applySort($query)
@@ -343,8 +354,7 @@ class Formation
             return $query;
         }
 
-        if (! empty($sortable['relationship'])) {
-
+        if (!empty($sortable['relationship'])) {
             $relation = $query->getModel()->{$sortable['relationship']}(); // comments
 
             $subquery = $relation->getModel() // Comment
@@ -355,7 +365,7 @@ class Formation
                 )->take(1);
 
             $query->addSelect([
-                $sortable['column'] => $subquery  // upvotes
+                $sortable['column'] => $subquery,  // upvotes
             ]);
         } elseif (method_exists($query->getModel(), $sortable['column'])) {
             $query->withCount($sortable['column']);
@@ -371,12 +381,12 @@ class Formation
     {
         if (Request::filled('sort')) {
             $sortable = [
-                'column' => Request::input('sort'),
+                'column'   => Request::input('sort'),
                 'direction'=> 'asc',
             ];
         } elseif (Request::filled('sort-desc')) {
             $sortable = [
-                'column' => Request::input('sort-desc'),
+                'column'   => Request::input('sort-desc'),
                 'direction'=> 'desc',
             ];
         } else {
@@ -405,6 +415,26 @@ class Formation
         if (Request::input('page') > $this->results->lastPage()) {
             throw new PageExceededException();
         }
+    }
+
+    public function seekerMeta()
+    {
+        $name = Str::of(class_basename($this))
+            ->replace('Formation', '')
+            ->snake()
+            ->slug()
+            ->plural();
+
+        if ($this->detailRouteName) {
+            $route = $this->detailRouteName;
+        } else {
+            $route = $name->append('.show');
+        }
+
+        return [
+            'route' => $route,
+            'group' => $name,
+        ];
     }
 
     public function rules(): array
@@ -483,7 +513,7 @@ class Formation
 
     public function whereRelation($relation, $column, $operator, $value): Formation
     {
-        return $this->where(function($query) use($relation, $column, $operator, $value) {
+        return $this->where(function ($query) use ($relation, $column, $operator, $value) {
             $query->whereRelation($relation, $column, $operator, $value);
         });
     }
@@ -497,7 +527,7 @@ class Formation
 
     public function getForeignKey()
     {
-        if($this->foreignKey) {
+        if ($this->foreignKey) {
             return $this->foreignKey;
         }
 
@@ -514,8 +544,8 @@ class Formation
     public function options(): Formation
     {
         return $this->select([
-            $this->display . ' as display',
-            app($this->model)->getKeyName() . ' as value',
+            $this->display.' as display',
+            app($this->model)->getKeyName().' as value',
         ]);
     }
 
