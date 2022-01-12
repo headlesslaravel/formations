@@ -56,9 +56,11 @@ class FormationMakeCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * @param  string  $name
-     * @return string
+     * @param string $name
+     *
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     *
+     * @return string
      */
     protected function buildClass($name)
     {
@@ -67,19 +69,22 @@ class FormationMakeCommand extends GeneratorCommand
             : $this->qualifyModel($this->guessModelName($name));
 
         $replace = [
-            '{{ model }}' => '\\'.$model,
+            '{{ model }}'     => '\\'.$model,
             '{{ namespace }}' => $this->getDefaultNamespace($this->rootNamespace()),
         ];
 
         return str_replace(
-            array_keys($replace), array_values($replace), parent::buildClass($name)
+            array_keys($replace),
+            array_values($replace),
+            parent::buildClass($name)
         );
     }
 
     /**
      * Guess the model name from the Factory name or return a default model name.
      *
-     * @param  string  $name
+     * @param string $name
+     *
      * @return string
      */
     protected function guessModelName($name)
