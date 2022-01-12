@@ -40,25 +40,13 @@ class {{ class }} extends Formation
      *
      * @return array
      */
-    public function filters()
+    public function filters():array
     {
         return [
             Filter::make('created_at')->dateRange(),
             Filter::make('with-deleted')->withTrashed(),
             Filter::make('only-deleted')->onlyTrashed(),
             //
-        ];
-    }
-
-    /**
-     * Define the includes.
-     *
-     * @return array
-     */
-    public function includes()
-    {
-        return [
-            // Includes::make('author'),
         ];
     }
 }
