@@ -46,11 +46,10 @@ class FormationProvider extends ServiceProvider
 
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'formations');
 
-        Route::macro('formation', function ($resource, $formation, array $types = []) {
+        Route::macro('formation', function ($resource, $formation) {
             return app(Routes::class)
                 ->setResource($resource)
-                ->setFormation($formation)
-                ->setTypes($types);
+                ->setFormation($formation);
         });
 
         Route::macro('seeker', function ($endpoint, $formations = []) {
