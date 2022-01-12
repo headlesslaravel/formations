@@ -19,12 +19,14 @@ class RoutesTest extends TestCase
         Route::formation('articles', PostFormation::class)->only('index');
         Route::formation('articles.tags', TagFormation::class)->only(['index']);
         Route::formation('articles.tags', TagFormation::class)->pivot()->only(['sync']);
+        Route::formation('authors.articles', PostFormation::class)->only(['index']);
 
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();
 
-        $this->assertCount(($routesFilesRoutes + 3), $routes);
+        $this->assertCount(($routesFilesRoutes + 4), $routes);
         $this->assertNotNull($routes->getByName('articles.index'));
+        $this->assertNotNull($routes->getByName('authors.articles.index'));
         $this->assertNotNull($routes->getByName('articles.tags.index'));
         $this->assertNotNull($routes->getByName('articles.tags.sync'));
     }
