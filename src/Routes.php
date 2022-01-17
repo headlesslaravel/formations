@@ -2,7 +2,10 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Formations\Http\Controllers\ImportController;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class Routes
@@ -12,6 +15,8 @@ class Routes
     public $resource;
 
     public $pivot = false;
+
+    public $import = false;
 
     protected $types = [];
 
@@ -32,7 +37,14 @@ class Routes
         $this->prefix = $this->router->getLastGroupPrefix();
     }
 
-    public function setResource($resource)
+    public function formation($formation)
+    {
+        $this->formation = $formation;
+
+        return $this;
+    }
+
+    public function resource($resource):self
     {
         $this->parent = Str::before($resource, '.');
         $this->resource = Str::after($resource, '.');
@@ -44,9 +56,16 @@ class Routes
         return $this;
     }
 
-    public function setFormation($formation)
+    public function pivot():self
     {
-        $this->formation = $formation;
+        $this->pivot = true;
+
+        return $this;
+    }
+
+    public function import():self
+    {
+        $this->import = true;
 
         return $this;
     }
@@ -86,6 +105,10 @@ class Routes
 
     public function makeName($name)
     {
+        if ($this->import) {
+            return "$this->resource.imports.$name";
+        }
+
         if ($this->parent) {
             return "$this->parent.$this->resource.$name";
         }
@@ -112,7 +135,9 @@ class Routes
     {
         $name = Str::camel($name);
 
-        if ($this->pivot) {
+        if ($this->import) {
+            return [ImportController::class, $name];
+        } elseif ($this->pivot) {
             return [app($this->formation)->pivotController, $name];
         } elseif ($this->parent) {
             return [app($this->formation)->nestedController, $name];
@@ -129,7 +154,8 @@ class Routes
             $this->router
                 ->addRoute($route['verb'], $route['endpoint'], $route['action'])
                 ->name($route['name'])
-                ->withTrashed($route['with-trashed']);
+                ->withTrashed($route['with-trashed'])
+                ->defaults('formation', $this->formation);
         }
 
         $this->manager->register([
@@ -146,7 +172,9 @@ class Routes
 
     public function endpoints(): array
     {
-        if ($this->pivot) {
+        if ($this->import) {
+            $endpoints = $this->importEndpoints();
+        } else if ($this->pivot) {
             $endpoints = $this->pivotEndpoints();
         } elseif ($this->parent) {
             $endpoints = $this->nestedEndpoints();
@@ -226,6 +254,13 @@ class Routes
         ];
     }
 
+    private function importEndpoints(): array
+    {
+        return [
+            ['type' => 'store', 'verb' => 'POST', 'endpoint' => "imports/$this->resource"],
+        ];
+    }
+
     public function makeRouteKey($key): string
     {
         return Str::of($key)->replace('-', '_')->singular();
@@ -239,13 +274,6 @@ class Routes
     public function resourceRouteKey(): string
     {
         return $this->makeRouteKey($this->resource);
-    }
-
-    public function pivot(): self
-    {
-        $this->pivot = true;
-
-        return $this;
     }
 
     /**
