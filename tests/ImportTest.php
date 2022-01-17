@@ -49,6 +49,7 @@ class ImportTest extends TestCase
 
     public function test_uploading_with_relations_with_default_import()
     {
+        $this->withoutExceptionHandling();
         User::factory()->create(['name' => 'Susan']);
         User::factory()->create(['name' => 'Frank']);
 

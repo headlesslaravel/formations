@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
