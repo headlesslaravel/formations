@@ -23,5 +23,7 @@ class ImportController
         } catch (ValidationException $e) {
             Mail::to(Auth::user())->send(new ImportErrors($e->failures()));
         }
+
+        return response()->json(['success' => true]);
     }
 }
