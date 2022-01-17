@@ -121,4 +121,13 @@ class PostFormation extends Formation
             Filter::bounds(),
         ];
     }
+
+    public function import():array
+    {
+        return [
+            Field::make('title')->rules(['required', 'min:2']),
+            Field::make('body')->rules(['required', 'min:2']),
+            Field::make('author')->relation('name')->rules(['required', 'exists:users,name']),
+        ];
+    }
 }
