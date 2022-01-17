@@ -29,10 +29,10 @@ class SeekerTest extends TestCase
         $response->assertJsonPath('data.1.data.0.display', 'Hi author');
 
         $response->assertJsonPath('data.0.meta.route', 'posts.show');
-        $response->assertJsonPath('data.0.meta.group', 'posts');
+        $response->assertJsonPath('data.0.meta.resource', 'posts');
 
         $response->assertJsonPath('data.1.meta.route', 'authors.show');
-        $response->assertJsonPath('data.1.meta.group', 'authors');
+        $response->assertJsonPath('data.1.meta.resource', 'authors');
     }
 
     public function test_seeker_global_search_with_prefix()
@@ -61,9 +61,9 @@ class SeekerTest extends TestCase
         $response->assertJsonPath('data.1.data.0.display', 'Hi author');
 
         $response->assertJsonPath('data.0.meta.route', 'admin.posts.show');
-        $response->assertJsonPath('data.0.meta.group', 'posts');
+        $response->assertJsonPath('data.0.meta.resource', 'posts');
 
         $response->assertJsonPath('data.1.meta.route', 'admin.authors.show');
-        $response->assertJsonPath('data.1.meta.group', 'authors');
+        $response->assertJsonPath('data.1.meta.resource', 'authors');
     }
 }

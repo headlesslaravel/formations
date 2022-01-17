@@ -439,7 +439,7 @@ class Formation
 
         return [
             'route' => $route,
-            'group' => $name,
+            'resource' => $name,
         ];
     }
 
