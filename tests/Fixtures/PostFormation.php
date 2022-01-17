@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
@@ -119,6 +120,15 @@ class PostFormation extends Formation
             Filter::radius(),
 
             Filter::bounds(),
+        ];
+    }
+
+    public function import(): array
+    {
+        return [
+            Field::make('title')->rules(['required', 'min:2']),
+            Field::make('body')->rules(['required', 'min:2']),
+            Field::make('author')->relation('name')->rules(['required', 'exists:users,name']),
         ];
     }
 }
