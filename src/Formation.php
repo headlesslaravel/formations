@@ -438,7 +438,7 @@ class Formation
         }
 
         return [
-            'route' => $route,
+            'route'    => $route,
             'resource' => $name,
         ];
     }
