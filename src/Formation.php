@@ -126,6 +126,13 @@ class Formation
     public $resource = Resource::class;
 
     /**
+     * The default import class.
+     *
+     * @var string
+     */
+    public $import = Import::class;
+
+    /**
      * The results.
      *
      * @var mixed
@@ -502,6 +509,18 @@ class Formation
     public function includes(): array
     {
         return [];
+    }
+
+    public function import(): array
+    {
+        return [];
+    }
+
+    public function importable()
+    {
+        $import = $this->import;
+
+        return new $import($this->model, $this->import());
     }
 
     public function where(...$arguments): Formation
