@@ -14,7 +14,7 @@ class ImportController
 {
     public function store()
     {
-        Request::validate(['file' => ['required', 'mimes:csv']]);
+        Request::validate(['file' => ['required', 'file', 'mimes:csv,txt']]);
 
         $formation = app(Route::current()->parameter('formation'));
 
