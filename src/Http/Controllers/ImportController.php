@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Import;
 use HeadlessLaravel\Formations\Mail\ImportErrors;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;

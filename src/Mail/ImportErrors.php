@@ -9,7 +9,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportErrors extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     protected $failures;
 
@@ -18,7 +19,7 @@ class ImportErrors extends Mailable
         $this->failures = $failures;
     }
 
-    public function build():self
+    public function build(): self
     {
         return $this
             ->subject('Your import has validation errors')
@@ -26,23 +27,22 @@ class ImportErrors extends Mailable
             ->attachData($this->errorExport(), 'errors.csv');
     }
 
-    public function errorExport():String
+    public function errorExport(): string
     {
         $errors = $this->prepareErrors();
 
         return Excel::raw($errors, \Maatwebsite\Excel\Excel::CSV);
     }
 
-    public function prepareErrors():array
+    public function prepareErrors(): array
     {
         $attachment = [];
 
-        foreach(collect($this->failures)->groupBy('row') as $row) {
-
+        foreach (collect($this->failures)->groupBy('row') as $row) {
             $errors = '';
 
-            foreach($row as $failure) {
-                $errors .= ' ' . implode(' ', $failure->errors());
+            foreach ($row as $failure) {
+                $errors .= ' '.implode(' ', $failure->errors());
             }
 
             $attachment[] = array_merge(

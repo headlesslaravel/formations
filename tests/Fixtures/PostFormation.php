@@ -122,7 +122,7 @@ class PostFormation extends Formation
         ];
     }
 
-    public function import():array
+    public function import(): array
     {
         return [
             Field::make('title')->rules(['required', 'min:2']),

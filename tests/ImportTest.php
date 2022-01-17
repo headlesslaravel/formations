@@ -31,11 +31,10 @@ class ImportTest extends TestCase
         $csv = file_get_contents(__DIR__.'/Fixtures/Imports/posts-with-validation-errors.csv');
 
         $this->post('imports/posts', [
-            'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv)
+            'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv),
         ])->assertOk();
 
-        Mail::assertSent(function(ImportErrors $mail) {
-
+        Mail::assertSent(function (ImportErrors $mail) {
             $attachment = $mail->prepareErrors();
 
             $errors = 'The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid.';
@@ -56,7 +55,7 @@ class ImportTest extends TestCase
         $csv = file_get_contents(__DIR__.'/Fixtures/Imports/posts.csv');
 
         $this->post('imports/posts', [
-            'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv)
+            'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv),
         ])->assertOk();
 
         $posts = Post::all();
