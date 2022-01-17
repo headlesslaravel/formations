@@ -61,9 +61,9 @@ class SeekerTest extends TestCase
         $response->assertJsonPath('data.1.data.0.display', 'Hi author');
 
         $response->assertJsonPath('data.0.meta.route', 'admin.posts.show');
-        $response->assertJsonPath('data.0.meta.group', 'admin.posts');
+        $response->assertJsonPath('data.0.meta.group', 'posts');
 
         $response->assertJsonPath('data.1.meta.route', 'admin.authors.show');
-        $response->assertJsonPath('data.1.meta.group', 'admin.authors');
+        $response->assertJsonPath('data.1.meta.group', 'authors');
     }
 }

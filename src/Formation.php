@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 class Formation
 {
@@ -428,11 +429,12 @@ class Formation
         if ($this->detailRouteName) {
             $route = $this->detailRouteName;
         } else {
+            $route = new Stringable();
             $prefix = Request::route()->getPrefix();
             if (!empty($prefix)) {
-                $name = $name->prepend($prefix.'.');
+                $route = $route->prepend($prefix.'.');
             }
-            $route = $name->append('.show');
+            $route = $route->append($name->append('.show'));
         }
 
         return [
