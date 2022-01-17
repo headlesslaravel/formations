@@ -12,7 +12,14 @@ Route::seeker('search', [
     AuthorFormation::class,
 ]);
 
-Route::formation('posts', PostFormation::class);
-Route::formation('authors', AuthorFormation::class);
-Route::formation('authors.posts', PostFormation::class);
-Route::formation('posts.tags', TagFormation::class)->pivot();
+Route::formation(PostFormation::class)->resource('posts');
+Route::formation(AuthorFormation::class)->resource('authors');
+Route::formation(PostFormation::class)->resource('authors.posts');
+
+Route::formation(TagFormation::class)
+    ->resource('posts.tags')
+    ->pivot();
+
+Route::formation(PostFormation::class)
+    ->resource('posts')
+    ->import();

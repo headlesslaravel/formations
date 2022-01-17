@@ -26,7 +26,7 @@ class NestedControllerTest extends TestCase
     {
         $this->expectException(UnregisteredFormation::class);
 
-        Route::formation('users.posts', PostFormation::class);
+        Route::formation(PostFormation::class)->resource('users.posts');
     }
 
     public function test_indexing_a_nested_resource()
