@@ -10,6 +10,7 @@ use HeadlessLaravel\Formations\Tests\Fixtures\TestProvider;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Maatwebsite\Excel\ExcelServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\LaravelRay\RayServiceProvider;
 
@@ -20,6 +21,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
+            ExcelServiceProvider::class,
             RayServiceProvider::class,
             FormationProvider::class,
             TestProvider::class,
