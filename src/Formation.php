@@ -428,6 +428,10 @@ class Formation
         if ($this->detailRouteName) {
             $route = $this->detailRouteName;
         } else {
+            $prefix = Request::route()->getPrefix();
+            if (!empty($prefix)) {
+                $name = $name->prepend($prefix.'.');
+            }
             $route = $name->append('.show');
         }
 
