@@ -3,9 +3,7 @@
 namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Http\Controllers\ImportController;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class Routes
@@ -44,7 +42,7 @@ class Routes
         return $this;
     }
 
-    public function resource($resource):self
+    public function resource($resource): self
     {
         $this->parent = Str::before($resource, '.');
         $this->resource = Str::after($resource, '.');
@@ -56,14 +54,14 @@ class Routes
         return $this;
     }
 
-    public function pivot():self
+    public function pivot(): self
     {
         $this->pivot = true;
 
         return $this;
     }
 
-    public function import():self
+    public function import(): self
     {
         $this->import = true;
 
@@ -174,7 +172,7 @@ class Routes
     {
         if ($this->import) {
             $endpoints = $this->importEndpoints();
-        } else if ($this->pivot) {
+        } elseif ($this->pivot) {
             $endpoints = $this->pivotEndpoints();
         } elseif ($this->parent) {
             $endpoints = $this->nestedEndpoints();

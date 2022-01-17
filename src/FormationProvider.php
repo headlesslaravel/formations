@@ -3,7 +3,6 @@
 namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Commands\FormationMakeCommand;
-use HeadlessLaravel\Formations\Http\Controllers\SeekerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
