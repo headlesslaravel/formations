@@ -29,5 +29,8 @@
     "require-dev": {
         "orchestra/testbench": "^6.17",
         "inertiajs/inertia-laravel": "^0.4.5"
+    },
+    "require": {
+        "maatwebsite/excel": "^3.1"
     }
 }

@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
@@ -75,14 +76,14 @@ class PostFormation extends Formation
             Filter::make('author_id')->multiple(),
             Filter::make('like')->exists()->auth(),
             Filter::make('length')->range(),
-            Filter::make('author')->related(),
-            Filter::make('writer', 'author')->related()->multiple(),
+            Filter::make('author')->relation(),
+            Filter::make('writer', 'author')->relation()->multiple(),
             Filter::make('active')->boolean(),
             Filter::make('toggle', 'active')->toggle(),
             Filter::make('comments')->exists(),
             Filter::make('comments')->count(),
             Filter::make('comments')->countRange(),
-            Filter::make('tagged', 'tags')->related()->multiple(),
+            Filter::make('tagged', 'tags')->relation()->multiple(),
             Filter::make('tags')->exists(),
             Filter::make('tags')->count(),
             Filter::make('tags')->countRange(),
@@ -119,6 +120,15 @@ class PostFormation extends Formation
             Filter::radius(),
 
             Filter::bounds(),
+        ];
+    }
+
+    public function import(): array
+    {
+        return [
+            Field::make('title')->rules(['required', 'min:2']),
+            Field::make('body')->rules(['required', 'min:2']),
+            Field::make('author')->relation('name')->rules(['required', 'exists:users,name']),
         ];
     }
 }

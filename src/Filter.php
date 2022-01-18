@@ -437,7 +437,7 @@ class Filter
      *
      * @return $this
      */
-    public function related()
+    public function relation(): self
     {
         $this->withRules('nullable');
 
