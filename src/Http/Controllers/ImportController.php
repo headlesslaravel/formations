@@ -19,7 +19,7 @@ class ImportController
         $importable = $formation->importable();
         $importable->import(Request::file('file'));
 
-        if(count($importable->failures())) {
+        if (count($importable->failures())) {
             Mail::to(Auth::user())->send(new ImportErrorsMail($importable->failures()));
         }
 
