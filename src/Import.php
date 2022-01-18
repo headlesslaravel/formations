@@ -3,12 +3,15 @@
 namespace HeadlessLaravel\Formations;
 
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
 class Import implements ToCollection, WithHeadingRow, WithValidation
 {
+    use SkipsFailures;
+
     public $model;
 
     public $fields = [];
