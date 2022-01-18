@@ -426,7 +426,7 @@ class Formation
         }
     }
 
-    public function seekerMeta()
+    public function resourceName(): Stringable
     {
         /** @var Manager $manager */
         $manager = app(Manager::class);
@@ -434,14 +434,19 @@ class Formation
         $resource = $manager->resourceByFormation(get_class($this));
 
         if (!empty($resource)) {
-            $name = new Stringable($resource['resource']);
-        } else {
-            $name = Str::of(class_basename($this))
-                ->replace('Formation', '')
-                ->snake()
-                ->slug()
-                ->plural();
+            return new Stringable($resource['resource']);
         }
+
+        return Str::of(class_basename($this))
+            ->replace('Formation', '')
+            ->snake()
+            ->slug()
+            ->plural();
+    }
+
+    public function seekerMeta()
+    {
+        $name = $this->resourceName();
 
         if ($this->detailRouteName) {
             $route = $this->detailRouteName;
