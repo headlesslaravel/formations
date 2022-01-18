@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Imports;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
@@ -45,7 +46,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
         // author, category, etc
         foreach ($relations as $relation) {
-            $relationshipName = $relation->key;
+            $relationshipName = Str::camel($relation->key);
 
             $relationship = app($this->model)->$relationshipName();
 
