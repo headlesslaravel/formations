@@ -75,6 +75,24 @@ class Manager
     }
 
     /**
+     * Find a resource by formation class.
+     *
+     * @param $formation
+     *
+     * @return ?array
+     */
+    public function resourceByFormation($formation): ?array
+    {
+        foreach ($this->resources as $resource) {
+            if ($resource['formation'] === $formation) {
+                return $resource;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * The current formation object.
      *
      * @return Formation|null
