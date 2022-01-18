@@ -83,7 +83,7 @@ class ImportTest extends TestCase
 
         $this->get('import-template/posts')->assertOk();
 
-        Excel::assertDownloaded('posts.csv', function(ExportImportTemplate $export) {
+        Excel::assertDownloaded('posts.csv', function (ExportImportTemplate $export) {
             // Assert that the correct export is downloaded.
             return $export->headings() == ['title', 'body', 'author'];
         });
