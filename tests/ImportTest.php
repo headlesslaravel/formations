@@ -36,7 +36,6 @@ class ImportTest extends TestCase
         ])->assertOk();
 
         Mail::assertSent(function (ImportErrors $mail) {
-
             $mail->build();
             $attachment = $mail->prepareErrors();
             $data = $mail->rawAttachments[0]['data'];
