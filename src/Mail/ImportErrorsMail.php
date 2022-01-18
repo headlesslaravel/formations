@@ -2,46 +2,47 @@
 
 namespace HeadlessLaravel\Formations\Mail;
 
+use HeadlessLaravel\Formations\Exports\ImportErrors;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ImportErrors extends Mailable
+class ImportErrorsMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
 
-    protected $failures;
+    public $errors;
 
     public function __construct($failures)
     {
-        $this->failures = $failures;
+        $this->errors = $this->resolveErrors($failures);
     }
 
     public function build(): self
     {
+        $count = count($this->errors);
+
         return $this
-            ->subject('Your import has validation errors')
+            ->subject("Your import has $count invalid rows")
             ->html('See attached')
             ->attachData($this->errorExport(), 'errors.csv');
     }
 
     public function errorExport(): string
     {
-        $errors = $this->prepareErrors();
-
-        return Excel::raw(new ExportErrors($errors), \Maatwebsite\Excel\Excel::CSV);
+        return Excel::raw(
+            new ImportErrors($this->errors),
+            \Maatwebsite\Excel\Excel::CSV
+        );
     }
 
-    public function prepareErrors(): array
+    public function resolveErrors($failures): array
     {
         $attachment = [];
 
-        foreach (collect($this->failures) as $failure) {
+        foreach (collect($failures) as $failure) {
             $key = 'row-'.$failure->row();
 
             $errors = implode(' ', $failure->errors());
@@ -57,27 +58,5 @@ class ImportErrors extends Mailable
         }
 
         return array_values($attachment);
-    }
-}
-
-class ExportErrors implements FromCollection, WithHeadings
-{
-    use Exportable;
-
-    public $errors;
-
-    public function __construct($errors)
-    {
-        $this->errors = $errors;
-    }
-
-    public function headings(): array
-    {
-        return array_keys($this->errors[0]);
-    }
-
-    public function collection()
-    {
-        return collect($this->errors);
     }
 }

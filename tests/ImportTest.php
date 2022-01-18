@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests;
 
-use HeadlessLaravel\Formations\Mail\ImportErrors;
+use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,20 +35,19 @@ class ImportTest extends TestCase
             'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv),
         ])->assertOk();
 
-        Mail::assertSent(function (ImportErrors $mail) {
+        Mail::assertSent(function (ImportErrorsMail $mail) {
             $mail->build();
-            $attachment = $mail->prepareErrors();
             $data = $mail->rawAttachments[0]['data'];
             $errors = 'The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid.';
             $firstRow = '"t","b","Brian","The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid."';
 
             return Str::startsWith($data, '"title","body","author","errors"')
                 && Str::startsWith(Str::after($data, '"title","body","author","errors"'."\n"), $firstRow)
-                && count($attachment[0]) == 4
-                && $attachment[0]['errors'] == $errors
-                && $attachment[0]['title'] == 't'
-                && $attachment[0]['body'] == 'b'
-                && $attachment[0]['author'] == 'Brian';
+                && count($mail->errors[0]) == 4
+                && $mail->errors[0]['errors'] == $errors
+                && $mail->errors[0]['title'] == 't'
+                && $mail->errors[0]['body'] == 'b'
+                && $mail->errors[0]['author'] == 'Brian';
         });
     }
 
