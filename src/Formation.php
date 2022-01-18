@@ -9,6 +9,7 @@ use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
 use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
 use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
 use HeadlessLaravel\Formations\Http\Resources\Resource;
+use HeadlessLaravel\Formations\Imports\Import;
 use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

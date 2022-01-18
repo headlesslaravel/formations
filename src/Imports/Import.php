@@ -1,16 +1,19 @@
 <?php
 
-namespace HeadlessLaravel\Formations;
+namespace HeadlessLaravel\Formations\Imports;
 
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class Import implements ToCollection, WithHeadingRow, WithValidation
+class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
     use SkipsFailures;
+    use Importable;
 
     public $model;
 
