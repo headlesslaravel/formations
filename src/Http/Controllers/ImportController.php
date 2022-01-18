@@ -14,7 +14,7 @@ class ImportController
 {
     public function store()
     {
-        Request::validate(['file' => ['required', 'mimes:csv']]);
+        Request::validate(['file' => ['required', 'file', 'mimes:csv,txt']]);
 
         $formation = app(Route::current()->parameter('formation'));
 
@@ -23,5 +23,7 @@ class ImportController
         } catch (ValidationException $e) {
             Mail::to(Auth::user())->send(new ImportErrors($e->failures()));
         }
+
+        return response()->json(['success' => true]);
     }
 }

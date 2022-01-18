@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class ImportTest extends TestCase
 {
@@ -35,11 +36,15 @@ class ImportTest extends TestCase
         ])->assertOk();
 
         Mail::assertSent(function (ImportErrors $mail) {
+            $mail->build();
             $attachment = $mail->prepareErrors();
-
+            $data = $mail->rawAttachments[0]['data'];
             $errors = 'The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid.';
+            $firstRow = '"t","b","Brian","The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid."';
 
-            return count($attachment[0]) == 4
+            return Str::startsWith($data, '"title","body","author","errors"')
+                && Str::startsWith(Str::after($data, '"title","body","author","errors"'."\n"), $firstRow)
+                && count($attachment[0]) == 4
                 && $attachment[0]['errors'] == $errors
                 && $attachment[0]['title'] == 't'
                 && $attachment[0]['body'] == 'b'
@@ -49,7 +54,6 @@ class ImportTest extends TestCase
 
     public function test_uploading_with_relations_with_default_import()
     {
-        $this->withoutExceptionHandling();
         User::factory()->create(['name' => 'Susan']);
         User::factory()->create(['name' => 'Frank']);
 
