@@ -428,11 +428,20 @@ class Formation
 
     public function seekerMeta()
     {
-        $name = Str::of(class_basename($this))
-            ->replace('Formation', '')
-            ->snake()
-            ->slug()
-            ->plural();
+        /** @var Manager $manager */
+        $manager = app(Manager::class);
+
+        $resource = $manager->resourceByFormation(get_class($this));
+
+        if (!empty($resource)) {
+            $name = new Stringable($resource['resource']);
+        } else {
+            $name = Str::of(class_basename($this))
+                ->replace('Formation', '')
+                ->snake()
+                ->slug()
+                ->plural();
+        }
 
         if ($this->detailRouteName) {
             $route = $this->detailRouteName;
