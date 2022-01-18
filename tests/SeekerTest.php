@@ -41,8 +41,8 @@ class SeekerTest extends TestCase
         $author = User::factory()->create(['name' => 'Hi author']);
 
         Route::prefix('admin')->group(function () {
-            Route::formation('posts', PostFormation::class);
-            Route::formation('authors', AuthorFormation::class);
+            Route::formation(PostFormation::class)->resource('posts');
+            Route::formation(AuthorFormation::class)->resource('authors');
 
             Route::seeker('search', [
                 PostFormation::class,

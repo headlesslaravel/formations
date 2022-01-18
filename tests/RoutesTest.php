@@ -16,10 +16,10 @@ class RoutesTest extends TestCase
         // preloaded from routes.php
         $routesFilesRoutes = count(Route::getRoutes());
 
-        Route::formation('articles', PostFormation::class)->only('index');
-        Route::formation('articles.tags', TagFormation::class)->only(['index']);
-        Route::formation('articles.tags', TagFormation::class)->pivot()->only(['sync']);
-        Route::formation('authors.articles', PostFormation::class)->only(['index']);
+        Route::formation(PostFormation::class)->resource('articles')->only('index');
+        Route::formation(TagFormation::class)->resource('articles.tags')->only(['index']);
+        Route::formation(TagFormation::class)->resource('articles.tags')->pivot()->only(['sync']);
+        Route::formation(PostFormation::class)->resource('authors.articles')->only(['index']);
 
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();
@@ -36,9 +36,9 @@ class RoutesTest extends TestCase
         // preloaded from routes.php
         $routesFilesRoutes = count(Route::getRoutes());
 
-        $a = Route::formation('articles', PostFormation::class)->except('index')->create();
-        $b = Route::formation('articles.tags', TagFormation::class)->except(['index'])->create();
-        $c = Route::formation('articles.tags', TagFormation::class)->pivot()->except(['sync', 'index', 'show'])->create();
+        $a = Route::formation(PostFormation::class)->resource('articles')->except('index')->create();
+        $b = Route::formation(TagFormation::class)->resource('articles.tags')->except(['index'])->create();
+        $c = Route::formation(TagFormation::class)->resource('articles.tags')->pivot()->except(['sync', 'index', 'show'])->create();
 
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();

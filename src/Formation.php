@@ -9,6 +9,7 @@ use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
 use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
 use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
 use HeadlessLaravel\Formations\Http\Resources\Resource;
+use HeadlessLaravel\Formations\Imports\Import;
 use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -125,6 +126,13 @@ class Formation
      * @var string
      */
     public $resource = Resource::class;
+
+    /**
+     * The default import class.
+     *
+     * @var string
+     */
+    public $import = Import::class;
 
     /**
      * The results.
@@ -438,7 +446,7 @@ class Formation
         }
 
         return [
-            'route' => $route,
+            'route'    => $route,
             'resource' => $name,
         ];
     }
@@ -508,6 +516,18 @@ class Formation
     public function includes(): array
     {
         return [];
+    }
+
+    public function import(): array
+    {
+        return [];
+    }
+
+    public function importable()
+    {
+        $import = $this->import;
+
+        return new $import($this->model, $this->import());
     }
 
     public function where(...$arguments): Formation
