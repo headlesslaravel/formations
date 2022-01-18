@@ -42,13 +42,12 @@ class ImportErrors extends Mailable
         $attachment = [];
 
         foreach (collect($this->failures) as $failure) {
-
             $key = 'row-'.$failure->row();
 
             $errors = implode(' ', $failure->errors());
 
-            if(isset($attachment[$key])) {
-                $attachment[$key]['errors'] .= ' ' . $errors;
+            if (isset($attachment[$key])) {
+                $attachment[$key]['errors'] .= ' '.$errors;
             } else {
                 $attachment[$key] = array_merge(
                     $failure->values(),
