@@ -436,6 +436,7 @@ class Formation
         if (!empty($resource)) {
             return new Stringable($resource['resource']);
         }
+
         return Str::of(class_basename($this))
             ->replace('Formation', '')
             ->snake()
