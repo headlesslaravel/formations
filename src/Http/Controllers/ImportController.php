@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ImportController
@@ -34,12 +33,7 @@ class ImportController
     {
         /** @var Formation $formation */
         $formation = app(Route::current()->parameter('formation'));
-
-        // TODO: replace this with the PR #50 Manager->resourceByFormation() once it's merged
-        $fileName = Str::of(class_basename($formation))
-            ->replace('Formation', '')
-            ->snake()
-            ->plural();
+        $fileName = $formation->resourceName();
 
         return Excel::download(new ExportImportTemplate($formation), "$fileName.csv");
     }

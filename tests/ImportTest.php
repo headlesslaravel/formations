@@ -81,7 +81,7 @@ class ImportTest extends TestCase
     {
         Excel::fake();
 
-        $this->get('import-template/posts')->assertOk();
+        $this->get('imports/posts')->assertOk();
 
         Excel::assertDownloaded('posts.csv', function (ExportImportTemplate $export) {
             // Assert that the correct export is downloaded.

@@ -256,7 +256,7 @@ class Routes
     {
         return [
             ['type' => 'store', 'verb' => 'POST', 'endpoint' => "imports/$this->resource"],
-            ['type' => 'create', 'verb' => 'GET', 'endpoint' => "import-template/$this->resource"],
+            ['type' => 'create', 'verb' => 'GET', 'endpoint' => "imports/$this->resource"],
         ];
     }
 
