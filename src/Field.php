@@ -19,7 +19,7 @@ class Field
         if (!is_null($internal) && str_contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
             $internal = Str::before($internal, '.');
-        } else if (is_null($internal) && str_contains($key, '.')) {
+        } elseif (is_null($internal) && str_contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
             $internal = Str::before($key, '.');
             $key = Str::before($key, '.');
