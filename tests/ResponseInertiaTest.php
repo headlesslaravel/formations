@@ -20,8 +20,6 @@ class ResponseInertiaTest extends TestCase
 
     public function test_index_inertia_responses()
     {
-        $this->markTestSkipped('weird bug: changes from data to posts in response wrap');
-
         Post::factory()->create(['title' => 'Hello World']);
 
         $index = $this->getResourceController()
@@ -57,8 +55,6 @@ class ResponseInertiaTest extends TestCase
 
     public function test_show_inertia_responses()
     {
-        $this->markTestSkipped('weird bug: changes from data to posts in response wrap');
-
         $post = Post::factory()->create(['title' => 'Hello World']);
 
         $show = $this
