@@ -12,18 +12,20 @@ class Field
 
     public $rules;
 
-    public $relation;
+    public $relationColumn;
 
     public function init($key, $internal = null): self
     {
         if (is_null($internal) && str_contains($key, '.')) {
-            $internal = $key;
+            $this->relationColumn = Str::afterLast($key, '.');
+            $internal = Str::before($key, '.');
             $key = Str::before($key, '.');
+        } else if(is_null($internal)) {
+            $internal = $key;
         }
 
         $this->key = $key;
-        $this->internal = Str::beforeLast($internal, '.');
-        $this->relation(Str::afterLast($internal, '.'));
+        $this->internal = $internal;
 
         return $this;
     }
@@ -40,17 +42,8 @@ class Field
         return $this;
     }
 
-    public function relation($display = null): self
-    {
-        if (!is_null($display)) {
-            $this->relation = $display;
-        }
-
-        return $this;
-    }
-
     public function isRelation(): bool
     {
-        return !is_null($this->relation);
+        return !is_null($this->relationColumn);
     }
 }
