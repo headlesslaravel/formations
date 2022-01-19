@@ -128,7 +128,7 @@ class PostFormation extends Formation
         return [
             Field::make('title')->rules(['required', 'min:2']),
             Field::make('body')->rules(['required', 'min:2']),
-            Field::make('author.name')->relation()->rules(['required', 'exists:users,name']),
+            Field::make('author.name')->rules(['required', 'exists:users,name']),
         ];
     }
 }
