@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Imports;
 
-use HeadlessLaravel\Formations\Field;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -83,7 +82,6 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
     {
         $replacements = [];
 
-        /** @var Field[] $relations */
         $relations = collect($this->fields)->filter->isRelation();
 
         // author, category, etc
@@ -98,10 +96,10 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
                 ->toArray();
 
             $models = $relationship->getModel()
-                ->whereIn($relation->relation, $values)
+                ->whereIn($relation->relationColumn, $values)
                 ->get();
 
-            $display = $relation->relation;
+            $display = $relation->relationColumn;
 
             foreach ($models as $model) {
                 $replacements[] = [
