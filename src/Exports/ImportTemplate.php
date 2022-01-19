@@ -7,16 +7,13 @@ use HeadlessLaravel\Formations\Formation;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ExportImportTemplate implements WithHeadings
+class ImportTemplate implements WithHeadings
 {
     use Exportable;
 
     public $fields = [];
 
-    /**
-     * @param Formation $formation
-     */
-    public function __construct($formation)
+    public function __construct(Formation $formation)
     {
         $this->fields = $formation->import();
     }
