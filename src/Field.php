@@ -2,6 +2,8 @@
 
 namespace HeadlessLaravel\Formations;
 
+use Illuminate\Support\Str;
+
 class Field
 {
     public $key;
@@ -14,14 +16,14 @@ class Field
 
     public function init($key, $internal = null): self
     {
-        if (str_contains($key, '.')) {
-            $segments = explode('.', $key);
-            $this->key = $segments[0];
-            $this->relation($segments[1]);
-        } else {
-            $this->key = $key;
+        if (is_null($internal) && str_contains($key, '.')) {
+            $internal = $key;
+            $key = Str::before($key, '.');
         }
-        $this->internal = $internal;
+
+        $this->key = $key;
+        $this->internal = Str::beforeLast($internal, '.');
+        $this->relation(Str::afterLast($internal, '.'));
 
         return $this;
     }

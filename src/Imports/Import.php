@@ -89,11 +89,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
         // author, category, etc
         foreach ($relations as $relation) {
-            if (!empty($relation->internal)) {
-                $relationshipName = $relation->internal;
-            } else {
-                $relationshipName = Str::camel($relation->key);
-            }
+            $relationshipName = $relation->internal;
 
             $relationship = app($this->model)->$relationshipName();
 
