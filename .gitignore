@@ -2,3 +2,5 @@
 /build
 /.idea
 .phpunit.result.cache
+.DS_Store
+*/**/.DS_Store

@@ -303,6 +303,8 @@ class Controller extends BaseController
             $resource::wrap($this->terms('resource.slugPlural'));
         } elseif ($this->mode() === 'api') {
             $resource::wrap($this->terms('resource.slug'));
+        } else {
+            $resource::withoutWrapping();
         }
 //        else if($this->mode() === 'inertia' && $this->controllerMethod() == 'index') {
 //            $class::wrap($this->terms('resource.camelPlural'));

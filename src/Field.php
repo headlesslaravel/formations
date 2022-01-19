@@ -14,7 +14,13 @@ class Field
 
     public function init($key, $internal = null): self
     {
-        $this->key = $key;
+        if (str_contains($key, '.')) {
+            $segments = explode('.', $key);
+            $this->key = $segments[0];
+            $this->relation($segments[1]);
+        } else {
+            $this->key = $key;
+        }
         $this->internal = $internal;
 
         return $this;
@@ -32,9 +38,11 @@ class Field
         return $this;
     }
 
-    public function relation($display = 'id'): self
+    public function relation($display = null): self
     {
-        $this->relation = $display;
+        if (!is_null($display)) {
+            $this->relation = $display;
+        }
 
         return $this;
     }
