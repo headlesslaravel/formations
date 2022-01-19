@@ -20,7 +20,7 @@ class Field
             $this->relationColumn = Str::afterLast($key, '.');
             $internal = Str::before($key, '.');
             $key = Str::before($key, '.');
-        } else if(is_null($internal)) {
+        } elseif (is_null($internal)) {
             $internal = $key;
         }
 
