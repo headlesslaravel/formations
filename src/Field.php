@@ -6,11 +6,13 @@ class Field
 {
     public $key;
 
+    public $internal;
+
     public $rules;
 
     public $relation;
 
-    public function init($key): self
+    public function init($key, $internal = null): self
     {
         if (str_contains($key, '.')) {
             $segments = explode('.', $key);
@@ -19,13 +21,14 @@ class Field
         } else {
             $this->key = $key;
         }
+        $this->internal = $internal;
 
         return $this;
     }
 
-    public static function make($key): self
+    public static function make($key, $internal = null): self
     {
-        return (new self())->init($key);
+        return (new self())->init($key, $internal);
     }
 
     public function rules($rules): self
