@@ -23,6 +23,7 @@ class CreatePostsTable extends Migration
             $table->timestamp('published_at')->nullable();
             $table->string('status')->nullable();
             $table->foreignId('author_id')->nullable();
+            $table->foreignId('category_id')->nullable();
             $table->double('latitude', 10, 8)->nullable();
             $table->double('longitude', 11, 8)->nullable();
             $table->softDeletes();

@@ -4,6 +4,7 @@ namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exports\ImportTemplate;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
+use HeadlessLaravel\Formations\Tests\Fixtures\Models\Category;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,16 +41,17 @@ class ImportTest extends TestCase
         Mail::assertSent(function (ImportErrorsMail $mail) {
             $mail->build();
             $data = $mail->rawAttachments[0]['data'];
-            $errors = 'The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid.';
-            $firstRow = '"t","b","Brian","The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid."';
+            $errors = 'The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid. The selected category is invalid.';
+            $firstRow = '"t","b","Brian","Tech","The title must be at least 2 characters. The body must be at least 2 characters. The selected author is invalid. The selected category is invalid."';
 
-            return Str::startsWith($data, '"title","body","author","errors"')
-                && Str::startsWith(Str::after($data, '"title","body","author","errors"'."\n"), $firstRow)
-                && count($mail->errors[0]) == 4
+            return Str::startsWith($data, '"title","body","author","category","errors"')
+                && Str::startsWith(Str::after($data, '"title","body","author","category","errors"'."\n"), $firstRow)
+                && count($mail->errors[0]) == 5
                 && $mail->errors[0]['errors'] == $errors
                 && $mail->errors[0]['title'] == 't'
                 && $mail->errors[0]['body'] == 'b'
-                && $mail->errors[0]['author'] == 'Brian';
+                && $mail->errors[0]['author'] == 'Brian'
+                && $mail->errors[0]['category'] == 'Tech';
         });
     }
 
@@ -57,6 +59,7 @@ class ImportTest extends TestCase
     {
         User::factory()->create(['name' => 'Susan']);
         User::factory()->create(['name' => 'Frank']);
+        Category::factory()->create(['title' => 'Tech']);
 
         $csv = file_get_contents(__DIR__.'/Fixtures/Imports/posts.csv');
 
@@ -84,7 +87,7 @@ class ImportTest extends TestCase
         $this->get('imports/posts')->assertOk();
 
         Excel::assertDownloaded('posts.csv', function (ImportTemplate $export) {
-            return $export->headings() == ['title', 'body', 'author'];
+            return $export->headings() == ['title', 'body', 'author', 'category'];
         });
     }
 }

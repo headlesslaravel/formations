@@ -1,5 +1,5 @@
-title,body,author
-t,b,Brian
-t2,b,Brian
-t3,b,Brian
-t4,b,Brian
+title,body,author,category
+t,b,Brian,Tech
+t2,b,Brian,Tech
+t3,b,Brian,Tech
+t4,b,Brian,Tech
