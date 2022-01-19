@@ -48,6 +48,7 @@ class TestCase extends Orchestra
         include_once __DIR__.'/Fixtures/Database/migrations/create_posts_table.php.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_likes_table.php.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_comments_table.php.stub';
+        include_once __DIR__.'/Fixtures/Database/migrations/create_categories_table.php.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_tags_table.php.stub';
 
         Schema::dropIfExists('users');
@@ -55,6 +56,7 @@ class TestCase extends Orchestra
         Schema::dropIfExists('likes');
         Schema::dropIfExists('comments');
         Schema::dropIfExists('tags');
+        Schema::dropIfExists('categories');
         Schema::dropIfExists('post_tag');
 
         (new \CreateUsersTable())->up();
@@ -62,6 +64,7 @@ class TestCase extends Orchestra
         (new \CreateLikesTable())->up();
         (new \CreateCommentsTable())->up();
         (new \CreateTagsTable())->up();
+        (new \CreateCategoriesTable())->up();
     }
 
     public function authUser()

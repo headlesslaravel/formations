@@ -129,6 +129,7 @@ class PostFormation extends Formation
             Field::make('title')->rules(['required', 'min:2']),
             Field::make('body')->rules(['required', 'min:2']),
             Field::make('author.name')->rules(['required', 'exists:users,name']),
+            Field::make('category', 'category.title')->rules(['required', 'exists:categories,title']),
         ];
     }
 }
