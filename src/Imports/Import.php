@@ -104,9 +104,9 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
             foreach ($models as $model) {
                 $replacements[] = [
-                    'search_key' => $relation->key, // author
-                    'search_value' => $model->$display, // frank
-                    'replace_key' => $relationship->getForeignKeyName(), // author_id
+                    'search_key'    => $relation->key, // author
+                    'search_value'  => $model->$display, // frank
+                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1
                 ];
             }

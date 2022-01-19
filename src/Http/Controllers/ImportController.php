@@ -3,7 +3,6 @@
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
 use HeadlessLaravel\Formations\Exports\ImportTemplate;
-use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;

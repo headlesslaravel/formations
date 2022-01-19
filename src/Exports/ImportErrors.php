@@ -23,7 +23,7 @@ class ImportErrors implements FromCollection, WithHeadings
         return array_keys($this->errors[0]);
     }
 
-    public function collection():Collection
+    public function collection(): Collection
     {
         return collect($this->errors);
     }
