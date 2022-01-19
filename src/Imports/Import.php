@@ -40,36 +40,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public function prepare(Collection $rows): Collection
     {
-        $replacements = [];
-
-        $relations = collect($this->fields)->filter->isRelation();
-
-        // author, category, etc
-        foreach ($relations as $relation) {
-            $relationshipName = Str::camel($relation->key);
-
-            $relationship = app($this->model)->$relationshipName();
-
-            $values = $rows
-                ->unique($relation->key)
-                ->pluck($relation->key)
-                ->toArray();
-
-            $models = $relationship->getModel()
-                ->whereIn($relation->relation, $values)
-                ->get();
-
-            $display = $relation->relation;
-
-            foreach ($models as $model) {
-                $replacements[] = [
-                    'search_key'   => $relation->key, // author
-                    'search_value' => $model->$display, // frank
-                    'replace_key'  => $relationship->getForeignKeyName(), // author_id
-                    'replace_value'=> $model->getKey(), // 1
-                ];
-            }
-        }
+        $replacements = $this->getReplacements($rows);
 
         foreach ($replacements as $replacement) {
             $rows->where(
@@ -106,5 +77,41 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         $keys = collect($this->fields)->pluck('key');
 
         return $row->only($keys)->toArray();
+    }
+
+    public function getReplacements(Collection $rows): array
+    {
+        $replacements = [];
+
+        $relations = collect($this->fields)->filter->isRelation();
+
+        // author, category, etc
+        foreach ($relations as $relation) {
+            $relationshipName = Str::camel($relation->key);
+
+            $relationship = app($this->model)->$relationshipName();
+
+            $values = $rows
+                ->unique($relation->key)
+                ->pluck($relation->key)
+                ->toArray();
+
+            $models = $relationship->getModel()
+                ->whereIn($relation->relation, $values)
+                ->get();
+
+            $display = $relation->relation;
+
+            foreach ($models as $model) {
+                $replacements[] = [
+                    'search_key'    => $relation->key, // author
+                    'search_value'  => $model->$display, // frank
+                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
+                    'replace_value' => $model->getKey(), // 1
+                ];
+            }
+        }
+
+        return $replacements;
     }
 }

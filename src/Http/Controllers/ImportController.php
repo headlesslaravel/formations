@@ -2,8 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Exports\ExportImportTemplate;
-use HeadlessLaravel\Formations\Formation;
+use HeadlessLaravel\Formations\Exports\ImportTemplate;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -13,6 +12,14 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportController
 {
+    public function create()
+    {
+        $formation = app(Route::current()->parameter('formation'));
+        $fileName = $formation->resourceName();
+
+        return Excel::download(new ImportTemplate($formation), "$fileName.csv");
+    }
+
     public function store()
     {
         Request::validate(['file' => ['required', 'file', 'mimes:csv,txt']]);
@@ -27,14 +34,5 @@ class ImportController
         }
 
         return response()->json(['success' => true]);
-    }
-
-    public function create()
-    {
-        /** @var Formation $formation */
-        $formation = app(Route::current()->parameter('formation'));
-        $fileName = $formation->resourceName();
-
-        return Excel::download(new ExportImportTemplate($formation), "$fileName.csv");
     }
 }

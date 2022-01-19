@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests;
 
-use HeadlessLaravel\Formations\Exports\ExportImportTemplate;
+use HeadlessLaravel\Formations\Exports\ImportTemplate;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
@@ -77,14 +77,13 @@ class ImportTest extends TestCase
         $this->assertEquals('Frank', $posts[1]->author->name);
     }
 
-    public function test_download_import_export_template()
+    public function test_download_import_template()
     {
         Excel::fake();
 
         $this->get('imports/posts')->assertOk();
 
-        Excel::assertDownloaded('posts.csv', function (ExportImportTemplate $export) {
-            // Assert that the correct export is downloaded.
+        Excel::assertDownloaded('posts.csv', function (ImportTemplate $export) {
             return $export->headings() == ['title', 'body', 'author'];
         });
     }
