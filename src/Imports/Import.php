@@ -125,6 +125,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
     {
         if (count($this->failures())) {
             Mail::to(Auth::user())->send(new ImportErrorsMail($this->failures()));
+
             return;
         }
 

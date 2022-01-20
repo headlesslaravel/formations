@@ -110,6 +110,7 @@ class ImportTest extends TestCase
 
         Mail::assertSent(function (ImportSuccessMail $mail) {
             $mail->build();
+
             return $mail->subject === '2 successfully imported';
         });
 
