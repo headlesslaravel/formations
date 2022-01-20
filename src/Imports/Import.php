@@ -2,7 +2,11 @@
 
 namespace HeadlessLaravel\Formations\Imports;
 
+use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
+use HeadlessLaravel\Formations\Mail\ImportSuccessMail;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
@@ -19,6 +23,8 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public $fields = [];
 
+    private $totalRows;
+
     public function __construct($model, $fields)
     {
         $this->model = $model;
@@ -28,6 +34,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public function collection(Collection $rows)
     {
+        $this->totalRows = $rows->count();
         $rows = $this->prepare($rows);
 
         foreach ($rows as $row) {
@@ -112,5 +119,15 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         }
 
         return $replacements;
+    }
+
+    public function confirmation()
+    {
+        if (count($this->failures())) {
+            Mail::to(Auth::user())->send(new ImportErrorsMail($this->failures()));
+            return;
+        }
+
+        Mail::to(Auth::user())->send(new ImportSuccessMail($this->totalRows - $this->failures()->count()));
     }
 }
