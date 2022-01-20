@@ -7,7 +7,6 @@ use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Category;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ImportTest extends TestCase
 {
-    use RefreshDatabase;
+    protected $useMysql = true;
 
     public function test_route_exists()
     {
@@ -89,5 +88,31 @@ class ImportTest extends TestCase
         Excel::assertDownloaded('posts.csv', function (ImportTemplate $export) {
             return $export->headings() == ['title', 'body', 'author', 'category'];
         });
+    }
+
+    public function test_uploading_with_unique_validation_errors()
+    {
+        Mail::fake();
+
+        $csv = file_get_contents(__DIR__.'/Fixtures/Imports/with-unique-rule-and-duplicates.csv');
+
+        $this->post('imports/categories', [
+            'file' => UploadedFile::fake()->createWithContent('categories.csv', $csv),
+        ])->assertOk();
+
+        Mail::assertSent(function (ImportErrorsMail $mail) {
+            $mail->build();
+            $data = $mail->rawAttachments[0]['data'];
+            $errors = 'The title has already been taken.';
+            $firstRow = '"tech","The title has already been taken."';
+
+            return Str::startsWith($data, '"title","errors"')
+                && Str::startsWith(Str::after($data, '"title","errors"'."\n"), $firstRow)
+                && count($mail->errors[0]) == 2
+                && $mail->errors[0]['errors'] == $errors
+                && $mail->errors[0]['title'] == 'tech';
+        });
+
+        $this->assertCount(1, Category::all());
     }
 }

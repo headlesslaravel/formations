@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Validators\RowValidator;
 
 class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFailure
 {
@@ -19,6 +20,9 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public $fields = [];
 
+    /** @var Collection */
+    private $replacements;
+
     public function __construct($model, $fields)
     {
         $this->model = $model;
@@ -28,36 +32,38 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public function collection(Collection $rows)
     {
-        $rows = $this->prepare($rows);
+        $this->prepareReplacements($rows);
+
+        /** @var RowValidator $rowValidator */
+        $rowValidator = app(RowValidator::class);
 
         foreach ($rows as $row) {
-            $model = new $this->model();
-            $model->fill($this->values($row));
-            $model->save();
+
+            try {
+                $rowValidator->validate([$row->toArray()], $this);
+
+                $row = $this->applyReplacement($row);
+                $model = new $this->model();
+                $model->fill($this->values($row));
+                $model->save();
+            } catch (\Throwable $e) {
+                // Do Nothing as failures are already pushed to the importable
+            }
         }
     }
 
-    public function prepare(Collection $rows): Collection
+    public function applyReplacement(Collection $row)
     {
-        $replacements = $this->getReplacements($rows);
-
-        foreach ($replacements as $replacement) {
-            $rows->where(
-                $replacement['search_key'], // author
-                $replacement['search_value'] // frank
-            )->each(function ($row) use ($replacement) {
-                unset($row[$replacement['search_key']]); // author
-                $row[$replacement['replace_key']] = $replacement['replace_value']; // ['author_id'] = 1
-                // change author to author_id in fields for validation keys in value()
-                foreach ($this->fields as $field) {
-                    if ($field->key == $replacement['search_key']) {
-                        $field->key = $replacement['replace_key'];
-                    }
+        foreach ($this->replacements as $replacement) {
+            if (isset($row[$replacement['search_key']])) {
+                if ($row[$replacement['search_key']] == $replacement['search_value']) {
+                    unset($row[$replacement['search_key']]); // author
+                    $row[$replacement['replace_key']] = $replacement['replace_value']; // ['author_id'] = 1
                 }
-            });
+            }
         }
 
-        return $rows;
+        return $row;
     }
 
     public function rules(): array
@@ -71,16 +77,17 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         return $rules;
     }
 
-    public function values($row): array
+    public function values(Collection $row): array
     {
         $keys = collect($this->fields)->pluck('key');
+        $keys = array_merge($keys->toArray(), array_unique($this->replacements->pluck('replace_key')->toArray()));
 
         return $row->only($keys)->toArray();
     }
 
-    public function getReplacements(Collection $rows): array
+    public function prepareReplacements(Collection $rows)
     {
-        $replacements = [];
+        $this->replacements = collect([]);
 
         $relations = collect($this->fields)->filter->isRelation();
 
@@ -102,15 +109,13 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
             $display = $relation->relationColumn;
 
             foreach ($models as $model) {
-                $replacements[] = [
-                    'search_key'    => $relation->key, // author
-                    'search_value'  => $model->$display, // frank
-                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
+                $this->replacements->add([
+                    'search_key' => $relation->key, // author
+                    'search_value' => $model->$display, // frank
+                    'replace_key' => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1
-                ];
+                ]);
             }
         }
-
-        return $replacements;
     }
 }
