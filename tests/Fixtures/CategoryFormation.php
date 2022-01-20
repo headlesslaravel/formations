@@ -15,6 +15,7 @@ class CategoryFormation extends Formation
     public function import(): array
     {
         return [
-            Field::make('title')->rules(['required', 'unique:categories,title'])
+            Field::make('title')->rules(['required', 'unique:categories,title']),
         ];
-    }}
+    }
+}

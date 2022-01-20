@@ -38,7 +38,6 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         $rowValidator = app(RowValidator::class);
 
         foreach ($rows as $row) {
-
             try {
                 $rowValidator->validate([$row->toArray()], $this);
 
@@ -110,9 +109,9 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
             foreach ($models as $model) {
                 $this->replacements->add([
-                    'search_key' => $relation->key, // author
-                    'search_value' => $model->$display, // frank
-                    'replace_key' => $relationship->getForeignKeyName(), // author_id
+                    'search_key'    => $relation->key, // author
+                    'search_value'  => $model->$display, // frank
+                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1
                 ]);
             }
