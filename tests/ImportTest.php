@@ -4,6 +4,7 @@ namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Exports\ImportTemplate;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
+use HeadlessLaravel\Formations\Mail\ImportSuccessMail;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Category;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
@@ -52,6 +53,8 @@ class ImportTest extends TestCase
                 && $mail->errors[0]['author'] == 'Brian'
                 && $mail->errors[0]['category'] == 'Tech';
         });
+
+        Mail::assertNotSent(ImportSuccessMail::class);
     }
 
     public function test_uploading_with_relations_with_default_import()
@@ -114,5 +117,28 @@ class ImportTest extends TestCase
         });
 
         $this->assertCount(1, Category::all());
+    }
+
+    public function test_import_confirmation_email()
+    {
+        Mail::fake();
+
+        User::factory()->create(['name' => 'Susan']);
+        User::factory()->create(['name' => 'Frank']);
+        Category::factory()->create(['title' => 'Tech']);
+
+        $csv = file_get_contents(__DIR__.'/Fixtures/Imports/posts.csv');
+
+        $this->post('imports/posts', [
+            'file' => UploadedFile::fake()->createWithContent('posts.csv', $csv),
+        ])->assertOk();
+
+        Mail::assertSent(function (ImportSuccessMail $mail) {
+            $mail->build();
+
+            return $mail->subject === '2 successfully imported';
+        });
+
+        Mail::assertNotSent(ImportErrorsMail::class);
     }
 }
