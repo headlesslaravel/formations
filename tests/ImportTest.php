@@ -116,6 +116,8 @@ class ImportTest extends TestCase
                 && $mail->errors[0]['title'] == 'tech';
         });
 
+        Mail::assertNotSent(ImportSuccessMail::class);
+
         $this->assertCount(1, Category::all());
     }
 
