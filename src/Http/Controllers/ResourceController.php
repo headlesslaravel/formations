@@ -27,9 +27,7 @@ class ResourceController extends Controller
     {
         $this->check('create', $this->model());
 
-        $resource = $this->formation()->create($this->model(), $this->values());
-
-        $this->formation()->created($resource);
+        $resource = $this->model()->create($this->values());
 
         return $this->response('store', $resource);
     }
@@ -58,9 +56,7 @@ class ResourceController extends Controller
 
         $this->check('update', $resource);
 
-        $resource = $this->formation()->update($resource, $this->values());
-
-        $this->formation()->updated($resource);
+        $resource->update($this->values());
 
         return $this->response('update', $resource);
     }
@@ -71,7 +67,7 @@ class ResourceController extends Controller
 
         $this->check('delete', $resource);
 
-        $this->formation()->delete($resource);
+        $resource->delete();
 
         return $this->response('destroy', $resource);
     }
@@ -80,9 +76,7 @@ class ResourceController extends Controller
     {
         $resource = $this->resource();
 
-        $this->check('restore', $resource);
-
-        $this->formation()->restore($resource);
+        $resource->restore();
 
         return $this->response('restore', $resource);
     }
@@ -93,7 +87,7 @@ class ResourceController extends Controller
 
         $this->check('forceDelete', $resource);
 
-        $this->formation()->forceDelete($resource);
+        $resource->forceDelete();
 
         return $this->response('force-delete', $resource);
     }

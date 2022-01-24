@@ -138,22 +138,24 @@ class Manager
         abort(500, "No resource with route name: $name");
     }
 
-    public function seeker(string $endpoint, array $formations): self
+    public function seeker(array $formations, string $key = 'main'): self
     {
-        Route::get($endpoint, [SeekerController::class, 'index']);
+        $name = $key === 'main' ? 'seekers.main.index' : "seekers.$key'index";
 
-        $this->seekers[$endpoint] = $formations;
+        Route::get("/seekers/$key", [SeekerController::class, 'index'])
+            ->name($name)
+            ->setDefaults(['key' => $key]);
+
+        $this->seekers[$key] = $formations;
 
         return $this;
     }
 
     public function getSeekerFormations(): array
     {
-        $prefix = Request::route()->getPrefix();
-        $endpoint = Request::route()->uri();
-        $endpoint = Str::after($endpoint, "$prefix/");
+        $key = Route::current()->parameter('key');
 
-        return Arr::get($this->seekers, $endpoint, []);
+        return Arr::get($this->seekers, $key, []);
     }
 
     public function hasParent()

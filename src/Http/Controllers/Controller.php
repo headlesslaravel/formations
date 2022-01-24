@@ -14,6 +14,7 @@ use Illuminate\Pagination\AbstractPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,10 @@ use Inertia\Inertia;
 
 class Controller extends BaseController
 {
+    use AuthorizesRequests;
+    use DispatchesJobs;
+    use ValidatesRequests;
+
     public $current;
 
     public $terms = [];
@@ -31,10 +36,6 @@ class Controller extends BaseController
     protected $resolvedParent;
 
     protected $resolvedResource;
-
-    use AuthorizesRequests;
-    use DispatchesJobs;
-    use ValidatesRequests;
 
     public function __construct(Manager $manager)
     {
@@ -365,6 +366,10 @@ class Controller extends BaseController
 
     public function inertia($type, $props = null)
     {
+        $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
+
+        $usingGenericView = ! File::exists(resource_path("js/Pages/$view.vue"));
+
         $term = null;
 
         if ($type === 'index') {
@@ -376,12 +381,18 @@ class Controller extends BaseController
         $data = [];
 
         if ($term) {
-            $data = [$this->terms($term) => $this->transform($props)];
+            $dataKey = $this->terms($term);
+
+            $data = [$dataKey => $this->transform($props)];
         }
 
         $data = $this->formation()->dataCallback($type, $data, $props);
 
-        $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
+        if($usingGenericView) {
+            $view = 'Resources/'.ucfirst($type);
+        }
+
+        $data['headless'] = $this->formation()->meta($type);
 
         return Inertia::render($view, $data);
     }

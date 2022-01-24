@@ -23,8 +23,10 @@ class Field
             $this->relationColumn = Str::afterLast($key, '.');
             $internal = Str::before($key, '.');
             $key = Str::before($key, '.');
-        } elseif (is_null($internal)) {
-            $internal = $key;
+        } elseif (is_null($internal) && Str::contains($key, ' ')) {
+            $internal = Str::snake($key);
+        } else if(is_null($internal)) {
+            $internal = Str::lower($key);
         }
 
         $this->key = $key;
@@ -48,5 +50,14 @@ class Field
     public function isRelation(): bool
     {
         return !is_null($this->relationColumn);
+    }
+
+    public function toArray()
+    {
+        return [
+            'key' => $this->key,
+            'internal' => $this->internal,
+            'rules' => $this->rules,
+        ];
     }
 }

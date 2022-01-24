@@ -18,6 +18,11 @@ class ResponseInertiaTest extends TestCase
         Inertia::setRootView('testing::app');
     }
 
+    public function test_inertia_fallback_view()
+    {
+
+    }
+
     public function test_index_inertia_responses()
     {
         Post::factory()->create(['title' => 'Hello World']);
