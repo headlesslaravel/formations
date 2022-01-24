@@ -465,22 +465,20 @@ class Formation
         ];
     }
 
-    public function meta($type):array
+    public function meta($type): array
     {
         $fields = $this->$type();
 
         $meta = [
-            'resource' => $this->resourceName(),
+            'resource'          => $this->resourceName(),
             'resource_singular' => Str::singular($this->resourceName()),
         ];
 
-
-        if($type === 'index') {
-
+        if ($type === 'index') {
             $formatted = [];
 
-            foreach($fields as $field) {
-                if($field->key == $field->internal) {
+            foreach ($fields as $field) {
+                if ($field->key == $field->internal) {
                     $formatted[] = $field->key;
                 } else {
                     $formatted[] = "$field->internal:$field->key";
@@ -491,20 +489,20 @@ class Formation
 
             $meta['fields'] = $formatted;
 
-            $meta['filters'] = collect($this->filters())->map(function($filter) {
+            $meta['filters'] = collect($this->filters())->map(function ($filter) {
                 return [
-                    'key' => $filter->publicKey,
-                    'display' => Str::of($filter->publicKey)->replace('_', ' ')->title(),
+                    'key'       => $filter->publicKey,
+                    'display'   => Str::of($filter->publicKey)->replace('_', ' ')->title(),
                     'component' => $filter->component,
-                    'props' => $filter->props,
+                    'props'     => $filter->props,
                 ];
             })->toArray();
         }
 
-        if($type === 'create' || $type === 'edit') {
+        if ($type === 'create' || $type === 'edit') {
             $formatted = [];
 
-            foreach($fields as $field) {
+            foreach ($fields as $field) {
                 $formatted[] = "$field->internal:$field->key";
             }
 
@@ -514,36 +512,36 @@ class Formation
         return $meta;
     }
 
-    public function index():array
+    public function index(): array
     {
         return $this->fields();
     }
 
-    public function show():array
+    public function show(): array
     {
         return $this->index();
     }
 
-    public function form():array
+    public function form(): array
     {
-        return collect($this->fields())->filter(function($field) {
-            return ! in_array($field->internal, [
-                'id', 'created_at', 'updated_at', 'deleted_at'
+        return collect($this->fields())->filter(function ($field) {
+            return !in_array($field->internal, [
+                'id', 'created_at', 'updated_at', 'deleted_at',
             ]);
         })->toArray();
     }
 
-    public function create():array
+    public function create(): array
     {
         return $this->form();
     }
 
-    public function edit():array
+    public function edit(): array
     {
         return $this->form();
     }
 
-    public function fields():array
+    public function fields(): array
     {
         return [
             Field::make('Id', 'id'),
@@ -560,21 +558,21 @@ class Formation
 
     public function rulesForIndexing(): array
     {
-        return collect($this->index())->flatMap(function($field) {
+        return collect($this->index())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForCreating(): array
     {
-        return collect($this->create())->flatMap(function($field) {
+        return collect($this->create())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForUpdating(): array
     {
-        return collect($this->edit())->flatMap(function($field) {
+        return collect($this->edit())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }

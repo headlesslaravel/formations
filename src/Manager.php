@@ -7,7 +7,6 @@ use HeadlessLaravel\Formations\Http\Controllers\SeekerController;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 class Manager
 {

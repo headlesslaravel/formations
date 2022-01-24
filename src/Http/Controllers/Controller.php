@@ -368,7 +368,7 @@ class Controller extends BaseController
     {
         $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
 
-        $usingGenericView = ! File::exists(resource_path("js/Pages/$view.vue"));
+        $usingGenericView = !File::exists(resource_path("js/Pages/$view.vue"));
 
         $term = null;
 
@@ -388,7 +388,7 @@ class Controller extends BaseController
 
         $data = $this->formation()->dataCallback($type, $data, $props);
 
-        if($usingGenericView) {
+        if ($usingGenericView) {
             $view = 'Resources/'.ucfirst($type);
         }
 

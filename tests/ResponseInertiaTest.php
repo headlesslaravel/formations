@@ -20,7 +20,6 @@ class ResponseInertiaTest extends TestCase
 
     public function test_inertia_fallback_view()
     {
-
     }
 
     public function test_index_inertia_responses()

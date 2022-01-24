@@ -25,7 +25,7 @@ class Field
             $key = Str::before($key, '.');
         } elseif (is_null($internal) && Str::contains($key, ' ')) {
             $internal = Str::snake($key);
-        } else if(is_null($internal)) {
+        } elseif (is_null($internal)) {
             $internal = Str::lower($key);
         }
 
@@ -55,9 +55,9 @@ class Field
     public function toArray()
     {
         return [
-            'key' => $this->key,
+            'key'      => $this->key,
             'internal' => $this->internal,
-            'rules' => $this->rules,
+            'rules'    => $this->rules,
         ];
     }
 }
