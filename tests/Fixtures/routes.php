@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('login')->name('login');
 
-Route::seeker('search', [
+Route::seeker([
     PostFormation::class,
     AuthorFormation::class,
-]);
+], 'search');
 
 Route::formation(PostFormation::class)->resource('posts');
 Route::formation(AuthorFormation::class)->resource('authors');

@@ -49,8 +49,8 @@ class FormationProvider extends ServiceProvider
             return app(Routes::class)->formation($formation);
         });
 
-        Route::macro('seeker', function ($endpoint, $formations = []) {
-            app(Manager::class)->seeker($endpoint, $formations);
+        Route::macro('seeker', function ($formations = [], $key = 'main') {
+            app(Manager::class)->seeker($formations, $key);
         });
     }
 }

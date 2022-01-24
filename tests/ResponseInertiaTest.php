@@ -32,7 +32,7 @@ class ResponseInertiaTest extends TestCase
         $this->assertInstanceOf(Response::class, $index);
         $this->assertEquals('testing::app', $view->name());
         $this->assertArrayHasKey('page', $view->getData());
-        $this->assertEquals('Posts/Index', $view->getData()['page']['component']);
+        $this->assertEquals('Resources/Index', $view->getData()['page']['component']);
         $this->assertEquals('Hello World', $view->getData()['page']['props']['posts']->data[0]->title);
     }
 
@@ -49,7 +49,7 @@ class ResponseInertiaTest extends TestCase
         $this->assertInstanceOf(Response::class, $create);
         $this->assertEquals('testing::app', $view->name());
         $this->assertArrayHasKey('page', $view->getData());
-        $this->assertEquals('Posts/Create', $view->getData()['page']['component']);
+        $this->assertEquals('Resources/Create', $view->getData()['page']['component']);
         $this->assertEquals('populated from extra method', $view->getData()['page']['props']['extra']);
     }
 
@@ -68,7 +68,7 @@ class ResponseInertiaTest extends TestCase
         $this->assertInstanceOf(Response::class, $show);
         $this->assertEquals('testing::app', $view->name());
         $this->assertArrayHasKey('page', $view->getData());
-        $this->assertEquals('Posts/Show', $view->getData()['page']['component']);
+        $this->assertEquals('Resources/Show', $view->getData()['page']['component']);
         // TODO: should the following be ->data?
 //        dd($view->getData()['page']['props']['post']);
         $this->assertEquals('Hello World', $view->getData()['page']['props']['post']->title);
@@ -101,7 +101,7 @@ class ResponseInertiaTest extends TestCase
         $this->assertInstanceOf(Response::class, $edit);
         $this->assertEquals('testing::app', $view->name());
         $this->assertArrayHasKey('page', $view->getData());
-        $this->assertEquals('Posts/Edit', $view->getData()['page']['component']);
+        $this->assertEquals('Resources/Edit', $view->getData()['page']['component']);
         $this->assertEquals($post->id, $view->getData()['page']['props']['id']);
         $this->assertEquals('populated from override method', $view->getData()['page']['props']['override']);
     }

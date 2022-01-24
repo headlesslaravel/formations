@@ -8,6 +8,7 @@ use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class Filter
@@ -24,7 +25,21 @@ class Filter
      *
      * @var
      */
-    protected $key;
+    public $key;
+
+    /**
+     * The frontend component.
+     *
+     * @var
+     */
+    public $component = 'FilterText';
+
+    /**
+     * The component props.
+     *
+     * @var
+     */
+    public $props = [];
 
     /**
      * The validation rules.
@@ -145,6 +160,20 @@ class Filter
     }
 
     /**
+     * The frontend display text.
+     *
+     * @return string
+     */
+    public function getDisplay()
+    {
+        if (is_array($this->publicKey)) {
+            return implode(', ', $this->publicKey);
+        }
+
+        return Str::of($this->publicKey)->replace('_', ' ')->title();
+    }
+
+    /**
      * Add the public filter key.
      *
      * @param $value
@@ -209,6 +238,12 @@ class Filter
         $this->withQuery(function ($query) {
             $query->whereIn($this->key, Arr::wrap($this->value));
         });
+
+        $this->component('FilterSelect');
+
+        $this->props([
+            'options' => $options,
+        ]);
 
         return $this;
     }
@@ -332,6 +367,8 @@ class Filter
             });
         });
 
+        $this->component('FilterDate');
+
         return $this;
     }
 
@@ -347,6 +384,8 @@ class Filter
 
         $this->withRules('nullable|date', "$this->publicKey:max");
         $this->withRules('nullable|date', "$this->publicKey:min");
+
+        $this->component('FilterDate');
 
         $this->withQuery(function ($query) {
             if (isset($this->value['min'], $this->value['max'])) {
@@ -713,6 +752,48 @@ class Filter
         $this->filterMethodCalled = true;
 
         $this->queries[] = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Add a frontend component.
+     *
+     * @param $component
+     *
+     * @return $this
+     */
+    public function component($component): self
+    {
+        $this->component = $component;
+
+        return $this;
+    }
+
+    /**
+     * Add a frontend component.
+     *
+     * @param $component
+     *
+     * @return $this
+     */
+    public function as($component): self
+    {
+        $this->component($component);
+
+        return $this;
+    }
+
+    /**
+     * Add props values for frontend component.
+     *
+     * @param array $props
+     *
+     * @return $this
+     */
+    public function props(array $props): self
+    {
+        $this->props = array_merge($this->props, $props);
 
         return $this;
     }

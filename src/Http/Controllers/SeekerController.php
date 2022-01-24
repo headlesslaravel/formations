@@ -17,8 +17,6 @@ class SeekerController
                 $formation = app($formation);
                 $query = app($formation->model)->query();
 
-                abort_if(count($formation->search) == 0, 500, class_basename($formation).' formation is missing search');
-
                 $query = (new SearchScope())->apply($query, $formation->search, Request::input('term'));
 
                 $data = $query
