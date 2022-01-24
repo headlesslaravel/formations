@@ -8,6 +8,7 @@ use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class Filter
@@ -156,6 +157,20 @@ class Filter
         $this->key = is_null($internal) ? $public : $internal;
 
         return $this;
+    }
+
+    /**
+     * The frontend display text.
+     *
+     * @return string
+     */
+    public function getDisplay()
+    {
+        if(is_array($this->publicKey)) {
+            return implode(', ', $this->publicKey);
+        }
+
+        return Str::of($this->publicKey)->replace('_', ' ')->title();
     }
 
     /**

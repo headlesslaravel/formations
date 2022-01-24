@@ -15,10 +15,11 @@ class SeekerTest extends TestCase
 
     public function test_seeker_global_search()
     {
+        ray(Route::getRoutes());
         $post = Post::factory()->create(['title' => 'Hi post']);
         $author = User::factory()->create(['name' => 'Hi author']);
 
-        $response = $this->get('search?term=hi');
+        $response = $this->get('seekers/search?term=hi');
 
         $response->assertJsonCount(2, 'data.0.data.0');
         $response->assertJsonPath('data.0.data.0.value', $post->id);
@@ -50,7 +51,7 @@ class SeekerTest extends TestCase
             ], 'search');
         });
 
-        $response = $this->get('admin/search?term=hi');
+        $response = $this->get('admin/seekers/search?term=hi');
 
         $response->assertJsonCount(2, 'data.0.data.0');
         $response->assertJsonPath('data.0.data.0.value', $post->id);

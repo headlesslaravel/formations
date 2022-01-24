@@ -492,7 +492,7 @@ class Formation
             $meta['filters'] = collect($this->filters())->map(function ($filter) {
                 return [
                     'key'       => $filter->publicKey,
-                    'display'   => Str::of($filter->publicKey)->replace('_', ' ')->title(),
+                    'display'   => $filter->getDisplay(),
                     'component' => $filter->component,
                     'props'     => $filter->props,
                 ];

@@ -76,6 +76,8 @@ class ResourceController extends Controller
     {
         $resource = $this->resource();
 
+        $this->check('restore', $resource);
+
         $resource->restore();
 
         return $this->response('restore', $resource);
