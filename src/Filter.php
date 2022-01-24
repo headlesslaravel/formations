@@ -166,7 +166,7 @@ class Filter
      */
     public function getDisplay()
     {
-        if(is_array($this->publicKey)) {
+        if (is_array($this->publicKey)) {
             return implode(', ', $this->publicKey);
         }
 
