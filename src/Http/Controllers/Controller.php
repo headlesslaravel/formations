@@ -366,10 +366,6 @@ class Controller extends BaseController
 
     public function inertia($type, $props = null)
     {
-        $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
-
-        $usingGenericView = !File::exists(resource_path("js/Pages/$view.vue"));
-
         $term = null;
 
         if ($type === 'index') {
@@ -388,11 +384,13 @@ class Controller extends BaseController
 
         $data = $this->formation()->dataCallback($type, $data, $props);
 
-        if ($usingGenericView) {
+        $data['headless'] = $this->formation()->meta($type);
+
+        $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
+
+        if (! File::exists(resource_path("js/Pages/$view.vue"))) {
             $view = 'Resources/'.ucfirst($type);
         }
-
-        $data['headless'] = $this->formation()->meta($type);
 
         return Inertia::render($view, $data);
     }

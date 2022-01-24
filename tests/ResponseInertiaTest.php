@@ -4,6 +4,7 @@ namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,10 +17,6 @@ class ResponseInertiaTest extends TestCase
         config()->set('formations.mode', 'inertia');
 
         Inertia::setRootView('testing::app');
-    }
-
-    public function test_inertia_fallback_view()
-    {
     }
 
     public function test_index_inertia_responses()
