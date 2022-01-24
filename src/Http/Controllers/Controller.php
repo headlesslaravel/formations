@@ -388,7 +388,7 @@ class Controller extends BaseController
 
         $view = $this->terms('resource.studlyPlural').'/'.ucfirst($type);
 
-        if (! File::exists(resource_path("js/Pages/$view.vue"))) {
+        if (!File::exists(resource_path("js/Pages/$view.vue"))) {
             $view = 'Resources/'.ucfirst($type);
         }
 
