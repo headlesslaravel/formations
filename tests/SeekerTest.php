@@ -44,10 +44,10 @@ class SeekerTest extends TestCase
             Route::formation(PostFormation::class)->resource('posts');
             Route::formation(AuthorFormation::class)->resource('authors');
 
-            Route::seeker('search', [
+            Route::seeker([
                 PostFormation::class,
                 AuthorFormation::class,
-            ]);
+            ], 'search');
         });
 
         $response = $this->get('admin/search?term=hi');
