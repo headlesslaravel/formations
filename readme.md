@@ -17,7 +17,8 @@
 
 Simple search, sort, filters & more for Laravel.
 
-See [the wiki](https://github.com/headlesslaravel/formations/wiki/) for documentation. (Work in progress)
+
+[Read the documentation](https://github.com/headlesslaravel/docs/blob/main/formations.md)
 
 ---
 
