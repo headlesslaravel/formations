@@ -426,6 +426,15 @@ class Formation
         }
     }
 
+    public function guessResourceName(): Stringable
+    {
+        return Str::of(class_basename($this))
+            ->replace('Formation', '')
+            ->snake()
+            ->slug()
+            ->plural();
+    }
+
     public function resourceName(): Stringable
     {
         /** @var Manager $manager */
@@ -437,11 +446,7 @@ class Formation
             return new Stringable($resource['resource']);
         }
 
-        return Str::of(class_basename($this))
-            ->replace('Formation', '')
-            ->snake()
-            ->slug()
-            ->plural();
+        return $this->guessResourceName();
     }
 
     public function seekerMeta()
