@@ -5,14 +5,13 @@ namespace HeadlessLaravel\Formations\Exports;
 use HeadlessLaravel\Formations\Field;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class Export implements FromCollection, WithHeadings
 {
-    use SkipsFailures;
     use Exportable;
 
+    /** @var string */
     public $model;
 
     /** @var Field[] */
@@ -21,7 +20,6 @@ class Export implements FromCollection, WithHeadings
     public function __construct($model, $fields)
     {
         $this->model = $model;
-
         $this->fields = $fields;
     }
 
