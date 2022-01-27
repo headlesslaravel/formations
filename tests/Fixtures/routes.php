@@ -18,8 +18,8 @@ Route::formation(PostFormation::class)->resource('authors.posts');
 
 Route::formation(TagFormation::class)
     ->resource('posts.tags')
-    ->pivot();
+    ->asPivot();
 
 Route::formation(PostFormation::class)
     ->resource('posts')
-    ->import();
+    ->asImport();

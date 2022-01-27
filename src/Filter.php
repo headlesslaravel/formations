@@ -195,6 +195,10 @@ class Filter
      */
     public function boolean()
     {
+        $this->component('FilterCheckbox');
+
+        $this->props(['on' => 'true', 'off' => 'false']);
+
         $this->withRules('nullable|in:true,false');
 
         $this->withQuery(function ($query) {
@@ -506,11 +510,27 @@ class Filter
     }
 
     /**
-     * Make a withTrashed filter.
+     * Make a trash only filter (boolean).
      *
      * @return $this
      */
-    public function withTrashed()
+    public function trashOnly(): self
+    {
+        $this->withRules('nullable|in:true,false');
+
+        $this->withQuery(function ($query) {
+            $query->onlyTrashed();
+        });
+
+        return $this;
+    }
+
+    /**
+     * Make a trash included filter  (boolean).
+     *
+     * @return $this
+     */
+    public function trashIncluded()
     {
         $this->withRules('nullable|in:true');
 
@@ -522,16 +542,28 @@ class Filter
     }
 
     /**
-     * Make a onlyTrashed filter.
+     * Make a select trash type filter. (with,only).
      *
      * @return $this
      */
-    public function onlyTrashed()
+    public function trash(): self
     {
-        $this->withRules('nullable|in:true');
+        $this->component('FilterSelect');
+
+        $this->props(['options' => [
+            ''     => 'No Trash',
+            'with' => 'With Trash',
+            'only' => 'Only Trash',
+        ]]);
+
+        $this->withRules('nullable|in:with,only');
 
         $this->withQuery(function ($query) {
-            $query->onlyTrashed();
+            if ($this->value === 'with') {
+                $query->withTrashed();
+            } else {
+                $query->onlyTrashed();
+            }
         });
 
         return $this;

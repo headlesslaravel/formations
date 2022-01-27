@@ -54,14 +54,14 @@ class Routes
         return $this;
     }
 
-    public function pivot(): self
+    public function asPivot(): self
     {
         $this->pivot = true;
 
         return $this;
     }
 
-    public function import(): self
+    public function asImport(): self
     {
         $this->import = true;
 

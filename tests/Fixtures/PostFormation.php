@@ -95,8 +95,8 @@ class PostFormation extends Formation
             Filter::make('value-scope')->scope('status'),
             Filter::make('active-scope')->scope('active'),
             Filter::make('boolean-scope')->scopeBoolean('activeBoolean'),
-            Filter::make('trashed')->onlyTrashed(),
-            Filter::make('with-trashed')->withTrashed(),
+            Filter::make('trashed')->trashOnly(),
+            Filter::make('with-trashed')->trashIncluded(),
             Filter::make('written-by')->search(['author.name']),
             Filter::make('article-size', 'length')
                 ->when('50', function ($query) {

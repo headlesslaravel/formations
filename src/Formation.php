@@ -86,6 +86,11 @@ class Formation
     public $detailRouteName;
 
     /**
+     * The global search.
+     */
+    public $globalSearch = true;
+
+    /**
      * The resource controller.
      *
      * @var string
