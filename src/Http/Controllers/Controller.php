@@ -534,7 +534,7 @@ class Controller extends BaseController
             return 'api';
         }
 
-        return config('formations.mode', 'blade');
+        return config('headless-formations.mode', 'blade');
     }
 
     protected function parentForeignKey(): string

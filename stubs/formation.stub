@@ -2,6 +2,7 @@
 
 namespace {{ namespace }};
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 
@@ -26,7 +27,7 @@ class {{ class }} extends Formation
      *
      * @var array
      */
-    public $search = [];
+    public $search = ['id'];
 
     /**
      * The sortable columns.
@@ -36,6 +37,20 @@ class {{ class }} extends Formation
     public $sort = ['created_at'];
 
     /**
+     * Define the fields.
+     *
+     * @return array
+     */
+    public function fields():array
+    {
+        return [
+            Field::make('id'),
+            //
+            Field::make('created_at'),
+        ];
+    }
+
+    /**
      * Define the filters.
      *
      * @return array
@@ -43,10 +58,9 @@ class {{ class }} extends Formation
     public function filters():array
     {
         return [
-            Filter::make('created_at')->dateRange(),
-            Filter::make('with-deleted')->withTrashed(),
-            Filter::make('only-deleted')->onlyTrashed(),
             //
+            Filter::make('trash')->trash(),
         ];
     }
 }
+

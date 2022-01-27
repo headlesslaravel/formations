@@ -25,7 +25,7 @@ class FormationProvider extends ServiceProvider
             return new Manager();
         });
 
-        $this->mergeConfigFrom(__DIR__.'/../config/formations.php', 'formations');
+        $this->mergeConfigFrom(__DIR__.'/../config/headless-formations.php', 'headless-formations');
     }
 
     /**
