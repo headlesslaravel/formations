@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Formations\Http\Controllers\ExportController;
 use HeadlessLaravel\Formations\Http\Controllers\ImportController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
@@ -15,6 +16,8 @@ class Routes
     public $pivot = false;
 
     public $import = false;
+
+    public $export = false;
 
     protected $types = [];
 
@@ -68,6 +71,13 @@ class Routes
         return $this;
     }
 
+    public function asExport(): self
+    {
+        $this->export = true;
+
+        return $this;
+    }
+
     public function setTypes(array $types = [])
     {
         $this->types['only'] = $types;
@@ -107,6 +117,10 @@ class Routes
             return "$this->resource.imports.$name";
         }
 
+        if ($this->export) {
+            return "$this->resource.exports.$name";
+        }
+
         if ($this->parent) {
             return "$this->parent.$this->resource.$name";
         }
@@ -135,6 +149,8 @@ class Routes
 
         if ($this->import) {
             return [ImportController::class, $name];
+        } elseif ($this->export) {
+            return [ExportController::class, $name];
         } elseif ($this->pivot) {
             return [app($this->formation)->pivotController, $name];
         } elseif ($this->parent) {
@@ -172,6 +188,8 @@ class Routes
     {
         if ($this->import) {
             $endpoints = $this->importEndpoints();
+        } elseif ($this->export) {
+            $endpoints = $this->exportEndpoints();
         } elseif ($this->pivot) {
             $endpoints = $this->pivotEndpoints();
         } elseif ($this->parent) {
@@ -257,6 +275,13 @@ class Routes
         return [
             ['type' => 'store', 'verb' => 'POST', 'endpoint' => "imports/$this->resource"],
             ['type' => 'create', 'verb' => 'GET', 'endpoint' => "imports/$this->resource"],
+        ];
+    }
+
+    private function exportEndpoints(): array
+    {
+        return [
+            ['type' => 'create', 'verb' => 'GET', 'endpoint' => "exports/$this->resource"],
         ];
     }
 

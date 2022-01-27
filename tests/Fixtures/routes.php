@@ -23,3 +23,7 @@ Route::formation(TagFormation::class)
 Route::formation(PostFormation::class)
     ->resource('posts')
     ->asImport();
+
+Route::formation(PostFormation::class)
+    ->resource('posts')
+    ->asExport();

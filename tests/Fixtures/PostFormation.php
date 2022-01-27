@@ -132,4 +132,13 @@ class PostFormation extends Formation
             Field::make('category', 'category.title')->rules(['required', 'exists:categories,title']),
         ];
     }
+
+    public function export(): array
+    {
+        return [
+            Field::make('id'),
+            Field::make('title'),
+            Field::make('author_name', 'author.name'),
+        ];
+    }
 }
