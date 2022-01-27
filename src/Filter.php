@@ -483,7 +483,7 @@ class Filter
     public function relation(): self
     {
         $this->withRules('nullable');
-        
+
         $this->withQuery(function ($query) {
             $this->validateMultiple();
 
