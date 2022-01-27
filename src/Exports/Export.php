@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Exports;
 
 use HeadlessLaravel\Formations\Field;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -23,7 +24,7 @@ class Export implements FromCollection, WithHeadings
         $this->fields = $fields;
     }
 
-    public function collection()
+    public function collection(): Collection
     {
         $eagerLoadings = $this->getEagerLoadings();
 
