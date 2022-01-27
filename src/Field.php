@@ -10,6 +10,8 @@ class Field
 
     public $internal;
 
+    public $label;
+
     public $rules;
 
     public $relationColumn;
@@ -38,6 +40,13 @@ class Field
     public static function make($key, $internal = null): self
     {
         return (new self())->init($key, $internal);
+    }
+
+    public function label(string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
     }
 
     public function rules($rules): self

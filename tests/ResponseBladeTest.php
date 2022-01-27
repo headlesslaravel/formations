@@ -13,7 +13,7 @@ class ResponseBladeTest extends TestCase
     {
         parent::setUp();
 
-        config()->set('formations.mode', 'blade');
+        config()->set('headless-formations.mode', 'blade');
     }
 
     public function test_index_blade_responses()
@@ -92,7 +92,7 @@ class ResponseBladeTest extends TestCase
     {
         $this->authUser();
 
-        config()->set('formations.mode', 'blade');
+        config()->set('headless-formations.mode', 'blade');
 
         $this->withHeader('Wants-Json', true);
 

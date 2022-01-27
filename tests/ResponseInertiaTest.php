@@ -13,7 +13,7 @@ class ResponseInertiaTest extends TestCase
     {
         parent::setUp();
 
-        config()->set('formations.mode', 'inertia');
+        config()->set('headless-formations.mode', 'inertia');
 
         Inertia::setRootView('testing::app');
     }

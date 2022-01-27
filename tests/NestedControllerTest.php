@@ -19,7 +19,7 @@ class NestedControllerTest extends TestCase
 
         $this->authUser();
 
-        config()->set('formations.mode', 'api');
+        config()->set('headless-formations.mode', 'api');
     }
 
     public function test_unregistered_formation_exception()
