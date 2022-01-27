@@ -25,6 +25,6 @@ class ExportController
             })->toArray();
         }
 
-        return Excel::download($exportable, $formation->resourceName() . '.xlsx');
+        return Excel::download($exportable, $formation->resourceName().'.xlsx');
     }
 }

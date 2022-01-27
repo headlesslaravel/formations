@@ -36,7 +36,7 @@ class ExportTest extends TestCase
         $response = $this->get('exports/posts');
         $response->assertOk();
 
-        Excel::assertDownloaded('posts.xlsx', function(Export $export) {
+        Excel::assertDownloaded('posts.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -60,7 +60,7 @@ class ExportTest extends TestCase
         $response = $this->get('exports/posts?columns=id,title');
         $response->assertOk();
 
-        Excel::assertDownloaded('posts.xlsx', function(Export $export) {
+        Excel::assertDownloaded('posts.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
