@@ -510,7 +510,7 @@ class Filter
     }
 
     /**
-     * Make a trash only filter (boolean)
+     * Make a trash only filter (boolean).
      *
      * @return $this
      */
@@ -526,7 +526,7 @@ class Filter
     }
 
     /**
-     * Make a trash included filter  (boolean)
+     * Make a trash included filter  (boolean).
      *
      * @return $this
      */
@@ -542,7 +542,7 @@ class Filter
     }
 
     /**
-     * Make a select trash type filter. (with,only)
+     * Make a select trash type filter. (with,only).
      *
      * @return $this
      */
@@ -551,15 +551,15 @@ class Filter
         $this->component('FilterSelect');
 
         $this->props(['options' => [
-            '' => 'No Trash',
-            'with' => "With Trash",
-            'only' => 'Only Trash'
+            ''     => 'No Trash',
+            'with' => 'With Trash',
+            'only' => 'Only Trash',
         ]]);
 
         $this->withRules('nullable|in:with,only');
 
         $this->withQuery(function ($query) {
-            if($this->value === 'with') {
+            if ($this->value === 'with') {
                 $query->withTrashed();
             } else {
                 $query->onlyTrashed();
