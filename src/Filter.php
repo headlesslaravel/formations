@@ -483,9 +483,7 @@ class Filter
     public function relation(): self
     {
         $this->withRules('nullable');
-
-        $this->component('FilterConditions');
-
+        
         $this->withQuery(function ($query) {
             $this->validateMultiple();
 
