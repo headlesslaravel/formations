@@ -483,7 +483,7 @@ class Filter
     public function relation(): self
     {
         $this->withRules('nullable');
-        
+
         $this->withQuery(function ($query) {
             $this->validateMultiple();
 
@@ -516,7 +516,7 @@ class Filter
      */
     public function trashOnly(): self
     {
-        $this->withRules('nullable|boolean');
+        $this->withRules('nullable|in:true,false');
 
         $this->withQuery(function ($query) {
             $query->onlyTrashed();
