@@ -31,9 +31,9 @@ class Export implements FromCollection, WithHeadings
 
         $records = (new $this->model())->query()->with($eagerLoadings)->get();
         $result = collect([]);
-        foreach($records as $record) {
+        foreach ($records as $record) {
             $resultRecord = [];
-            foreach($this->fields as $field) {
+            foreach ($this->fields as $field) {
                 if ($field->isRelation()) {
                     $resultRecord[$field->key] = $record->{$field->internal}->{$field->relationColumn};
                 } else {
@@ -42,6 +42,7 @@ class Export implements FromCollection, WithHeadings
             }
             $result->add($resultRecord);
         }
+
         return $result;
     }
 
