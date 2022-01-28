@@ -612,7 +612,17 @@ class Formation
 
     public function export(): array
     {
-        return $this->index();
+        return [];
+    }
+
+    public function exportAs(): string
+    {
+        $fileName = $this->resourceName();
+        $fileName = $fileName->append(now()->format(config('formations.exports.date_format')));
+        $fileName = $fileName->append('.');
+        $fileName = $fileName->append(config('formations.exports.file_format'));
+
+        return (string)$fileName;
     }
 
     public function importable()

@@ -33,10 +33,10 @@ class ExportTest extends TestCase
         Post::factory()->create(['title' => 'Post1', 'author_id' => $user->id]);
         Post::factory()->create(['title' => 'Post2', 'author_id' => $user->id]);
 
-        $response = $this->get('exports/posts');
-        $response->assertOk();
+        $this->get('exports/posts')->assertOk();
 
-        Excel::assertDownloaded('posts.xlsx', function (Export $export) {
+        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
+        Excel::assertDownloaded($fileName, function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -57,10 +57,10 @@ class ExportTest extends TestCase
         Post::factory()->create(['title' => 'Post1', 'author_id' => $user->id]);
         Post::factory()->create(['title' => 'Post2', 'author_id' => $user->id]);
 
-        $response = $this->get('exports/posts?columns=id,title');
-        $response->assertOk();
+        $this->get('exports/posts?columns=id,title')->assertOk();
 
-        Excel::assertDownloaded('posts.xlsx', function (Export $export) {
+        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
+        Excel::assertDownloaded($fileName, function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -68,5 +68,17 @@ class ExportTest extends TestCase
 
             return $count && $resultObjectFieldsCount;
         });
+    }
+
+    public function test_exporting_with_invalid_export_columns()
+    {
+        Excel::fake();
+
+        $this->authUser();
+
+        $response = $this->get('exports/posts?columns=dummy_column');
+        $response->assertUnprocessable();
+
+        $response->assertJson(['errors' => ['columns' => ['Invalid Column Name Passed']]]);
     }
 }
