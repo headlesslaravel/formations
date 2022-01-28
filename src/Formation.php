@@ -530,35 +530,11 @@ class Formation
         return $meta;
     }
 
-    public function index(): array
-    {
-        return $this->fields();
-    }
-
-    public function show(): array
-    {
-        return $this->index();
-    }
-
-    public function form(): array
-    {
-        return collect($this->fields())->filter(function ($field) {
-            return !in_array($field->internal, [
-                'id', 'created_at', 'updated_at', 'deleted_at',
-            ]);
-        })->toArray();
-    }
-
-    public function create(): array
-    {
-        return $this->form();
-    }
-
-    public function edit(): array
-    {
-        return $this->form();
-    }
-
+    /**
+     * Define the fields all views.
+     *
+     * @return array
+     */
     public function fields(): array
     {
         return [
@@ -567,6 +543,60 @@ class Formation
             Field::make('Created', 'created_at'),
             Field::make('Updated', 'updated_at'),
         ];
+    }
+
+    /**
+     * Define the fields for indexing.
+     *
+     * @return array
+     */
+    public function index(): array
+    {
+        return $this->fields();
+    }
+
+    /**
+     * Define the fields for showing.
+     *
+     * @return array
+     */
+    public function show(): array
+    {
+        return $this->index();
+    }
+
+    /**
+     * Define the fields for create forms.
+     *
+     * @return array
+     */
+    public function create(): array
+    {
+        return $this->form();
+    }
+
+    /**
+     * Define the fields for edit forms.
+     *
+     * @return array
+     */
+    public function edit(): array
+    {
+        return $this->form();
+    }
+
+    /**
+     * Define the fields for forms.
+     *
+     * @return array
+     */
+    public function form(): array
+    {
+        return collect($this->fields())->filter(function ($field) {
+            return !in_array($field->internal, [
+                'id', 'created_at', 'updated_at', 'deleted_at',
+            ]);
+        })->toArray();
     }
 
     public function rules(): array
@@ -595,26 +625,51 @@ class Formation
         })->toArray();
     }
 
+    /**
+     * Define the filters.
+     *
+     * @return array
+     */
     public function filters(): array
     {
         return [];
     }
 
+    /**
+     * Define the include columns.
+     *
+     * @return array
+     */
     public function includes(): array
     {
         return [];
     }
 
+    /**
+     * Define the exportable columns.
+     *
+     * @return array
+     */
     public function import(): array
     {
         return [];
     }
 
+    /**
+     * Define the exportable columns.
+     *
+     * @return array
+     */
     public function export(): array
     {
         return [];
     }
 
+    /**
+     * Define the export filename.
+     *
+     * @return array
+     */
     public function exportAs(): string
     {
         return (string) $this->resourceName()
