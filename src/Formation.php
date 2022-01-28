@@ -636,7 +636,7 @@ class Formation
     {
         $export = $this->export;
 
-        return new $export($this->model, $this->export());
+        return new $export($this->builder(), $this->export());
     }
 
     public function where(...$arguments): Formation

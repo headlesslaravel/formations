@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Exports;
 
 use HeadlessLaravel\Formations\Field;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -12,15 +13,19 @@ class Export implements FromCollection, WithHeadings
 {
     use Exportable;
 
-    /** @var string */
-    public $model;
+    /** @var Builder */
+    public $builder;
 
     /** @var Field[] */
     public $fields = [];
 
-    public function __construct($model, $fields)
+    /**
+     * @param Builder $builder
+     * @param array $fields
+     */
+    public function __construct($builder, $fields)
     {
-        $this->model = $model;
+        $this->builder = $builder;
         $this->fields = $fields;
     }
 
@@ -28,7 +33,7 @@ class Export implements FromCollection, WithHeadings
     {
         $eagerLoadings = $this->getEagerLoadings();
 
-        $records = (new $this->model())->query()->with($eagerLoadings)->get();
+        $records = $this->builder->with($eagerLoadings)->get();
         $result = collect([]);
         foreach ($records as $record) {
             $resultRecord = [];

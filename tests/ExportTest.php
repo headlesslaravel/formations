@@ -30,8 +30,8 @@ class ExportTest extends TestCase
         $this->authUser();
 
         $user = User::factory()->create(['name' => 'John Doe']);
-        Post::factory()->create(['title' => 'Post1', 'author_id' => $user->id]);
-        Post::factory()->create(['title' => 'Post2', 'author_id' => $user->id]);
+        Post::factory()->create(['title' => 'Post1', 'body' => 'Post Body 1', 'author_id' => $user->id]);
+        Post::factory()->create(['title' => 'Post2', 'body' => 'Post Body 2', 'author_id' => $user->id]);
 
         $this->get('exports/posts')->assertOk();
 
@@ -40,7 +40,7 @@ class ExportTest extends TestCase
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
-            $title = $data[0]['title'] === 'Post1' && $data[1]['title'] === 'Post2';
+            $title = $data[0]['title'] === 'Post2' && $data[1]['title'] === 'Post1'; // default sort body desc
             $authorName = $data[0]['author_name'] === 'John Doe' && $data[1]['author_name'] === 'John Doe';
 
             return $count && $title && $authorName;
@@ -80,5 +80,31 @@ class ExportTest extends TestCase
         $response->assertUnprocessable();
 
         $response->assertJson(['errors' => ['columns' => ['Invalid Column Name Passed']]]);
+    }
+
+    public function test_exporting_with_filters()
+    {
+        Excel::fake();
+
+        $this->authUser();
+
+        $userOne = User::factory()->create(['name' => 'John Doe']);
+        $userTwo = User::factory()->create(['name' => 'John Two']);
+        Post::factory()->create(['title' => 'Post1', 'body' => 'Post Body 1', 'author_id' => $userOne->id]);
+        Post::factory()->create(['title' => 'Post2', 'body' => 'Post Body 2', 'author_id' => $userOne->id]);
+        Post::factory()->create(['title' => 'Post3', 'body' => 'Post Body 3', 'author_id' => $userTwo->id]);
+
+        $this->get('exports/posts?author_id='.$userOne->id)->assertOk();
+
+        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
+        Excel::assertDownloaded($fileName, function (Export $export) {
+            // Assert that the correct export is downloaded.
+            $data = $export->collection()->toArray();
+            $count = count($data) == 2;
+            $title = $data[0]['title'] === 'Post2' && $data[1]['title'] === 'Post1'; // default sort body desc
+            $authorName = $data[0]['author_name'] === 'John Doe' && $data[1]['author_name'] === 'John Doe';
+
+            return $count && $title && $authorName;
+        });
     }
 }
