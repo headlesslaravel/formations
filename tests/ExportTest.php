@@ -26,7 +26,7 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_relations_with_default_export_and_relations()
     {
-        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02', 'America/New_York'));
+        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02'));
 
         Excel::fake();
 
@@ -38,7 +38,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts')->assertOk();
 
-        Excel::assertDownloaded('posts_2022-01-29_01:30:02.xlsx', function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -51,7 +51,7 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_relations_with_export_columns()
     {
-        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02', 'America/New_York'));
+        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02'));
 
         Excel::fake();
 
@@ -63,7 +63,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts?columns=id,title')->assertOk();
 
-        Excel::assertDownloaded('posts_2022-01-29_01:30:02.xlsx', function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -83,7 +83,7 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_filters()
     {
-        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02', 'America/New_York'));
+        $this->travelTo(Carbon::create('2022', '01', '29', '08', '30', '02'));
 
         Excel::fake();
 
@@ -97,7 +97,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts?author_id='.$userOne->id)->assertOk();
 
-        Excel::assertDownloaded('posts_2022-01-29_01:30:02.xlsx', function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
