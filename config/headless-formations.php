@@ -12,18 +12,19 @@ return [
     */
     'mode' => 'blade',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Export settings
+    |--------------------------------------------------------------------------
+    | Customize the following options when using formation exports.
+    | Things like the date format and file format used for the
+    | file download which can be overridden with exportAs()
+    |
+    */
     'exports' => [
 
-        'date_format' => 'Ymd_his',
+        'date_format' => 'Y-m-d_h:i:s',
 
-        /*
-        |--------------------------------------------------------------------------
-        | Default file export format
-        |--------------------------------------------------------------------------
-        | Check here for possible values https://docs.laravel-excel.com/3.1/exports/export-formats.html
-        |
-        */
         'file_format' => 'xlsx',
-
     ],
 ];

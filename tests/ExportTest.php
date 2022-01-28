@@ -6,6 +6,7 @@ use HeadlessLaravel\Formations\Exports\Export;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -25,6 +26,8 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_relations_with_default_export_and_relations()
     {
+        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02'));
+
         Excel::fake();
 
         $this->authUser();
@@ -35,8 +38,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts')->assertOk();
 
-        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
-        Excel::assertDownloaded($fileName, function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -49,6 +51,8 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_relations_with_export_columns()
     {
+        $this->travelTo(Carbon::create('2022', '01', '29', '8', '30', '02'));
+
         Excel::fake();
 
         $this->authUser();
@@ -59,8 +63,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts?columns=id,title')->assertOk();
 
-        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
-        Excel::assertDownloaded($fileName, function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
@@ -72,18 +75,16 @@ class ExportTest extends TestCase
 
     public function test_exporting_with_invalid_export_columns()
     {
-        Excel::fake();
-
         $this->authUser();
 
-        $response = $this->get('exports/posts?columns=dummy_column');
-        $response->assertUnprocessable();
-
-        $response->assertJson(['errors' => ['columns' => ['Invalid Column Name Passed']]]);
+        $this->get('exports/posts?columns=title,invalid_1,invalid_2')
+            ->assertInvalid(['columns' => 'Invalid columns: invalid_1, invalid_2']);
     }
 
     public function test_exporting_with_filters()
     {
+        $this->travelTo(Carbon::create('2022', '01', '29', '08', '30', '02'));
+
         Excel::fake();
 
         $this->authUser();
@@ -96,8 +97,7 @@ class ExportTest extends TestCase
 
         $this->get('exports/posts?author_id='.$userOne->id)->assertOk();
 
-        $fileName = 'posts'.now()->format('Ymd_His').'.xlsx';
-        Excel::assertDownloaded($fileName, function (Export $export) {
+        Excel::assertDownloaded('posts_2022-01-29_08:30:02.xlsx', function (Export $export) {
             // Assert that the correct export is downloaded.
             $data = $export->collection()->toArray();
             $count = count($data) == 2;
