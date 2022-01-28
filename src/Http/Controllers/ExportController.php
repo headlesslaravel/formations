@@ -14,27 +14,17 @@ class ExportController
 {
     public function create(Request $request)
     {
-        /** @var Formation $formation */
         $formation = app(Route::current()->parameter('formation'));
 
-        $validator = Validator::make($request->all(), [
-            'columns' => ['nullable', new ValidColumns($formation->export())],
-        ]);
+        $request->validate(['columns' => ['nullable', new ValidColumns($formation->export())]]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
-        }
         $exportable = $formation->exportable();
-        $requestedColumns = $request->get('columns');
 
-        if (!empty($requestedColumns)) {
-            $requestedColumns = explode(',', $requestedColumns);
-
+        if ($columns = $request->get('columns')) {
+            $columns = explode(',',$columns);
             $exportable->fields = collect($formation->export())
-                ->filter(function (Field $field) use ($requestedColumns) {
-                    return in_array($field->key, $requestedColumns);
+                ->filter(function (Field $field) use ($columns) {
+                    return in_array($field->key, $columns);
                 })->toArray();
         }
 

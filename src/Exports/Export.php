@@ -13,10 +13,8 @@ class Export implements FromCollection, WithHeadings
 {
     use Exportable;
 
-    /** @var Builder */
     public $builder;
 
-    /** @var Field[] */
     public $fields = [];
 
     /**
@@ -26,6 +24,7 @@ class Export implements FromCollection, WithHeadings
     public function __construct($builder, $fields)
     {
         $this->builder = $builder;
+
         $this->fields = $fields;
     }
 
@@ -35,8 +34,10 @@ class Export implements FromCollection, WithHeadings
 
         $records = $this->builder->with($eagerLoadings)->get();
         $result = collect([]);
+
         foreach ($records as $record) {
             $resultRecord = [];
+
             foreach ($this->fields as $field) {
                 if ($field->isRelation()) {
                     $resultRecord[$field->key] = $record->{$field->internal}->{$field->relationColumn};
@@ -55,6 +56,7 @@ class Export implements FromCollection, WithHeadings
         $relations = collect($this->fields)->filter->isRelation();
 
         $relationNames = [];
+
         foreach ($relations as $relation) {
             $relationNames[] = $relation->internal;
         }

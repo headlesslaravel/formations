@@ -7,8 +7,9 @@ use Illuminate\Contracts\Validation\Rule;
 
 class ValidColumns implements Rule
 {
-    /** @var Field[] */
     public $fields = [];
+
+    public $invalid = [];
 
     /**
      * Create a new rule instance.
@@ -34,13 +35,14 @@ class ValidColumns implements Rule
     {
         $columns = explode(',', $value);
         $fieldNames = collect($this->fields)->pluck('key')->toArray();
+
         foreach ($columns as $column) {
             if (!in_array($column, $fieldNames)) {
-                return false;
+                $this->invalid[] = $column;
             }
         }
 
-        return true;
+        return count($this->invalid) === 0;
     }
 
     /**
@@ -50,6 +52,6 @@ class ValidColumns implements Rule
      */
     public function message()
     {
-        return 'Invalid Column Name Passed';
+        return 'Invalid columns: ' . implode(', ', $this->invalid);
     }
 }
