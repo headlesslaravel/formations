@@ -618,9 +618,9 @@ class Formation
     public function exportAs(): string
     {
         $fileName = $this->resourceName();
-        $fileName = $fileName->append(now()->format(config('formations.exports.date_format')));
+        $fileName = $fileName->append(now()->format(config('headless-formations.exports.date_format')));
         $fileName = $fileName->append('.');
-        $fileName = $fileName->append(config('formations.exports.file_format'));
+        $fileName = $fileName->append(config('headless-formations.exports.file_format'));
 
         return (string)$fileName;
     }
