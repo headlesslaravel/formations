@@ -18,7 +18,7 @@ class ResourceControllerTest extends TestCase
 
         $this->authUser();
 
-        config()->set('formations.mode', 'api');
+        config()->set('headless-formations.mode', 'api');
     }
 
     public function test_resource_singleton()

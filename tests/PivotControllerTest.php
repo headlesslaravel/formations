@@ -16,7 +16,7 @@ class PivotControllerTest extends TestCase
 
         $this->authUser();
 
-        config()->set('formations.mode', 'api');
+        config()->set('headless-formations.mode', 'api');
     }
 
     public function test_pivot_count()
