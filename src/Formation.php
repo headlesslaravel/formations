@@ -529,6 +529,7 @@ class Formation
 
         return $meta;
     }
+
     /**
      * Define the fields all views.
      *
@@ -543,7 +544,6 @@ class Formation
             Field::make('Updated', 'updated_at'),
         ];
     }
-
 
     /**
      * Define the fields for indexing.
@@ -584,6 +584,7 @@ class Formation
     {
         return $this->form();
     }
+
     /**
      * Define the fields for forms.
      *
