@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Rules;
 
-use HeadlessLaravel\Formations\Field;
 use Illuminate\Contracts\Validation\Rule;
 
 class ValidColumns implements Rule
@@ -52,6 +51,6 @@ class ValidColumns implements Rule
      */
     public function message()
     {
-        return 'Invalid columns: ' . implode(', ', $this->invalid);
+        return 'Invalid columns: '.implode(', ', $this->invalid);
     }
 }
