@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Exceptions\PageExceededException;
+use HeadlessLaravel\Formations\Exports\Export;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
 use HeadlessLaravel\Formations\Http\Controllers\PivotController;
 use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
@@ -138,6 +139,13 @@ class Formation
      * @var string
      */
     public $import = Import::class;
+
+    /**
+     * The default export class.
+     *
+     * @var string
+     */
+    public $export = Export::class;
 
     /**
      * The results.
@@ -602,11 +610,33 @@ class Formation
         return [];
     }
 
+    public function export(): array
+    {
+        return [];
+    }
+
+    public function exportAs(): string
+    {
+        $fileName = $this->resourceName();
+        $fileName = $fileName->append(now()->format(config('headless-formations.exports.date_format')));
+        $fileName = $fileName->append('.');
+        $fileName = $fileName->append(config('headless-formations.exports.file_format'));
+
+        return (string) $fileName;
+    }
+
     public function importable()
     {
         $import = $this->import;
 
         return new $import($this->model, $this->import());
+    }
+
+    public function exportable()
+    {
+        $export = $this->export;
+
+        return new $export($this->builder(), $this->export());
     }
 
     public function where(...$arguments): Formation
