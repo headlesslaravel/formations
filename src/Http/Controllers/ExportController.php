@@ -18,12 +18,12 @@ class ExportController
         $formation = app(Route::current()->parameter('formation'));
 
         $validator = Validator::make($request->all(), [
-            'columns' => ['nullable', new ValidColumns($formation->export())]
+            'columns' => ['nullable', new ValidColumns($formation->export())],
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         $exportable = $formation->exportable();

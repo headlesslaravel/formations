@@ -622,7 +622,7 @@ class Formation
         $fileName = $fileName->append('.');
         $fileName = $fileName->append(config('headless-formations.exports.file_format'));
 
-        return (string)$fileName;
+        return (string) $fileName;
     }
 
     public function importable()

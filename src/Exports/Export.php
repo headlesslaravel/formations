@@ -21,7 +21,7 @@ class Export implements FromCollection, WithHeadings
 
     /**
      * @param Builder $builder
-     * @param array $fields
+     * @param array   $fields
      */
     public function __construct($builder, $fields)
     {

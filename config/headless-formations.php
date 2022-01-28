@@ -25,5 +25,5 @@ return [
         */
         'file_format' => 'xlsx',
 
-    ]
+    ],
 ];
