@@ -69,10 +69,10 @@ class Post extends Model
 
     public function imported($row)
     {
-        if(isset($row['tags'])) {
+        if (isset($row['tags'])) {
             $tags = [];
 
-            foreach($row['tags'] as $tag) {
+            foreach ($row['tags'] as $tag) {
                 $tags[] = Tag::firstOrCreate(['title' => $tag])->id;
             }
 

@@ -111,9 +111,9 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
             foreach ($models as $model) {
                 $replacements[] = [
-                    'search_key' => $relation->key, // author
-                    'search_value' => $model->$display, // frank
-                    'replace_key' => $relationship->getForeignKeyName(), // author_id
+                    'search_key'    => $relation->key, // author
+                    'search_value'  => $model->$display, // frank
+                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1
                 ];
             }
@@ -152,7 +152,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
                     if (!is_null($relation->relationColumn)) {
                         $pattern .= ".{$relation->relationColumn}/";
                     } else {
-                        $pattern .= "/";
+                        $pattern .= '/';
                     }
                     if (preg_match($pattern, $key, $matches)) {
                         if (!isset($rowData[$relation->key])) {

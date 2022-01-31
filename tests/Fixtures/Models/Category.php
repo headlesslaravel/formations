@@ -21,8 +21,8 @@ class Category extends Model
 
     public function imported($row)
     {
-        if(isset($row['posts'])) {
-            foreach($row['posts'] as $post) {
+        if (isset($row['posts'])) {
+            foreach ($row['posts'] as $post) {
                 $post['category_id'] = $this->id;
                 Post::create($post);
             }
