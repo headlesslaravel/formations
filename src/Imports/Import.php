@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Imports;
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Mail\ImportSuccessMail;
 use Illuminate\Support\Collection;
@@ -41,28 +42,16 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
             $model = new $this->model();
             $model->fill($this->values($row));
             $model->save();
+            if (method_exists($model, 'imported')) {
+                $model->imported($row);
+            }
         }
     }
 
     public function prepare(Collection $rows): Collection
     {
-        $replacements = $this->getReplacements($rows);
-
-        foreach ($replacements as $replacement) {
-            $rows->where(
-                $replacement['search_key'], // author
-                $replacement['search_value'] // frank
-            )->each(function ($row) use ($replacement) {
-                unset($row[$replacement['search_key']]); // author
-                $row[$replacement['replace_key']] = $replacement['replace_value']; // ['author_id'] = 1
-                // change author to author_id in fields for validation keys in value()
-                foreach ($this->fields as $field) {
-                    if ($field->key == $replacement['search_key']) {
-                        $field->key = $replacement['replace_key'];
-                    }
-                }
-            });
-        }
+        $rows = $this->replaceSingleRelations($rows);
+        $rows = $this->replaceMultipleRelations($rows);
 
         return $rows;
     }
@@ -71,8 +60,13 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
     {
         $rules = [];
 
+        /** @var Field $field */
         foreach ($this->fields as $field) {
-            $rules["*.$field->key"] = $field->rules;
+            if ($field->isMultiple()) {
+                $rules["$field->key.*.$field->relationColumn"] = $field->rules;
+            } else {
+                $rules["*.$field->key"] = $field->rules;
+            }
         }
 
         return $rules;
@@ -80,15 +74,18 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public function values($row): array
     {
-        $keys = collect($this->fields)->pluck('key');
+        $keys = collect($this->fields)->filter(function (Field $field) {
+            return !$field->isMultiple();
+        })->pluck('key');
 
         return $row->only($keys)->toArray();
     }
 
-    public function getReplacements(Collection $rows): array
+    public function replaceSingleRelations(Collection $rows): Collection
     {
         $replacements = [];
 
+        /** @var Field[] $relations */
         $relations = collect($this->fields)->filter->isRelation();
 
         // author, category, etc
@@ -110,15 +107,69 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
             foreach ($models as $model) {
                 $replacements[] = [
-                    'search_key'    => $relation->key, // author
-                    'search_value'  => $model->$display, // frank
-                    'replace_key'   => $relationship->getForeignKeyName(), // author_id
+                    'search_key' => $relation->key, // author
+                    'search_value' => $model->$display, // frank
+                    'replace_key' => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1
                 ];
             }
         }
 
-        return $replacements;
+        foreach ($replacements as $replacement) {
+            $rows->where(
+                $replacement['search_key'], // author
+                $replacement['search_value'] // frank
+            )->each(function ($row) use ($replacement) {
+                unset($row[$replacement['search_key']]); // author
+                $row[$replacement['replace_key']] = $replacement['replace_value']; // ['author_id'] = 1
+                // change author to author_id in fields for validation keys in value()
+                foreach ($this->fields as $field) {
+                    if ($field->key == $replacement['search_key']) {
+                        $field->key = $replacement['replace_key'];
+                    }
+                }
+            });
+        }
+
+        return $rows;
+    }
+
+    public function replaceMultipleRelations(Collection $rows): Collection
+    {
+        /** @var Field[] $multipleRelations */
+        $multipleRelations = collect($this->fields)->filter->isMultiple();
+
+        $replacedRows = collect([]);
+        $rows->each(function (Collection &$row) use ($multipleRelations, $replacedRows) {
+            $rowData = $row->toArray();
+            foreach ($multipleRelations as $relation) {
+                foreach ($rowData as $key => $value) {
+                    $pattern = "/{$relation->key}.(\d+)";
+                    if (!is_null($relation->relationColumn)) {
+                        $pattern .= ".{$relation->relationColumn}/";
+                    } else {
+                        $pattern .= "/";
+                    }
+                    if (preg_match($pattern, $key, $matches)) {
+                        if (!isset($rowData[$relation->key])) {
+                            $rowData[$relation->key] = [];
+                        }
+                        if (count($matches) > 0) {
+                            if (is_null($relation->relationColumn)) {
+                                $rowData[$relation->key][intval($matches[1]) - 1] = $value;
+                                unset($rowData[$relation->key.'.'.$matches[1]]);
+                            } else {
+                                $rowData[$relation->key][intval($matches[1]) - 1][$relation->relationColumn] = $value;
+                                unset($rowData[$relation->key.'.'.$matches[1].'.'.$relation->relationColumn]);
+                            }
+                        }
+                    }
+                }
+            }
+            $replacedRows->add(collect($rowData));
+        });
+
+        return $replacedRows;
     }
 
     public function confirmation()

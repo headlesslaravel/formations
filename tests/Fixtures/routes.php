@@ -1,6 +1,7 @@
 <?php
 
 use HeadlessLaravel\Formations\Tests\Fixtures\AuthorFormation;
+use HeadlessLaravel\Formations\Tests\Fixtures\CategoryFormation;
 use HeadlessLaravel\Formations\Tests\Fixtures\PostFormation;
 use HeadlessLaravel\Formations\Tests\Fixtures\TagFormation;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::formation(TagFormation::class)
 
 Route::formation(PostFormation::class)
     ->resource('posts')
+    ->asImport();
+
+Route::formation(CategoryFormation::class)
+    ->resource('categories')
     ->asImport();
 
 Route::formation(PostFormation::class)

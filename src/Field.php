@@ -16,11 +16,21 @@ class Field
 
     public $relationColumn;
 
+    public $multiple = false;
+
     public function init($key, $internal = null): self
     {
         if (!is_null($internal) && str_contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
             $internal = Str::before($internal, '.');
+        } elseif (is_null($internal) && Str::contains($key, '*')) {
+            $this->multiple = true;
+            $this->relationColumn = Str::afterLast($key, '.');
+            if ($this->relationColumn === '*') {
+                $this->relationColumn = null;
+            }
+            $internal = Str::before($key, '.');
+            $key = Str::before($key, '.');
         } elseif (is_null($internal) && str_contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
             $internal = Str::before($key, '.');
@@ -59,6 +69,11 @@ class Field
     public function isRelation(): bool
     {
         return !is_null($this->relationColumn);
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->multiple;
     }
 
     public function toArray()
