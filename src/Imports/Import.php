@@ -63,7 +63,11 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         /** @var Field $field */
         foreach ($this->fields as $field) {
             if ($field->isMultiple()) {
-                $rules["$field->key.*.$field->relationColumn"] = $field->rules;
+                if (is_null($field->relationColumn)) {
+                    $rules["*.$field->key.*"] = $field->rules;
+                } else {
+                    $rules["*.$field->key.*.$field->relationColumn"] = $field->rules;
+                }
             } else {
                 $rules["*.$field->key"] = $field->rules;
             }
