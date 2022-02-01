@@ -206,6 +206,5 @@ class ImportTest extends TestCase
         });
 
         Mail::assertNotSent(ImportSuccessMail::class);
-
     }
 }

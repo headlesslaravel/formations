@@ -93,7 +93,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
         /** @var Field[] $relations */
         $relations = collect($this->fields)->filter(function (Field $field) {
-          return $field->isRelation() && !$field->isMultiple();
+            return $field->isRelation() && !$field->isMultiple();
         });
 
         // author, category, etc
