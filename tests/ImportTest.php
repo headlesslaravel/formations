@@ -171,7 +171,8 @@ class ImportTest extends TestCase
 
     public function test_import_of_fail_of_invalid_data_for_multiple_relationships_with_single_field()
     {
-        $this->markTestSkipped('In Progress');
+        Mail::fake();
+
         User::factory()->create(['name' => 'Susan']);
         User::factory()->create(['name' => 'Frank']);
         Category::factory()->create(['title' => 'Tech']);
@@ -185,15 +186,26 @@ class ImportTest extends TestCase
         $posts = Post::all();
         $tags = Tag::all();
 
-        $this->assertCount(2, $posts);
-        $this->assertCount(4, $tags);
+        $this->assertCount(0, $posts);
+        $this->assertCount(0, $tags);
 
-        $this->assertEquals('title 1', $posts[0]->title);
-        $this->assertEquals('laravel', $posts[0]->tags[0]->title);
-        $this->assertEquals('vue', $posts[0]->tags[1]->title);
+        Mail::assertSent(function (ImportErrorsMail $mail) {
+            $mail->build();
+            $data = $mail->rawAttachments[0]['data'];
+            $firstRow = '"title 1","the body","Susan","Tech","[""n"",""vue""]","The tags.0 must be at least 2 characters."';
+            $secondRow = '"title 2","the body","Frank","Tech","[""ruby"",""n""]","The tags.1 must be at least 2 characters."';
 
-        $this->assertEquals('title 2', $posts[1]->title);
-        $this->assertEquals('ruby', $posts[1]->tags[0]->title);
-        $this->assertEquals('react', $posts[1]->tags[1]->title);
+            return Str::startsWith($data, '"title","body","author","category","tags","errors"')
+                && Str::startsWith(Str::after($data, '"title","body","author","category","tags","errors"'."\n"), $firstRow)
+                && Str::startsWith(Str::after($data, $firstRow."\n"), $secondRow)
+                && count($mail->errors) == 2
+                && $mail->errors[0]['title'] == 'title 1'
+                && $mail->errors[0]['errors'] == 'The tags.0 must be at least 2 characters.'
+                && $mail->errors[1]['title'] == 'title 2'
+                && $mail->errors[1]['errors'] == 'The tags.1 must be at least 2 characters.';
+        });
+
+        Mail::assertNotSent(ImportSuccessMail::class);
+
     }
 }

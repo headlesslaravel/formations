@@ -33,6 +33,11 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         $this->fields = $fields;
     }
 
+    public function prepareForValidation($data, $index)
+    {
+        return $this->replaceMultipleRelations($data);
+    }
+
     public function collection(Collection $rows)
     {
         $this->totalRows = $rows->count();
@@ -50,10 +55,7 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
 
     public function prepare(Collection $rows): Collection
     {
-        $rows = $this->replaceSingleRelations($rows);
-        $rows = $this->replaceMultipleRelations($rows);
-
-        return $rows;
+        return $this->replaceSingleRelations($rows);
     }
 
     public function rules(): array
@@ -90,7 +92,9 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         $replacements = [];
 
         /** @var Field[] $relations */
-        $relations = collect($this->fields)->filter->isRelation();
+        $relations = collect($this->fields)->filter(function (Field $field) {
+          return $field->isRelation() && !$field->isMultiple();
+        });
 
         // author, category, etc
         foreach ($relations as $relation) {
@@ -138,42 +142,37 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
         return $rows;
     }
 
-    public function replaceMultipleRelations(Collection $rows): Collection
+    public function replaceMultipleRelations(array $row): array
     {
         /** @var Field[] $multipleRelations */
         $multipleRelations = collect($this->fields)->filter->isMultiple();
 
-        $replacedRows = collect([]);
-        $rows->each(function (Collection &$row) use ($multipleRelations, $replacedRows) {
-            $rowData = $row->toArray();
-            foreach ($multipleRelations as $relation) {
-                foreach ($rowData as $key => $value) {
-                    $pattern = "/{$relation->key}.(\d+)";
-                    if (!is_null($relation->relationColumn)) {
-                        $pattern .= ".{$relation->relationColumn}/";
-                    } else {
-                        $pattern .= '/';
+        foreach ($multipleRelations as $relation) {
+            foreach ($row as $key => $value) {
+                $pattern = "/{$relation->key}.(\d+)";
+                if (!is_null($relation->relationColumn)) {
+                    $pattern .= ".{$relation->relationColumn}/";
+                } else {
+                    $pattern .= '/';
+                }
+                if (preg_match($pattern, $key, $matches)) {
+                    if (!isset($row[$relation->key])) {
+                        $row[$relation->key] = [];
                     }
-                    if (preg_match($pattern, $key, $matches)) {
-                        if (!isset($rowData[$relation->key])) {
-                            $rowData[$relation->key] = [];
-                        }
-                        if (count($matches) > 0) {
-                            if (is_null($relation->relationColumn)) {
-                                $rowData[$relation->key][intval($matches[1]) - 1] = $value;
-                                unset($rowData[$relation->key.'.'.$matches[1]]);
-                            } else {
-                                $rowData[$relation->key][intval($matches[1]) - 1][$relation->relationColumn] = $value;
-                                unset($rowData[$relation->key.'.'.$matches[1].'.'.$relation->relationColumn]);
-                            }
+                    if (count($matches) > 0) {
+                        if (is_null($relation->relationColumn)) {
+                            $row[$relation->key][intval($matches[1]) - 1] = $value;
+                            unset($row[$relation->key.'.'.$matches[1]]);
+                        } else {
+                            $row[$relation->key][intval($matches[1]) - 1][$relation->relationColumn] = $value;
+                            unset($row[$relation->key.'.'.$matches[1].'.'.$relation->relationColumn]);
                         }
                     }
                 }
             }
-            $replacedRows->add(collect($rowData));
-        });
+        }
 
-        return $replacedRows;
+        return $row;
     }
 
     public function confirmation()
