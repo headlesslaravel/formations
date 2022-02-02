@@ -24,7 +24,7 @@ class SliceController extends Controller
             }
 
             if (count($currentSlice->queries)) {
-                $currentFormation->where(function($query) use ($currentSlice) {
+                $currentFormation->where(function ($query) use ($currentSlice) {
                     $currentSlice->applyQuery($query);
                 });
             }
