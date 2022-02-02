@@ -4,6 +4,7 @@ namespace HeadlessLaravel\Formations;
 
 use HeadlessLaravel\Formations\Http\Controllers\ExportController;
 use HeadlessLaravel\Formations\Http\Controllers\ImportController;
+use HeadlessLaravel\Formations\Http\Controllers\SliceController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Str;
 
@@ -95,12 +96,12 @@ class Routes
     public function make()
     {
         return array_map(function ($endpoint) {
-            return array_merge($endpoint, [
+            return array_merge([
                 'with-trashed' => $this->withTrashed($endpoint['type']),
                 'action'       => $this->makeAction($endpoint['type']),
                 'name'         => $this->makeName($endpoint['type']),
                 'key'          => $this->makeKey($endpoint['type']),
-            ]);
+            ], $endpoint);
         }, $this->endpoints());
     }
 
@@ -219,11 +220,37 @@ class Routes
         return $endpoints;
     }
 
+    protected function sliceEndpoints(): array
+    {
+        $slices = app($this->formation)->slices();
+
+        if (!count($slices)) {
+            return [];
+        }
+
+        $routes = [];
+
+        /** @var Slice $slice */
+        foreach ($slices as $slice) {
+            $routes[] = [
+                'type' => 'index',
+                'verb' => ['GET', 'HEAD'],
+                'action' => [SliceController::class, 'index'],
+                'name' => "$this->resource.slices.$slice->internal",
+                'endpoint' => "$this->resource/{$slice->internal}",
+                'key' => "$this->resource.slices.$slice->internal",
+                'with-trashed' => $this->withTrashed('index'),
+            ];
+        }
+
+        return $routes;
+    }
+
     private function resourceEndpoints(): array
     {
         $key = $this->resourceRouteKey();
 
-        return [
+        return array_merge($this->sliceEndpoints(), [
             ['type' => 'index', 'verb' => ['GET', 'HEAD'], 'endpoint' => $this->resource],
             ['type' => 'create', 'verb' => ['GET', 'HEAD'], 'endpoint' => "$this->resource/new"],
             ['type' => 'store', 'verb' => 'POST', 'endpoint' => "$this->resource/new"],
@@ -233,7 +260,7 @@ class Routes
             ['type' => 'destroy', 'verb' => 'DELETE', 'endpoint' => "$this->resource/{{$key}}"],
             ['type' => 'restore', 'verb' => 'PUT', 'endpoint' => "$this->resource/{{$key}}/restore"],
             ['type' => 'force-delete', 'verb' => 'DELETE', 'endpoint' => "$this->resource/{{$key}}/force-delete"],
-        ];
+        ]);
     }
 
     public function nestedEndpoints(): array

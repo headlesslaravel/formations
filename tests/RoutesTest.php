@@ -24,7 +24,7 @@ class RoutesTest extends TestCase
         $routes = Route::getRoutes();
         $routes->refreshNameLookups();
 
-        $this->assertCount(($routesFilesRoutes + 4), $routes);
+        $this->assertCount(($routesFilesRoutes + 4 + 4), $routes); // 4 Slice Routes
         $this->assertNotNull($routes->getByName('articles.index'));
         $this->assertNotNull($routes->getByName('authors.articles.index'));
         $this->assertNotNull($routes->getByName('articles.tags.index'));
