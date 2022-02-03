@@ -239,7 +239,7 @@ class Routes
                 'name' => "$this->resource.slices.$slice->internal",
                 'endpoint' => "$this->resource/{$slice->internal}",
                 'key' => "$this->resource.slices.$slice->internal",
-                'with-trashed' => $this->withTrashed('index'),
+                'with-trashed' => false,
             ];
         }
 

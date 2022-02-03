@@ -135,8 +135,8 @@ class PostFormation extends Formation
                 ->query(function ($query) {
                     $query->where('author_id', auth()->id());
                 }),
-            Slice::make('Active Posts Sort Body Desc')
-                ->filter(['active' => true, 'sort-desc' => 'body']),
+            Slice::make('Active Posts Sort Title Desc')
+                ->filter(['active' => true, 'sort-desc' => 'title']),
         ];
     }
 

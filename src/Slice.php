@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
 class Slice
@@ -33,6 +34,13 @@ class Slice
      * @var array
      */
     public $queries = [];
+
+    /**
+     * The formation object.
+     *
+     * @var Formation
+     */
+    public $formation;
 
     /**
      * Make a filter instance.
@@ -96,5 +104,29 @@ class Slice
         }
 
         return $query;
+    }
+
+    public function apply()
+    {
+        if (count($this->filters)) {
+            $input = Request::all();
+            $mergedInput = array_merge($this->filters, $input);
+            Request::replace($mergedInput);
+        }
+
+        if (count($this->queries)) {
+            $this->formation->where(function($query) {
+                $this->applyQuery($query);
+            });
+        }
+
+        return $this;
+    }
+
+    public function setFormation($formation)
+    {
+        $this->formation = $formation;
+
+        return $this;
     }
 }

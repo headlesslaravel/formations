@@ -34,7 +34,7 @@ class SliceTest extends TestCase
         $this->assertEquals('active-posts', $slices[0]['link']);
         $this->assertEquals('inactive-posts', $slices[1]['link']);
         $this->assertEquals('my-posts', $slices[2]['link']);
-        $this->assertEquals('active-posts-sort-body-desc', $slices[3]['link']);
+        $this->assertEquals('active-posts-sort-title-desc', $slices[3]['link']);
     }
 
     public function test_formation_slice_using_current_auth_user_as_post_author()
@@ -55,14 +55,14 @@ class SliceTest extends TestCase
         config()->set('headless-formations.mode', 'api');
         $this->authUser();
 
-        Post::factory()->create(['active' => true, 'body' => 'body 1']);
-        Post::factory()->create(['active' => true, 'body' => 'body 2']);
+        Post::factory()->create(['active' => true, 'title' => 'title 1']);
+        Post::factory()->create(['active' => true, 'title' => 'title 2']);
         Post::factory(2)->create(['active' => false]);
 
-        $this->get('/posts/active-posts-sort-body-desc')
+        $this->get('/posts/active-posts-sort-title-desc')
             ->assertJsonCount(2, 'posts')
-            ->assertJsonPath('posts.0.body', 'body 2')
-            ->assertJsonPath('posts.1.body', 'body 1');
+            ->assertJsonPath('posts.0.title', 'title 2')
+            ->assertJsonPath('posts.1.title', 'title 1');
     }
 
     public function test_formation_slice_using_sort_desc_and_post_active_filter_with_sort_in_url()
@@ -74,7 +74,7 @@ class SliceTest extends TestCase
         Post::factory()->create(['active' => true, 'title' => 'title 2', 'body' => 'body 2']);
         Post::factory(2)->create(['active' => false]);
 
-        $this->get('/posts/active-posts-sort-body-desc?sort=title')
+        $this->get('/posts/active-posts-sort-title-desc?sort=title')
             ->assertJsonCount(2, 'posts')
             ->assertJsonPath('posts.0.title', 'title 1')
             ->assertJsonPath('posts.1.title', 'title 2');

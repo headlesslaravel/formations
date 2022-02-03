@@ -665,7 +665,7 @@ class Formation
         foreach ($slices as $slice) {
             $routeName = $this->resourceName() . '.slices.' . $slice->internal;
             if ($routeName === $currentRouteName) {
-                return $slice;
+                return $slice->setFormation($this);
             }
         }
 
