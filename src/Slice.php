@@ -117,7 +117,7 @@ class Slice
         }
 
         if (count($this->queries)) {
-            $this->formation->where(function($query) {
+            $this->formation->where(function ($query) {
                 $this->applyQuery($query);
             });
         }
