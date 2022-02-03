@@ -233,12 +233,12 @@ class Routes
         /** @var Slice $slice */
         foreach ($slices as $slice) {
             $routes[] = [
-                'type' => 'index',
-                'verb' => ['GET', 'HEAD'],
-                'action' => [SliceController::class, 'index'],
-                'name' => "$this->resource.slices.$slice->internal",
-                'endpoint' => "$this->resource/{$slice->internal}",
-                'key' => "$this->resource.slices.$slice->internal",
+                'type'         => 'index',
+                'verb'         => ['GET', 'HEAD'],
+                'action'       => [SliceController::class, 'index'],
+                'name'         => "$this->resource.slices.$slice->internal",
+                'endpoint'     => "$this->resource/{$slice->internal}",
+                'key'          => "$this->resource.slices.$slice->internal",
                 'with-trashed' => false,
             ];
         }

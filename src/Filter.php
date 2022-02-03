@@ -989,6 +989,7 @@ class Filter
         if (is_bool($value)) {
             $value = $value ? 'true' : 'false';
         }
+
         return ['false' => 0, 'true' => 1][$value];
     }
 

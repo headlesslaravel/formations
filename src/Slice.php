@@ -77,6 +77,7 @@ class Slice
 
     /**
      * @param array $filter
+     *
      * @return $this
      */
     public function filter($filter): self
@@ -88,6 +89,7 @@ class Slice
 
     /**
      * @param \Closure $callback
+     *
      * @return $this
      */
     public function query($callback): self

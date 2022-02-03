@@ -519,7 +519,7 @@ class Formation
             $meta['slices'] = collect($this->slices())->map(function (Slice $slice) {
                 return array_merge([
                     'display'   => $slice->key,
-                    'link' => $slice->internal,
+                    'link'      => $slice->internal,
                 ], $slice->filters);
             })->toArray();
         }
@@ -663,7 +663,7 @@ class Formation
 
         /** @var Slice $slice */
         foreach ($slices as $slice) {
-            $routeName = $this->resourceName() . '.slices.' . $slice->internal;
+            $routeName = $this->resourceName().'.slices.'.$slice->internal;
             if ($routeName === $currentRouteName) {
                 return $slice->setFormation($this);
             }
