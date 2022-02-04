@@ -541,6 +541,37 @@ class Formation
     }
 
     /**
+     * @return Action|null
+     */
+    public function currentAction()
+    {
+        $currentRouteName = Request::route()->getName();
+
+        $actions = $this->actions();
+
+        /** @var Action $action */
+        foreach ($actions as $action) {
+            $actionRouteName = $this->resourceName().'.actions.'.$action->key;
+            $routeNames = [$actionRouteName.'.store', $actionRouteName.'.show'];
+            if (in_array($currentRouteName, $routeNames)) {
+                return $action->setFormation($this);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Define actions.
+     *
+     * @return array
+     */
+    public function actions(): array
+    {
+        return [];
+    }
+
+    /**
      * Define the include columns.
      *
      * @return array

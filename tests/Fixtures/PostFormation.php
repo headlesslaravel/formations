@@ -5,9 +5,12 @@ namespace HeadlessLaravel\Formations\Tests\Fixtures;
 use HeadlessLaravel\Finders\Filter;
 use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
+use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
+use HeadlessLaravel\Formations\Tests\Fixtures\Events\PostEvent;
+use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 
 class PostFormation extends Formation
@@ -136,6 +139,18 @@ class PostFormation extends Formation
                     'active'    => 'true',
                     'sort-desc' => 'title',
                 ]),
+        ];
+    }
+
+    public function actions(): array
+    {
+        return [
+            Action::make('set-status')
+                ->job(SetStatus::class)
+                ->can('setStatus', Post::class)
+                ->fields(['status' => 'active'])
+                ->after(PostEvent::class)
+                ->afterEach(PostEvent::class),
         ];
     }
 
