@@ -2,8 +2,8 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Http\Resources\Resource;
 use HeadlessLaravel\Formations\Manager;
+use HeadlessLaravel\Formations\Slice;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -130,6 +130,14 @@ class Controller extends BaseController
     public function formation()
     {
         return app($this->current['formation']);
+    }
+
+    /**
+     * @return Slice|null
+     */
+    public function slice()
+    {
+        return app($this->current['formation'])->currentSlice();
     }
 
     public function formationWithPivot()

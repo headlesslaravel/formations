@@ -7,6 +7,7 @@ use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Formation;
+use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 
 class PostFormation extends Formation
@@ -129,6 +130,22 @@ class PostFormation extends Formation
             Filter::radius(),
 
             Filter::bounds(),
+        ];
+    }
+
+    public function slices(): array
+    {
+        return [
+            Slice::make('Active Posts', 'active-posts')
+                ->filter(['active' => true]),
+            Slice::make('InActive Posts')
+                ->filter(['active' => false]),
+            Slice::make('My Posts', 'my-posts')
+                ->query(function ($query) {
+                    $query->where('author_id', auth()->id());
+                }),
+            Slice::make('Active Posts Sort Title Desc')
+                ->filter(['active' => true, 'sort-desc' => 'title']),
         ];
     }
 

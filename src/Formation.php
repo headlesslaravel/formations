@@ -363,6 +363,13 @@ class Formation
                     'props'     => $filter->props,
                 ];
             })->toArray();
+
+            $meta['slices'] = collect($this->slices())->map(function (Slice $slice) {
+                return array_merge([
+                    'display'   => $slice->key,
+                    'link'      => $slice->internal,
+                ], $slice->filters);
+            })->toArray();
         }
 
         if ($type === 'create' || $type === 'edit') {
@@ -501,6 +508,36 @@ class Formation
     public function filters(): array
     {
         return [];
+    }
+
+    /**
+     * Define the slices.
+     *
+     * @return array
+     */
+    public function slices(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return Slice|null
+     */
+    public function currentSlice()
+    {
+        $currentRouteName = Request::route()->getName();
+
+        $slices = $this->slices();
+
+        /** @var Slice $slice */
+        foreach ($slices as $slice) {
+            $routeName = $this->resourceName().'.slices.'.$slice->internal;
+            if ($routeName === $currentRouteName) {
+                return $slice->setFormation($this);
+            }
+        }
+
+        return null;
     }
 
     /**
