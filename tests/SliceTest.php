@@ -12,11 +12,19 @@ class SliceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config()->set('headless-formations.mode', 'api');
+    }
+
     public function test_formation_meta_includes_slice_links()
     {
+        config()->set('headless-formations.mode', 'inertia');
+
         $this->authUser();
 
-        config()->set('headless-formations.mode', 'inertia');
         Inertia::setRootView('testing::app');
 
         Post::factory()->create(['title' => 'Hello World']);
@@ -39,7 +47,6 @@ class SliceTest extends TestCase
 
     public function test_formation_slice_using_current_auth_user_as_post_author()
     {
-        config()->set('headless-formations.mode', 'api');
         $user = $this->authUser();
 
         $userOne = User::factory()->create();
@@ -52,31 +59,32 @@ class SliceTest extends TestCase
 
     public function test_formation_slice_using_sort_desc_and_post_active_filter()
     {
-        config()->set('headless-formations.mode', 'api');
         $this->authUser();
 
         Post::factory()->create(['active' => true, 'title' => 'title 1']);
         Post::factory()->create(['active' => true, 'title' => 'title 2']);
         Post::factory(2)->create(['active' => false]);
 
-        $this->get('/posts/active-posts-sort-title-desc')
+        $this->get('posts/active-posts-sort-title-desc')
             ->assertJsonCount(2, 'posts')
             ->assertJsonPath('posts.0.title', 'title 2')
             ->assertJsonPath('posts.1.title', 'title 1');
     }
 
-    public function test_formation_slice_using_sort_desc_and_post_active_filter_with_sort_in_url()
+    public function test_overriding_formation_slice_using_sort_desc_and_post_active_filter_with_sort_in_url()
     {
-        config()->set('headless-formations.mode', 'api');
         $this->authUser();
 
+        Post::factory()->create(['active' => true, 'title' => 'title 3', 'body' => 'body 2']);
         Post::factory()->create(['active' => true, 'title' => 'title 1', 'body' => 'body 1']);
         Post::factory()->create(['active' => true, 'title' => 'title 2', 'body' => 'body 2']);
+
         Post::factory(2)->create(['active' => false]);
 
         $this->get('/posts/active-posts-sort-title-desc?sort=title')
-            ->assertJsonCount(2, 'posts')
+            ->assertJsonCount(3, 'posts')
             ->assertJsonPath('posts.0.title', 'title 1')
-            ->assertJsonPath('posts.1.title', 'title 2');
+            ->assertJsonPath('posts.1.title', 'title 2')
+            ->assertJsonPath('posts.2.title', 'title 3');
     }
 }

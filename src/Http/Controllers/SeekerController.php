@@ -2,8 +2,8 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
+use HeadlessLaravel\Finders\Scopes\SearchScope;
 use HeadlessLaravel\Formations\Manager;
-use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Support\Facades\Request;
 
 class SeekerController
@@ -17,7 +17,9 @@ class SeekerController
                 $formation = app($formation);
                 $query = app($formation->model)->query();
 
-                $query = (new SearchScope())->apply($query, $formation->search, Request::input('term'));
+                $columns = collect($formation->search())->pluck('internal')->toArray();
+
+                $query = (new SearchScope())->apply($query, $columns, Request::input('term'));
 
                 $data = $query
                     ->select(['id as value', "$formation->display as display"])

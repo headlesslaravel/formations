@@ -111,9 +111,16 @@ class Slice
     public function apply()
     {
         if (count($this->filters)) {
-            $input = Request::all();
-            $mergedInput = array_merge($this->filters, $input);
-            Request::replace($mergedInput);
+            // allow sort & sort-desc overriding slices
+            if (Request::has('sort')) {
+                unset($this->filters['sort-desc']);
+                unset($this->formation->defaults['sort-desc']);
+            } elseif (Request::has('sort-desc')) {
+                unset($this->filters['sort']);
+                unset($this->formation->defaults['sort']);
+            }
+
+            Request::merge($this->filters);
         }
 
         if (count($this->queries)) {

@@ -2,6 +2,9 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Finders\ApplyFilters;
+use HeadlessLaravel\Finders\ApplySearch;
+use HeadlessLaravel\Finders\ApplySort;
 use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Exports\Export;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
@@ -11,12 +14,10 @@ use HeadlessLaravel\Formations\Http\Requests\CreateRequest;
 use HeadlessLaravel\Formations\Http\Requests\UpdateRequest;
 use HeadlessLaravel\Formations\Http\Resources\Resource;
 use HeadlessLaravel\Formations\Imports\Import;
-use HeadlessLaravel\Formations\Scopes\SearchScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
@@ -38,20 +39,6 @@ class Formation
      * @var string
      */
     public $foreignKey;
-
-    /**
-     * Array of columns allowed to search by.
-     *
-     * @var array
-     */
-    public $search = [];
-
-    /**
-     * Array of columns allowed to order by.
-     *
-     * @var array
-     */
-    public $sort = ['created_at'];
 
     /**
      * The maximum number of items per page.
@@ -169,17 +156,6 @@ class Formation
     protected $wasRequested = false;
 
     /**
-     * Build the query upon method injection.
-     */
-    public function validate()
-    {
-        Validator::make(
-            Request::all(),
-            $this->getFilterRules()
-        )->validate();
-    }
-
-    /**
      * Perform the query.
      *
      * @return Collection
@@ -217,32 +193,6 @@ class Formation
     }
 
     /**
-     * Get validation rules for url parameters.
-     *
-     * @var array
-     */
-    protected function getFilterRules(): array
-    {
-        $rules = [
-            'search'    => 'nullable|string|min:1|max:64',
-            'per_page'  => "nullable|integer|min:1,max:{$this->maxPerPage}",
-            'sort'      => 'nullable|string|in:'.$this->getSortableKeys(),
-            'sort-desc' => 'nullable|string|in:'.$this->getSortableKeys(),
-        ];
-
-        $rules = array_merge($rules, $this->rulesForIndexing());
-
-        foreach ($this->filters() as $filter) {
-            $filter->setRequest(request());
-            foreach ($filter->getRules() as $key => $rule) {
-                $rules[$key] = $rule;
-            }
-        }
-
-        return $rules;
-    }
-
-    /**
      * Perform the query.
      *
      * @return Builder
@@ -252,10 +202,12 @@ class Formation
         $this->applyDefaults();
 
         $query = app($this->model)->query();
-        $query = $this->applySort($query);
-        $query = $this->applySearch($query);
+
+        ApplySort::on($query, $this->sort());
+        ApplySearch::on($query, $this->search());
+        ApplyFilters::on($query, $this->filters());
+
         $query = $this->applyIncludes($query);
-        $query = $this->applyFilters($query);
         $query = $this->applySelect($query);
         $query = $this->applyConditions($query);
 
@@ -276,39 +228,6 @@ class Formation
         }
 
         return $this;
-    }
-
-    /**
-     * Apply search to the query.
-     *
-     * @var Builder
-     *
-     * @return Builder
-     */
-    protected function applySearch($query)
-    {
-        if ($term = Request::input('search')) {
-            $query = (new SearchScope())->apply($query, $this->search, $term);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Apply filters to the query.
-     *
-     * @var Builder
-     *
-     * @return Builder
-     */
-    protected function applyFilters($query)
-    {
-        foreach ($this->filters() as $filter) {
-            $filter->setRequest(request());
-            $filter->apply($query);
-        }
-
-        return $query;
     }
 
     /**
@@ -359,77 +278,6 @@ class Formation
         }
 
         return $query;
-    }
-
-    /**
-     * Apply sort to the query.
-     *
-     * @var Builder
-     *
-     * @return Builder
-     */
-    protected function applySort($query)
-    {
-        $sortable = $this->getSortable();
-
-        if (empty($sortable)) {
-            return $query;
-        }
-
-        if (!empty($sortable['relationship'])) {
-            $relation = $query->getModel()->{$sortable['relationship']}(); // comments
-
-            $subquery = $relation->getModel() // Comment
-                ->select($sortable['column'])  // upvotes
-                ->whereColumn(
-                    $relation->getQualifiedForeignKeyName(), // comments.post_id
-                    $query->getModel()->getQualifiedKeyName() // posts.id
-                )->take(1);
-
-            $query->addSelect([
-                $sortable['column'] => $subquery,  // upvotes
-            ]);
-        } elseif (method_exists($query->getModel(), $sortable['column'])) {
-            $query->withCount($sortable['column']);
-            $sortable['column'] = $sortable['column'].'_count';
-        }
-
-        $query->orderBy($sortable['column'], $sortable['direction']);
-
-        return $query;
-    }
-
-    public function getSortable(): array
-    {
-        if (Request::filled('sort')) {
-            $sortable = [
-                'column'   => Request::input('sort'),
-                'direction'=> 'asc',
-            ];
-        } elseif (Request::filled('sort-desc')) {
-            $sortable = [
-                'column'   => Request::input('sort-desc'),
-                'direction'=> 'desc',
-            ];
-        } else {
-            return [];
-        }
-
-        foreach ($this->sort as $definition) {
-            if (Str::endsWith($definition, '.'.$sortable['column'])) {
-                $sortable['column'] = Str::after($definition, '.');
-                $sortable['relationship'] = Str::before($definition, '.');
-            } elseif (Str::endsWith($definition, ' as '.$sortable['column'])) {
-                $sortable['alias'] = $sortable['column'];
-                $sortable['column'] = Str::before($definition, ' as '.$sortable['column']);
-                if (Str::contains($sortable['column'], '.')) {
-                    $sortable['relationship'] = Str::before($sortable['column'], '.');
-                    $sortable['column'] = Str::after($sortable['column'], '.');
-                }
-            }
-        }
-
-        return $sortable;
     }
 
     public function validatePagination()
@@ -503,7 +351,7 @@ class Formation
                 }
             }
 
-            $meta['sort'] = $this->sort;
+            $meta['sort'] = collect($this->sort())->pluck('key')->toArray();
 
             $meta['fields'] = $formatted;
 
@@ -630,6 +478,26 @@ class Formation
         return collect($this->edit())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
+    }
+
+    /**
+     * Define the search.
+     *
+     * @return array
+     */
+    public function search(): array
+    {
+        return [];
+    }
+
+    /**
+     * Define the sort.
+     *
+     * @return array
+     */
+    public function sort(): array
+    {
+        return [];
     }
 
     /**
@@ -773,26 +641,5 @@ class Formation
             $this->display.' as display',
             app($this->model)->getKeyName().' as value',
         ]);
-    }
-
-    public function getSortableKeys()
-    {
-        $keys = [];
-
-        foreach ($this->sort as $sort) {
-            if (Str::contains($sort, ' as ')) {
-                $bits = explode(' as ', $sort);
-                $keys[] = $bits[1];
-            } else {
-                if (Str::contains($sort, '.')) {
-                    $bits = explode('.', $sort);
-                    $keys[] = $bits[1];
-                } else {
-                    $keys[] = $sort;
-                }
-            }
-        }
-
-        return implode(',', $keys);
     }
 }

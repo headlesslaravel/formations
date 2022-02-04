@@ -14,6 +14,8 @@ class Field
 
     public $rules;
 
+    public $props;
+
     public $relationColumn;
 
     public function init($key, $internal = null): self
@@ -56,12 +58,19 @@ class Field
         return $this;
     }
 
+    public function props(array $props): self
+    {
+        $this->props = $props;
+
+        return $this;
+    }
+
     public function isRelation(): bool
     {
         return !is_null($this->relationColumn);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'key'      => $this->key,

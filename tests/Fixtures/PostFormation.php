@@ -2,8 +2,10 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
+use HeadlessLaravel\Finders\Filter;
+use HeadlessLaravel\Finders\Search;
+use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Field;
-use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
@@ -14,20 +16,6 @@ class PostFormation extends Formation
 
     public $display = 'title';
 
-    public $search = [
-        'title',
-        'comments.body',
-        'tags.title',
-    ];
-
-    public $sort = [
-        'title',
-        'comments',
-        'comments.upvotes',
-        'comments.downvotes as disliked',
-        'author.name as author_name',
-    ];
-
     public $defaults = [
         'sort-desc' => 'body',
     ];
@@ -36,22 +24,6 @@ class PostFormation extends Formation
     {
         return [
             'rule_test' => 'nullable|in:allowed-value',
-        ];
-    }
-
-    public function rulesForCreating(): array
-    {
-        return [
-            'title'     => ['required'],
-            'author_id' => ['exists:users,id'],
-        ];
-    }
-
-    public function rulesForUpdating(): array
-    {
-        return [
-            'title'     => ['required', 'min:10'],
-            'author_id' => ['exists:users,id'],
         ];
     }
 
@@ -67,6 +39,27 @@ class PostFormation extends Formation
     {
         return [
             'extra' => 'populated from extra method',
+        ];
+    }
+
+    public function search(): array
+    {
+        return [
+            Search::make('title'),
+            Search::make('comments.body'),
+            Search::make('tags.title'),
+        ];
+    }
+
+    public function sort(): array
+    {
+        return [
+            Sort::make('title'),
+            Sort::make('body'),
+            Sort::make('comments'),
+            Sort::make('upvotes', 'comments.upvotes'),
+            Sort::make('disliked', 'comments.downvotes'),
+            Sort::make('author_name', 'author.name'),
         ];
     }
 
@@ -128,15 +121,21 @@ class PostFormation extends Formation
     {
         return [
             Slice::make('Active Posts', 'active-posts')
-                ->filter(['active' => true]),
+                ->filter(['active' => 'true']),
+
             Slice::make('InActive Posts')
-                ->filter(['active' => false]),
+                ->filter(['active' => 'false']),
+
             Slice::make('My Posts', 'my-posts')
                 ->query(function ($query) {
                     $query->where('author_id', auth()->id());
                 }),
+
             Slice::make('Active Posts Sort Title Desc')
-                ->filter(['active' => true, 'sort-desc' => 'title']),
+                ->filter([
+                    'active'    => 'true',
+                    'sort-desc' => 'title',
+                ]),
         ];
     }
 
@@ -156,6 +155,22 @@ class PostFormation extends Formation
             Field::make('id'),
             Field::make('title'),
             Field::make('author_name', 'author.name'),
+        ];
+    }
+
+    public function create(): array
+    {
+        return [
+            Field::make('title')->rules(['required']),
+            Field::make('author_id')->rules(['exists:users,id']),
+        ];
+    }
+
+    public function edit(): array
+    {
+        return [
+            Field::make('title')->rules(['required', 'min:10']),
+            Field::make('author_id')->rules(['exists:users,id']),
         ];
     }
 }
