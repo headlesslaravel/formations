@@ -14,7 +14,7 @@ class AuthorFormation extends Formation
 
     public $foreignKey = 'author_id';
 
-    public function search():array
+    public function search(): array
     {
         return [
             Search::make('name'),

@@ -10,7 +10,7 @@ class TagFormation extends Formation
 {
     public $model = Tag::class;
 
-    public function search():array
+    public function search(): array
     {
         return [
             Search::make('title'),
