@@ -3,7 +3,9 @@
 namespace {{ namespace }};
 
 use HeadlessLaravel\Formations\Field;
-use HeadlessLaravel\Formations\Filter;
+use HeadlessLaravel\Finders\Filter;
+use HeadlessLaravel\Finders\Search;
+use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Formation;
 
 class {{ class }} extends Formation
@@ -23,29 +25,38 @@ class {{ class }} extends Formation
     public $display = 'id';
 
     /**
-     * The searchable columns.
+     * Define the search.
      *
-     * @var array
+     * @return array
      */
-    public $search = ['id'];
+    public function search(): array
+    {
+        return [
+            Search::make('id'),
+        ];
+    }
 
     /**
-     * The sortable columns.
+     * Define the sort.
      *
-     * @var array
+     * @return array
      */
-    public $sort = ['created_at'];
+    public function sort(): array
+    {
+        return [
+            Sort::make('created_at'),
+        ];
+    }
 
     /**
      * Define the fields.
      *
      * @return array
      */
-    public function fields():array
+    public function fields(): array
     {
         return [
             Field::make('id'),
-            //
             Field::make('created_at'),
         ];
     }
@@ -55,10 +66,9 @@ class {{ class }} extends Formation
      *
      * @return array
      */
-    public function filters():array
+    public function filters(): array
     {
         return [
-            //
             Filter::make('trash')->trash(),
         ];
     }
