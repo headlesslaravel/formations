@@ -133,8 +133,8 @@ class PostFormation extends Formation
 
             Slice::make('Active Posts Sort Title Desc')
                 ->filter([
-                    'active' => 'true',
-                    'sort-desc' => 'title'
+                    'active'    => 'true',
+                    'sort-desc' => 'title',
                 ]),
         ];
     }

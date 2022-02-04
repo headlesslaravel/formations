@@ -112,10 +112,10 @@ class Slice
     {
         if (count($this->filters)) {
             // allow sort & sort-desc overriding slices
-            if(Request::has('sort')) {
+            if (Request::has('sort')) {
                 unset($this->filters['sort-desc']);
                 unset($this->formation->defaults['sort-desc']);
-            } else if(Request::has('sort-desc')) {
+            } elseif (Request::has('sort-desc')) {
                 unset($this->filters['sort']);
                 unset($this->formation->defaults['sort']);
             }
