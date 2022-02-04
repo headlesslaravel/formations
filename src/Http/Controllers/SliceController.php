@@ -8,7 +8,6 @@ class SliceController extends Controller
     {
         $this->check('viewAny', $this->model());
 
-        $this->formation()->validate();
         $currentSlice = $this->slice();
 
         if (!is_null($currentSlice)) {

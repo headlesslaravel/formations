@@ -27,22 +27,6 @@ class PostFormation extends Formation
         ];
     }
 
-    public function rulesForCreating(): array
-    {
-        return [
-            'title'     => ['required'],
-            'author_id' => ['exists:users,id'],
-        ];
-    }
-
-    public function rulesForUpdating(): array
-    {
-        return [
-            'title'     => ['required', 'min:10'],
-            'author_id' => ['exists:users,id'],
-        ];
-    }
-
     public function editData($model): array
     {
         return [
@@ -137,15 +121,21 @@ class PostFormation extends Formation
     {
         return [
             Slice::make('Active Posts', 'active-posts')
-                ->filter(['active' => true]),
+                ->filter(['active' => 'true']),
+
             Slice::make('InActive Posts')
-                ->filter(['active' => false]),
+                ->filter(['active' => 'false']),
+
             Slice::make('My Posts', 'my-posts')
                 ->query(function ($query) {
                     $query->where('author_id', auth()->id());
                 }),
+
             Slice::make('Active Posts Sort Title Desc')
-                ->filter(['active' => true, 'sort-desc' => 'title']),
+                ->filter([
+                    'active' => 'true',
+                    'sort-desc' => 'title'
+                ]),
         ];
     }
 
@@ -165,6 +155,22 @@ class PostFormation extends Formation
             Field::make('id'),
             Field::make('title'),
             Field::make('author_name', 'author.name'),
+        ];
+    }
+
+    public function create(): array
+    {
+        return [
+            Field::make('title')->rules(['required']),
+            Field::make('author_id')->rules(['exists:users,id']),
+        ];
+    }
+
+    public function edit(): array
+    {
+        return [
+            Field::make('title')->rules(['required', 'min:10']),
+            Field::make('author_id')->rules(['exists:users,id']),
         ];
     }
 }
