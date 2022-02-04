@@ -34,6 +34,7 @@ class ActionTest extends TestCase
         Bus::assertBatched(function (PendingBatchFake $batch) {
             $countCheck = $batch->jobs->count() === 2;
             $instanceCheck = $batch->jobs[0] instanceof SetStatus && $batch->jobs[1] instanceof SetStatus;
+
             return $countCheck && $instanceCheck;
         });
     }
@@ -51,10 +52,11 @@ class ActionTest extends TestCase
         $this->assertArrayHasKey('id', $response->json());
 
         Bus::assertBatchCount(1);
-        Bus::assertBatched(function (PendingBatchFake $batch) use($post) {
+        Bus::assertBatched(function (PendingBatchFake $batch) use ($post) {
             $countCheck = $batch->jobs->count() === 1;
             $instanceCheck = $batch->jobs[0] instanceof SetStatus;
             $postModelCheck = $batch->jobs[0]->post->id === $post->id;
+
             return $countCheck && $instanceCheck && $postModelCheck;
         });
     }
@@ -73,11 +75,12 @@ class ActionTest extends TestCase
         $this->assertArrayHasKey('id', $response->json());
 
         Bus::assertBatchCount(1);
-        Bus::assertBatched(function (PendingBatchFake $batch) use($postOne, $postTwo) {
+        Bus::assertBatched(function (PendingBatchFake $batch) use ($postOne, $postTwo) {
             $countCheck = $batch->jobs->count() === 2;
             $instanceCheck = $batch->jobs[0] instanceof SetStatus && $batch->jobs[1] instanceof SetStatus;
             $postOneModelCheck = $batch->jobs[0]->post->id === $postOne->id;
             $postTwoModelCheck = $batch->jobs[1]->post->id === $postTwo->id;
+
             return $countCheck && $instanceCheck && $postOneModelCheck && $postTwoModelCheck;
         });
     }

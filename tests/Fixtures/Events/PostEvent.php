@@ -9,7 +9,9 @@ use Illuminate\Queue\SerializesModels;
 
 class PostEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * The post instance.
@@ -21,7 +23,8 @@ class PostEvent
     /**
      * Create a new event instance.
      *
-     * @param  Post  $post
+     * @param Post $post
+     *
      * @return void
      */
     public function __construct($post)

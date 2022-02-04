@@ -13,7 +13,7 @@ class ActionController extends Controller
     {
         $currentAction = $this->formationAction();
 
-        if (! $currentAction) {
+        if (!$currentAction) {
             return redirect()->route('formation.index');
         }
 
@@ -22,12 +22,12 @@ class ActionController extends Controller
         $models = [];
         if ($modelIds === 'all') {
             $models = $currentAction->formation->results();
-        } else if (is_int($modelIds)) {
+        } elseif (is_int($modelIds)) {
             $model = $this->model()->where($this->model()->getKeyName(), $modelIds)->first();
             if (!empty($model)) {
                 $models = [$model];
             }
-        } else if (is_array($modelIds)) {
+        } elseif (is_array($modelIds)) {
             $models = $this->model()->whereIn($this->model()->getKeyName(), $modelIds)->get();
         }
 
@@ -51,7 +51,7 @@ class ActionController extends Controller
     {
         $batch = Bus::findBatch($batchId);
 
-        if (! $batch) {
+        if (!$batch) {
             return response()->json(['error' => 'Batch not found'], 404);
         }
 
