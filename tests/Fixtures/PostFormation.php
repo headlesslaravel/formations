@@ -2,8 +2,10 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
+use HeadlessLaravel\Finders\Filter;
+use HeadlessLaravel\Finders\Search;
+use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Field;
-use HeadlessLaravel\Formations\Filter;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 
@@ -12,20 +14,6 @@ class PostFormation extends Formation
     public $model = Post::class;
 
     public $display = 'title';
-
-    public $search = [
-        'title',
-        'comments.body',
-        'tags.title',
-    ];
-
-    public $sort = [
-        'title',
-        'comments',
-        'comments.upvotes',
-        'comments.downvotes as disliked',
-        'author.name as author_name',
-    ];
 
     public $defaults = [
         'sort-desc' => 'body',
@@ -66,6 +54,27 @@ class PostFormation extends Formation
     {
         return [
             'extra' => 'populated from extra method',
+        ];
+    }
+
+    public function search(): array
+    {
+        return [
+            Search::make('title'),
+            Search::make('comments.body'),
+            Search::make('tags.title'),
+        ];
+    }
+
+    public function sort(): array
+    {
+        return [
+            Sort::make('title'),
+            Sort::make('body'),
+            Sort::make('comments'),
+            Sort::make('upvotes', 'comments.upvotes'),
+            Sort::make('disliked', 'comments.downvotes'),
+            Sort::make('author_name', 'author.name'),
         ];
     }
 
