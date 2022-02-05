@@ -497,7 +497,7 @@ class Controller extends BaseController
             'message' => $message,
         ]);
 
-        if($this->mode() === 'inertia') {
+        if ($this->mode() === 'inertia') {
             Inertia::share('flash', [
                 'type'    => $type,
                 'message' => $message,
