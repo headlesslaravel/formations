@@ -338,6 +338,10 @@ class Controller extends BaseController
             return $this->redirect($type, $props);
         }
 
+        if ($this->mode() === 'inertia' && Session::has('flash')) {
+            Inertia::share('flash', Session::get('flash'));
+        }
+
         return match ($this->mode()) {
             'api'     => $this->api($type, $props),
             'inertia' => $this->inertia($type, $props),
