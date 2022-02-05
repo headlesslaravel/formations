@@ -496,6 +496,13 @@ class Controller extends BaseController
             'type'    => $type,
             'message' => $message,
         ]);
+
+        if ($this->mode() === 'inertia') {
+            Inertia::share('flash', [
+                'type'    => $type,
+                'message' => $message,
+            ]);
+        }
     }
 
     protected function getTerms($resource)
