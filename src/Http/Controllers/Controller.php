@@ -338,6 +338,10 @@ class Controller extends BaseController
             return $this->redirect($type, $props);
         }
 
+        if ($this->mode() === 'inertia' && Session::has('flash')) {
+            Inertia::share('flash', Session::get('flash'));
+        }
+
         return match ($this->mode()) {
             'api'     => $this->api($type, $props),
             'inertia' => $this->inertia($type, $props),
@@ -496,13 +500,6 @@ class Controller extends BaseController
             'type'    => $type,
             'message' => $message,
         ]);
-
-        if($this->mode() === 'inertia') {
-            Inertia::share('flash', [
-                'type'    => $type,
-                'message' => $message,
-            ]);
-        }
     }
 
     protected function getTerms($resource)
