@@ -50,6 +50,7 @@ class TestCase extends Orchestra
         include_once __DIR__.'/Fixtures/Database/migrations/create_comments_table.php.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_categories_table.php.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_tags_table.php.stub';
+        include_once __DIR__.'/Fixtures/Database/migrations/create_jobs_table.stub';
         include_once __DIR__.'/Fixtures/Database/migrations/create_job_batches_table.stub';
 
         Schema::dropIfExists('users');
@@ -59,6 +60,7 @@ class TestCase extends Orchestra
         Schema::dropIfExists('tags');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('post_tag');
+        Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_batches');
 
         (new \CreateUsersTable())->up();
@@ -67,6 +69,7 @@ class TestCase extends Orchestra
         (new \CreateCommentsTable())->up();
         (new \CreateTagsTable())->up();
         (new \CreateCategoriesTable())->up();
+        (new \CreateJobsTable())->up();
         (new \CreateJobBatchesTable())->up();
     }
 

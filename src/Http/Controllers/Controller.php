@@ -65,7 +65,7 @@ class Controller extends BaseController
     {
         $method = $this->controllerMethod();
 
-        return !in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach']);
+        return !in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach', 'progress']);
     }
 
     protected function resolveParentBinding()

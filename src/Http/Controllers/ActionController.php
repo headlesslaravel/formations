@@ -39,7 +39,7 @@ class ActionController extends Controller
 
         $jobs = [];
         foreach ($models as $model) {
-            $jobs[] = new $currentAction->job($model, $validated);
+            $jobs[] = new $currentAction->job($model, $validated['fields']);
         }
 
         $batch = Bus::batch($jobs)->then(function (Batch $batch) {
@@ -53,7 +53,7 @@ class ActionController extends Controller
         return response()->json(['id' => $batch->id]);
     }
 
-    public function show($batchId)
+    public function progress($batchId)
     {
         $batch = Bus::findBatch($batchId);
 

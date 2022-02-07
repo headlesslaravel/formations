@@ -272,7 +272,7 @@ class Routes
             $routes[] = [
                 'type'         => 'show',
                 'verb'         => ['GET', 'HEAD'],
-                'action'       => [ActionController::class, 'show'],
+                'action'       => [ActionController::class, 'progress'],
                 'name'         => "$this->resource.actions.{$action->key}.show",
                 'endpoint'     => "actions/$this->resource/{$action->key}/{batchId}",
                 'key'          => "$this->resource.actions.{$action->key}.show",
