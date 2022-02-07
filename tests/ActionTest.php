@@ -84,4 +84,16 @@ class ActionTest extends TestCase
             return $countCheck && $instanceCheck && $postOneModelCheck && $postTwoModelCheck;
         });
     }
+
+    public function test_actions_invalid_fields()
+    {
+        Bus::fake();
+
+        $this->authUser();
+
+        $this->post(
+            'actions/posts/set-status',
+            ['selected' => 'all', 'fields' => ['status' => 'invalid-status-type']]
+        )->assertInvalid(['fields.status']);
+    }
 }

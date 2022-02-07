@@ -17,6 +17,12 @@ class ActionController extends Controller
             return redirect()->route('formation.index');
         }
 
+        $rules = [];
+        foreach ($currentAction->fields as $fieldName => $rule) {
+            $rules['fields.'.$fieldName] = $rule;
+        }
+        $validated = $request->validate($rules);
+
         $modelIds = $request->get('selected', []);
 
         $models = [];
@@ -33,7 +39,7 @@ class ActionController extends Controller
 
         $jobs = [];
         foreach ($models as $model) {
-            $jobs[] = new $currentAction->job($model, $currentAction->fields);
+            $jobs[] = new $currentAction->job($model, $validated);
         }
 
         $batch = Bus::batch($jobs)->then(function (Batch $batch) {
