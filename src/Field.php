@@ -25,7 +25,6 @@ class Field
         if (!is_null($internal) && str_contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
             $this->relation = Str::beforeLast($internal, '.');
-            $internal = Str::before($internal, '.');
         } elseif (is_null($internal) && str_contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
             $this->relation = Str::before($key, '.');
