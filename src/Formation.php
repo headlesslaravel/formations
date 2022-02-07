@@ -361,6 +361,7 @@ class Formation
                     'display'   => $filter->getDisplay(),
                     'component' => $filter->component,
                     'props'     => $filter->props,
+                    'modifiers' => $filter->modifiers,
                 ];
             })->toArray();
 
