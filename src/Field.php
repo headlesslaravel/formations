@@ -16,16 +16,19 @@ class Field
 
     public $props;
 
+    public $relation;
+
     public $relationColumn;
 
     public function init($key, $internal = null): self
     {
         if (!is_null($internal) && str_contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
-            $internal = Str::before($internal, '.');
+            $this->relation = Str::beforeLast($internal, '.');
         } elseif (is_null($internal) && str_contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
-            $internal = Str::before($key, '.');
+            $this->relation = Str::before($key, '.');
+            $this->internal = $key;
             $key = Str::before($key, '.');
         } elseif (is_null($internal) && Str::contains($key, ' ')) {
             $internal = Str::snake($key);
