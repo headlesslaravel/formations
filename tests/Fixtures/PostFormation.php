@@ -9,7 +9,6 @@ use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
-use HeadlessLaravel\Formations\Tests\Fixtures\Events\PostEvent;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 
