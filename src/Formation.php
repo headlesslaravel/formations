@@ -355,7 +355,7 @@ class Formation
 
             $meta['fields'] = $formatted;
 
-            $meta['filters'] = collect($this->filters())->map(function ($filter) {
+            $meta['filters'] = collect($this->filters())->reject->hidden->map(function ($filter) {
                 return [
                     'key'       => $filter->publicKey,
                     'display'   => $filter->getDisplay(),
