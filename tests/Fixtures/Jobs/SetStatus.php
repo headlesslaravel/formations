@@ -12,7 +12,11 @@ use Illuminate\Queue\SerializesModels;
 
 class SetStatus implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /** @var Post */
     public $post;
