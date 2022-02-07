@@ -15,12 +15,6 @@ class Action
     /** @var array */
     public $fields = [];
 
-    /** @var string */
-    public $after;
-
-    /** @var string */
-    public $afterEach;
-
     /** @var bool */
     public $allowed = true;
 
@@ -53,20 +47,6 @@ class Action
     public function fields($fields): self
     {
         $this->fields = $fields;
-
-        return $this;
-    }
-
-    public function after($after): self
-    {
-        $this->after = $after;
-
-        return $this;
-    }
-
-    public function afterEach($afterEach): self
-    {
-        $this->afterEach = $afterEach;
 
         return $this;
     }

@@ -148,9 +148,7 @@ class PostFormation extends Formation
             Action::make('set-status')
                 ->job(SetStatus::class)
                 ->can('setStatus', Post::class)
-                ->fields(['status' => 'active'])
-                ->after(PostEvent::class)
-                ->afterEach(PostEvent::class),
+                ->fields(['status' => 'active']),
         ];
     }
 

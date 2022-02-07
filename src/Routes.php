@@ -266,7 +266,7 @@ class Routes
                 'name'         => "$this->resource.actions.{$action->key}.store",
                 'endpoint'     => "actions/$this->resource/{$action->key}",
                 'key'          => "$this->resource.actions.{$action->key}.store",
-                'with-trashed' => $this->withTrashed('store'),
+                'with-trashed' => false,
             ];
 
             $routes[] = [
@@ -276,7 +276,7 @@ class Routes
                 'name'         => "$this->resource.actions.{$action->key}.show",
                 'endpoint'     => "actions/$this->resource/{$action->key}/{batchId}",
                 'key'          => "$this->resource.actions.{$action->key}.show",
-                'with-trashed' => $this->withTrashed('show'),
+                'with-trashed' => false,
             ];
         }
 
