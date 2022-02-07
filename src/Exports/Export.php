@@ -39,7 +39,7 @@ class Export implements FromCollection, WithHeadings
 
             foreach ($this->fields as $field) {
                 if ($field->isRelation()) {
-                    $resultRecord[$field->key] = $record->{$field->internal}->{$field->relationColumn};
+                    $resultRecord[$field->key] = $record->{$field->relation}->{$field->relationColumn};
                 } else {
                     $resultRecord[$field->key] = $record->{$field->key};
                 }
@@ -52,12 +52,12 @@ class Export implements FromCollection, WithHeadings
 
     public function getEagerLoadings(): array
     {
-        $relations = collect($this->fields)->filter->isRelation();
+        $fields = collect($this->fields)->filter->isRelation();
 
         $relationNames = [];
 
-        foreach ($relations as $relation) {
-            $relationNames[] = $relation->internal;
+        foreach ($fields as $field) {
+            $relationNames[] = $field->relation;
         }
 
         return $relationNames;
