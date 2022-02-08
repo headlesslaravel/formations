@@ -37,6 +37,7 @@ class ActionController extends Controller
             ->dispatch();
 
         $modelsQuery->cursor()
+            ->chunk(1000)
             ->each(function (Model $model) use ($batch, $currentAction, $validated) {
                 $batch->add(new $currentAction->job($model, $validated['fields']));
             });
