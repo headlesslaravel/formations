@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
+use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\LazyCollection;
@@ -51,14 +52,14 @@ class Action
         return $this;
     }
 
-    public function setFormation($formation)
+    public function setFormation($formation):self
     {
         $this->formation = $formation;
 
         return $this;
     }
 
-    public function batch($selected, array $parameters = [], array $fields = [])
+    public function batch($selected, array $parameters = [], array $fields = []): Batch
     {
         $query = $this->queryUsing($selected, $parameters);
 
