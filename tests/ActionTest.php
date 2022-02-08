@@ -159,6 +159,13 @@ class ActionTest extends TestCase
         $this->assertEquals(0, $batchProgressData['processed']);
     }
 
+    public function test_actions_progress_not_found_with_random_id()
+    {
+        $this->authUser();
+
+        $this->get("actions/posts/set-status/12345")->assertNotFound();
+    }
+
     public function test_actions_policy_return_false()
     {
         config()->set('headless-formations.actions.testing-policy', false);
