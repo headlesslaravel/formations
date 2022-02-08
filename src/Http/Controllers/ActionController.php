@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\LazyCollection;
