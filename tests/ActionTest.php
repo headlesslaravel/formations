@@ -163,7 +163,7 @@ class ActionTest extends TestCase
     {
         $this->authUser();
 
-        $this->get("actions/posts/set-status/12345")->assertNotFound();
+        $this->get('actions/posts/set-status/12345')->assertNotFound();
     }
 
     public function test_actions_policy_return_false()
