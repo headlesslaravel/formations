@@ -3,7 +3,9 @@
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
 use HeadlessLaravel\Finders\Search;
+use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Formation;
+use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\Delete;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\User;
 
 class AuthorFormation extends Formation
@@ -18,6 +20,13 @@ class AuthorFormation extends Formation
     {
         return [
             Search::make('name'),
+        ];
+    }
+
+    public function actions(): array
+    {
+        return [
+            Action::make('delete')->job(Delete::class),
         ];
     }
 }

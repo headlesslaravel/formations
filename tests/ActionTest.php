@@ -27,18 +27,18 @@ class ActionTest extends TestCase
 
         Post::factory(2)->create(['author_id' => $user->id]);
 
-        $response = $this->post(
-            'actions/posts/set-status',
-            ['selected' => 'all', 'fields' => ['status' => 'active']]
-        )->assertOk();
+        $response = $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields' => ['status' => 'active']
+        ])->assertOk();
+
         $data = $response->json();
+
         $this->assertArrayHasKey('id', $data);
 
-        $batchId = $data['id'];
-
         Queue::assertPushed(SetStatus::class, 2);
-        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($batchId) {
-            return $job->batchId === $batchId;
+        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($data) {
+            return $job->batchId === $data['id'];
         });
     }
 
@@ -49,20 +49,21 @@ class ActionTest extends TestCase
         $user = $this->authUser();
 
         $post = Post::factory()->create(['author_id' => $user->id]);
+
         Post::factory(2)->create(['author_id' => $user->id]);
 
-        $response = $this->post(
-            'actions/posts/set-status',
-            ['selected' => $post->id, 'fields' => ['status' => 'active']]
-        )->assertOk();
+        $response = $this->post('actions/posts/set-status', [
+            'selected' => $post->id,
+            'fields' => ['status' => 'active']
+        ])->assertOk();
+
         $data = $response->json();
+
         $this->assertArrayHasKey('id', $data);
 
-        $batchId = $data['id'];
-
         Queue::assertPushed(SetStatus::class, 1);
-        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($batchId) {
-            return $job->batchId === $batchId;
+        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($data) {
+            return $job->batchId === $data['id'];
         });
     }
 
@@ -76,10 +77,11 @@ class ActionTest extends TestCase
         $postTwo = Post::factory()->create(['author_id' => $user->id]);
         Post::factory(2)->create(['author_id' => $user->id]);
 
-        $response = $this->post(
-            'actions/posts/set-status',
-            ['selected' => [$postOne->id, $postTwo->id], 'fields' => ['status' => 'active']]
-        )->assertOk();
+        $response = $this->post('actions/posts/set-status', [
+            'selected' => [$postOne->id, $postTwo->id],
+            'fields' => ['status' => 'active']
+        ])->assertOk();
+
         $data = $response->json();
         $this->assertArrayHasKey('id', $data);
 
@@ -102,14 +104,12 @@ class ActionTest extends TestCase
         Post::factory()->create(['author_id' => $user->id, 'title' => 'Random', 'body' => 'random body']);
         Post::factory(2)->create(['author_id' => $author->id]);
 
-        $response = $this->post(
-            'actions/posts/set-status',
-            [
-                'selected' => 'all',
-                'fields'   => ['status' => 'active'],
-                'query'    => ['author' => $user->id, 'sort-desc' => 'title', 'search' => 'Title'],
-            ]
-        )->assertOk();
+        $response = $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields'   => ['status' => 'active'],
+            'query'    => ['author' => $user->id, 'sort-desc' => 'title', 'search' => 'Title'],
+        ])->assertOk();
+
         $data = $response->json();
         $this->assertArrayHasKey('id', $data);
 
@@ -130,45 +130,81 @@ class ActionTest extends TestCase
     {
         $this->authUser();
 
-        $this->post(
-            'actions/posts/set-status',
-            ['selected' => 'all', 'fields' => ['status' => 'invalid-status-type']]
-        )->assertInvalid(['fields.status']);
+        $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields' => ['status' => 'invalid-status-type']
+        ])->assertInvalid(['fields.status']);
     }
 
-    public function test_actions_for_all_models_without_fake()
+    public function test_actions_in_progress_status()
     {
+        // sync will process jobs.. lets us hold off so we can see status
         $this->app['config']->set('queue.default', 'database');
+
         $user = $this->authUser();
 
-        Post::factory(2)->create(['author_id' => $user->id]);
+        Post::factory(2)->create([
+            'author_id' => $user->id,
+            'status' => 'draft',
+        ]);
 
-        $response = $this->post(
-            'actions/posts/set-status',
-            ['selected' => 'all', 'fields' => ['status' => 'active']]
-        )->assertOk();
-        $data = $response->json();
-        $this->assertArrayHasKey('id', $data);
+        $batchId = $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields' => ['status' => 'active']
+        ])->json('id');
 
-        $batchId = $data['id'];
+        $data = $this->get("actions/posts/set-status/$batchId")
+            ->assertOk()
+            ->json();
 
-        $batchProgressResponse = $this->get("actions/posts/set-status/$batchId")->assertOk();
-        $batchProgressData = $batchProgressResponse->json();
+        $this->assertArrayHasKey('status', $data);
+        $this->assertArrayHasKey('total', $data);
+        $this->assertArrayHasKey('processed', $data);
 
-        $this->assertArrayHasKey('status', $batchProgressData);
-        $this->assertArrayHasKey('total', $batchProgressData);
-        $this->assertArrayHasKey('processed', $batchProgressData);
+        $this->assertEquals('in-progress', $data['status']);
+        $this->assertEquals(2, $data['total']);
+        $this->assertEquals(0, $data['processed']);
 
-        $this->assertEquals('in-progress', $batchProgressData['status']);
-        $this->assertEquals(2, $batchProgressData['total']);
-        $this->assertEquals(0, $batchProgressData['processed']);
+        $this->assertEquals(2, Post::count());
+        $this->assertEquals(2, Post::where('status', 'draft')->count());
+    }
+
+    public function test_actions_completed_status()
+    {
+        $user = $this->authUser();
+
+        Post::factory(2)->create([
+            'author_id' => $user->id,
+            'status' => 'draft',
+        ]);
+
+        $batchId = $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields' => ['status' => 'active']
+        ])->json('id');
+
+        $data = $this->get("actions/posts/set-status/$batchId")
+            ->assertOk()
+            ->json();
+
+        $this->assertArrayHasKey('status', $data);
+        $this->assertArrayHasKey('total', $data);
+        $this->assertArrayHasKey('processed', $data);
+
+        $this->assertEquals('complete', $data['status']);
+        $this->assertEquals(2, $data['total']);
+        $this->assertEquals(2, $data['processed']);
+
+        $this->assertEquals(2, Post::count());
+        $this->assertEquals(2, Post::where('status', 'active')->count());
+        $this->assertEquals(0, Post::where('status', 'draft')->count());
     }
 
     public function test_actions_progress_not_found_with_random_id()
     {
         $this->authUser();
 
-        $this->get('actions/posts/set-status/12345')->assertNotFound();
+        $this->get('actions/12345')->assertNotFound();
     }
 
     public function test_actions_policy_return_false()
@@ -176,9 +212,9 @@ class ActionTest extends TestCase
         $this->authUser();
         $this->updateAbilities([]); // remove setStatus
 
-        $this->post(
-            'actions/posts/set-status',
-            ['selected' => 'all', 'fields' => ['status' => 'active']]
-        )->assertForbidden();
+        $this->post('actions/posts/set-status', [
+            'selected' => 'all',
+            'fields' => ['status' => 'active']
+        ])->assertForbidden();
     }
 }
