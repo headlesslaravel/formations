@@ -2,10 +2,9 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use Illuminate\Bus\Batch;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
-use Throwable;
 
 class ActionController extends Controller
 {
@@ -25,30 +24,22 @@ class ActionController extends Controller
 
         $modelIds = $request->get('selected', []);
 
-        $models = [];
-        if ($modelIds === 'all') {
-            $models = $currentAction->formation->results();
-        } elseif (is_int($modelIds)) {
-            $model = $this->model()->where($this->model()->getKeyName(), $modelIds)->first();
-            if (!empty($model)) {
-                $models = [$model];
-            }
+        $modelsQuery = $currentAction->formation->builder();
+
+        if (is_int($modelIds)) {
+            $modelsQuery = $modelsQuery->where($this->model()->getKeyName(), $modelIds);
         } elseif (is_array($modelIds)) {
-            $models = $this->model()->whereIn($this->model()->getKeyName(), $modelIds)->get();
+            $modelsQuery = $modelsQuery->whereIn($this->model()->getKeyName(), $modelIds);
         }
 
-        $jobs = [];
-        foreach ($models as $model) {
-            $jobs[] = new $currentAction->job($model, $validated['fields']);
-        }
+        $batch = Bus::batch([])
+            ->allowFailures()
+            ->dispatch();
 
-        $batch = Bus::batch($jobs)->then(function (Batch $batch) {
-            // All jobs completed successfully...
-        })->catch(function (Batch $batch, Throwable $e) {
-            // First batch job failure detected...
-        })->finally(function (Batch $batch) {
-            // The batch has finished executing...
-        })->dispatch();
+        $modelsQuery->cursor()
+            ->each(function (Model $model) use ($batch, $currentAction, $validated) {
+                $batch->add(new $currentAction->job($model, $validated['fields']));
+        });
 
         return response()->json(['id' => $batch->id]);
     }
@@ -64,7 +55,7 @@ class ActionController extends Controller
         $result = [];
         $result['status'] = $batch->finished() ? 'complete' : 'in-progress';
         $result['total'] = $batch->totalJobs;
-        $result['worked'] = $batch->processedJobs();
+        $result['processed'] = $batch->processedJobs();
 
         return response()->json($result);
     }

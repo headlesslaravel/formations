@@ -5,8 +5,7 @@ namespace HeadlessLaravel\Formations\Tests;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Testing\Fakes\PendingBatchFake;
+use Illuminate\Support\Facades\Queue;
 
 class ActionTest extends TestCase
 {
@@ -21,7 +20,7 @@ class ActionTest extends TestCase
 
     public function test_actions_for_all_models()
     {
-        Bus::fake();
+        Queue::fake();
 
         $user = $this->authUser();
 
@@ -31,20 +30,20 @@ class ActionTest extends TestCase
             'actions/posts/set-status',
             ['selected' => 'all', 'fields' => ['status' => 'active']]
         )->assertOk();
-        $this->assertArrayHasKey('id', $response->json());
+        $data = $response->json();
+        $this->assertArrayHasKey('id', $data);
 
-        Bus::assertBatchCount(1);
-        Bus::assertBatched(function (PendingBatchFake $batch) {
-            $countCheck = $batch->jobs->count() === 2;
-            $instanceCheck = $batch->jobs[0] instanceof SetStatus && $batch->jobs[1] instanceof SetStatus;
+        $batchId = $data['id'];
 
-            return $countCheck && $instanceCheck;
+        Queue::assertPushed(SetStatus::class, 2);
+        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($batchId) {
+            return $job->batchId === $batchId;
         });
     }
 
     public function test_actions_for_single_models()
     {
-        Bus::fake();
+        Queue::fake();
 
         $user = $this->authUser();
 
@@ -52,24 +51,22 @@ class ActionTest extends TestCase
         Post::factory(2)->create(['author_id' => $user->id]);
 
         $response = $this->post(
-            'actions/posts/set-status',
-            ['selected' => $post->id, 'fields' => ['status' => 'active']]
+            'actions/posts/set-status', ['selected' => $post->id, 'fields' => ['status' => 'active']]
         )->assertOk();
-        $this->assertArrayHasKey('id', $response->json());
+        $data = $response->json();
+        $this->assertArrayHasKey('id', $data);
 
-        Bus::assertBatchCount(1);
-        Bus::assertBatched(function (PendingBatchFake $batch) use ($post) {
-            $countCheck = $batch->jobs->count() === 1;
-            $instanceCheck = $batch->jobs[0] instanceof SetStatus;
-            $postModelCheck = $batch->jobs[0]->post->id === $post->id;
+        $batchId = $data['id'];
 
-            return $countCheck && $instanceCheck && $postModelCheck;
+        Queue::assertPushed(SetStatus::class, 1);
+        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($batchId) {
+            return $job->batchId === $batchId;
         });
     }
 
     public function test_actions_for_selected_models()
     {
-        Bus::fake();
+        Queue::fake();
 
         $user = $this->authUser();
 
@@ -81,23 +78,18 @@ class ActionTest extends TestCase
             'actions/posts/set-status',
             ['selected' => [$postOne->id, $postTwo->id], 'fields' => ['status' => 'active']]
         )->assertOk();
-        $this->assertArrayHasKey('id', $response->json());
+        $data = $response->json();
+        $this->assertArrayHasKey('id', $data);
 
-        Bus::assertBatchCount(1);
-        Bus::assertBatched(function (PendingBatchFake $batch) use ($postOne, $postTwo) {
-            $countCheck = $batch->jobs->count() === 2;
-            $instanceCheck = $batch->jobs[0] instanceof SetStatus && $batch->jobs[1] instanceof SetStatus;
-            $postOneModelCheck = $batch->jobs[0]->post->id === $postOne->id;
-            $postTwoModelCheck = $batch->jobs[1]->post->id === $postTwo->id;
-
-            return $countCheck && $instanceCheck && $postOneModelCheck && $postTwoModelCheck;
+        $postIds = [$postOne->id, $postTwo->id];
+        Queue::assertPushed(SetStatus::class, 2);
+        Queue::assertPushed(SetStatus::class, function (SetStatus $job) use ($postIds) {
+            return in_array($job->post->id, $postIds);
         });
     }
 
     public function test_actions_invalid_fields()
     {
-        Bus::fake();
-
         $this->authUser();
 
         $this->post(
@@ -127,10 +119,10 @@ class ActionTest extends TestCase
 
         $this->assertArrayHasKey('status', $batchProgressData);
         $this->assertArrayHasKey('total', $batchProgressData);
-        $this->assertArrayHasKey('worked', $batchProgressData);
+        $this->assertArrayHasKey('processed', $batchProgressData);
 
         $this->assertEquals('in-progress', $batchProgressData['status']);
         $this->assertEquals(2, $batchProgressData['total']);
-        $this->assertEquals(0, $batchProgressData['worked']);
+        $this->assertEquals(0, $batchProgressData['processed']);
     }
 }

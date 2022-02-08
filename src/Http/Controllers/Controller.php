@@ -5,6 +5,7 @@ namespace HeadlessLaravel\Formations\Http\Controllers;
 use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Manager;
 use HeadlessLaravel\Formations\Slice;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -190,6 +191,9 @@ class Controller extends BaseController
         return $this->terms('parent.camelPlural');
     }
 
+    /**
+     * @return Model|Builder
+     */
     public function model()
     {
         return app($this->formation()->model);
