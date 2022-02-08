@@ -60,8 +60,8 @@ class Action
     {
         $rules = [];
 
-        foreach ($this->fields as $key => $rule) {
-            $rules["fields.$key"] = $rule;
+        foreach ($this->fields as $field) {
+            $rules["fields.$field->key"] = $field->rules;
         }
 
         return Request::instance()->validate($rules);
