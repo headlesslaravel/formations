@@ -173,8 +173,8 @@ class ActionTest extends TestCase
 
     public function test_actions_policy_return_false()
     {
-        config()->set('headless-formations.actions.testing-policy', false);
         $this->authUser();
+        $this->updateAbilities([]); // remove setStatus
 
         $this->post(
             'actions/posts/set-status',
