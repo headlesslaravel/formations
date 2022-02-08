@@ -10,45 +10,28 @@ class ActionController extends Controller
 {
     public function store(Request $request)
     {
-        $currentAction = $this->formationAction();
+        $action = $this->formationAction();
 
-        if (!$currentAction) {
-            return redirect()->route('formation.index');
+        if ($action->ability) {
+            $this->check($action->ability, $action->formation->model);
         }
 
-        if ($currentAction->ability) {
-            $this->check($currentAction->ability, $currentAction->formation->model);
-        }
+        $validated = $action->validate();
 
-        $rules = [];
-        foreach ($currentAction->fields as $fieldName => $rule) {
-            $rules['fields.'.$fieldName] = $rule;
-        }
-        $validated = $request->validate($rules);
-
-        if ($query = $request->get('query')) {
-            $currentAction->formation->given($query);
-        }
-
-        $modelIds = $request->get('selected');
-
-        $modelsQuery = $currentAction->formation->builder();
-
-        if (is_int($modelIds)) {
-            $modelsQuery = $modelsQuery->where($this->model()->getKeyName(), $modelIds);
-        } elseif (is_array($modelIds)) {
-            $modelsQuery = $modelsQuery->whereIn($this->model()->getKeyName(), $modelIds);
-        }
+        $query = $action->queryUsing(
+            $request->get('selected'),
+            $request->get('query', [])
+        );
 
         $batch = Bus::batch([])
             ->allowFailures()
             ->dispatch();
 
-        $modelsQuery->cursor()
+        $query->cursor()
             ->chunk(1000)
-            ->each(function (LazyCollection $models) use ($batch, $currentAction, $validated) {
+            ->each(function (LazyCollection $models) use ($batch, $action, $validated) {
                 foreach ($models as $model) {
-                    $batch->add(new $currentAction->job($model, $validated['fields']));
+                    $batch->add(new $action->job($model, $validated['fields']));
                 }
             });
 

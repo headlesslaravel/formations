@@ -2,25 +2,18 @@
 
 namespace HeadlessLaravel\Formations;
 
+use Illuminate\Support\Facades\Request;
+
 class Action
 {
-    /** @var string */
     public $key;
 
-    /** @var string */
     public $job;
 
-    /** @var array */
     public $fields = [];
 
-    /** @var string */
     public $ability;
 
-    /**
-     * The formation object.
-     *
-     * @var Formation
-     */
     public $formation;
 
     public function init($key): self
@@ -61,5 +54,34 @@ class Action
         $this->formation = $formation;
 
         return $this;
+    }
+
+    public function validate(): array
+    {
+        $rules = [];
+
+        foreach ($this->fields as $key => $rule) {
+            $rules["fields.$key"] = $rule;
+        }
+
+        return Request::instance()->validate($rules);
+    }
+
+    public function queryUsing($selected, array $parameters = [])
+    {
+        if (count($parameters)) {
+            $this->formation->given($parameters);
+        }
+
+        $model = app($this->formation->model);
+        $query = $this->formation->builder();
+
+        if (is_int($selected)) {
+            $query = $query->where($model->getKeyName(), $selected);
+        } elseif (is_array($selected)) {
+            $query = $query->whereIn($model->getKeyName(), $selected);
+        }
+
+        return $query;
     }
 }
