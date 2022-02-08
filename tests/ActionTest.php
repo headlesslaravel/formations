@@ -158,4 +158,15 @@ class ActionTest extends TestCase
         $this->assertEquals(2, $batchProgressData['total']);
         $this->assertEquals(0, $batchProgressData['processed']);
     }
+
+    public function test_actions_policy_return_false()
+    {
+        config()->set('headless-formations.actions.testing-policy', false);
+        $this->authUser();
+
+        $this->post(
+            'actions/posts/set-status',
+            ['selected' => 'all', 'fields' => ['status' => 'active']]
+        )->assertForbidden();
+    }
 }

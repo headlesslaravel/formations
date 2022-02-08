@@ -102,7 +102,7 @@ class PostPolicy
      */
     public function setStatus(User $user): bool
     {
-        return true;
+        return config('headless-formations.actions.testing-policy', true);
     }
 
     /**
