@@ -55,6 +55,13 @@ class Formation
     public $defaults = [];
 
     /**
+     * The given parameters.
+     *
+     * @var mixed
+     */
+    public $given = [];
+
+    /**
      * The select overrides.
      *
      * @var mixed
@@ -200,6 +207,7 @@ class Formation
     public function builder()
     {
         $this->applyDefaults();
+        $this->applyGiven();
 
         $query = app($this->model)->query();
 
@@ -225,6 +233,33 @@ class Formation
             if (!Request::has($key)) {
                 Request::merge([$key => $value]);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set given params.
+     *
+     * @param array $params
+     * @return self
+     */
+    public function given($params = []): self
+    {
+        $this->given = $params;
+
+        return $this;
+    }
+
+    /**
+     * Apply given params to the request.
+     *
+     * @return self
+     */
+    protected function applyGiven(): self
+    {
+        foreach ($this->given as $key => $value) {
+            Request::merge([$key => $value]);
         }
 
         return $this;

@@ -99,11 +99,16 @@ class ActionTest extends TestCase
 
         $postOne = Post::factory()->create(['author_id' => $user->id, 'title' => 'Title 1']);
         $postTwo = Post::factory()->create(['author_id' => $user->id, 'title' => 'Title 2']);
+        Post::factory()->create(['author_id' => $user->id, 'title' => 'Random', 'body' => 'random body']);
         Post::factory(2)->create(['author_id' => $author->id]);
 
         $response = $this->post(
             'actions/posts/set-status',
-            ['selected' => 'all', 'fields' => ['status' => 'active'], 'author' => 1, 'sort-desc' => 'title']
+            [
+                'selected' => 'all',
+                'fields'   => ['status' => 'active'],
+                'query'    => ['author' => $user->id, 'sort-desc' => 'title', 'search' => 'Title']
+            ]
         )->assertOk();
         $data = $response->json();
         $this->assertArrayHasKey('id', $data);
