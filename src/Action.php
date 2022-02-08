@@ -2,8 +2,6 @@
 
 namespace HeadlessLaravel\Formations;
 
-use Illuminate\Support\Facades\Gate;
-
 class Action
 {
     /** @var string */
