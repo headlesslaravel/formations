@@ -5,6 +5,7 @@ namespace HeadlessLaravel\Formations\Http\Controllers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\LazyCollection;
 
 class ActionController extends Controller
 {
@@ -38,8 +39,10 @@ class ActionController extends Controller
 
         $modelsQuery->cursor()
             ->chunk(1000)
-            ->each(function (Model $model) use ($batch, $currentAction, $validated) {
-                $batch->add(new $currentAction->job($model, $validated['fields']));
+            ->each(function (LazyCollection $models) use ($batch, $currentAction, $validated) {
+                foreach ($models as $model) {
+                    $batch->add(new $currentAction->job($model, $validated['fields']));
+                }
             });
 
         return response()->json(['id' => $batch->id]);
