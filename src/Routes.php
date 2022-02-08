@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations;
 
+use HeadlessLaravel\Formations\Http\Controllers\ActionController;
 use HeadlessLaravel\Formations\Http\Controllers\ExportController;
 use HeadlessLaravel\Formations\Http\Controllers\ImportController;
 use HeadlessLaravel\Formations\Http\Controllers\SliceController;
@@ -246,11 +247,47 @@ class Routes
         return $routes;
     }
 
+    protected function actionEndpoints(): array
+    {
+        $actions = app($this->formation)->actions();
+
+        if (!count($actions)) {
+            return [];
+        }
+
+        $routes = [];
+
+        /** @var Action $action */
+        foreach ($actions as $action) {
+            $routes[] = [
+                'type'         => 'store',
+                'verb'         => 'POST',
+                'action'       => [ActionController::class, 'store'],
+                'name'         => "$this->resource.actions.{$action->key}.store",
+                'endpoint'     => "actions/$this->resource/{$action->key}",
+                'key'          => "$this->resource.actions.{$action->key}.store",
+                'with-trashed' => false,
+            ];
+
+            $routes[] = [
+                'type'         => 'show',
+                'verb'         => ['GET', 'HEAD'],
+                'action'       => [ActionController::class, 'progress'],
+                'name'         => "$this->resource.actions.{$action->key}.show",
+                'endpoint'     => "actions/$this->resource/{$action->key}/{batchId}",
+                'key'          => "$this->resource.actions.{$action->key}.show",
+                'with-trashed' => false,
+            ];
+        }
+
+        return $routes;
+    }
+
     private function resourceEndpoints(): array
     {
         $key = $this->resourceRouteKey();
 
-        return array_merge($this->sliceEndpoints(), [
+        return array_merge($this->sliceEndpoints(), $this->actionEndpoints(), [
             ['type' => 'index', 'verb' => ['GET', 'HEAD'], 'endpoint' => $this->resource],
             ['type' => 'create', 'verb' => ['GET', 'HEAD'], 'endpoint' => "$this->resource/new"],
             ['type' => 'store', 'verb' => 'POST', 'endpoint' => "$this->resource/new"],
