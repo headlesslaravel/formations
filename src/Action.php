@@ -52,7 +52,7 @@ class Action
         return $this;
     }
 
-    public function setFormation($formation):self
+    public function setFormation($formation): self
     {
         $this->formation = $formation;
 

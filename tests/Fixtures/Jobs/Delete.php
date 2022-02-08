@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures\Jobs;
 
-use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

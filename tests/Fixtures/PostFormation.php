@@ -148,7 +148,7 @@ class PostFormation extends Formation
                 ->job(SetStatus::class)
                 ->can('setStatus')
                 ->fields([
-                    Field::make('status')->rules(['in:active,draft'])
+                    Field::make('status')->rules(['in:active,draft']),
                 ]),
         ];
     }

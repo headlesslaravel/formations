@@ -39,8 +39,8 @@ class ActionController extends Controller
         }
 
         return response()->json([
-            'status' => $batch->finished() ? 'complete' : 'in-progress',
-            'total' => $batch->totalJobs,
+            'status'    => $batch->finished() ? 'complete' : 'in-progress',
+            'total'     => $batch->totalJobs,
             'processed' => $batch->processedJobs(),
         ]);
     }

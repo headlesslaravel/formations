@@ -29,7 +29,7 @@ class ActionTest extends TestCase
 
         $response = $this->post('actions/posts/set-status', [
             'selected' => 'all',
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->assertOk();
 
         $data = $response->json();
@@ -54,7 +54,7 @@ class ActionTest extends TestCase
 
         $response = $this->post('actions/posts/set-status', [
             'selected' => $post->id,
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->assertOk();
 
         $data = $response->json();
@@ -79,7 +79,7 @@ class ActionTest extends TestCase
 
         $response = $this->post('actions/posts/set-status', [
             'selected' => [$postOne->id, $postTwo->id],
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->assertOk();
 
         $data = $response->json();
@@ -132,7 +132,7 @@ class ActionTest extends TestCase
 
         $this->post('actions/posts/set-status', [
             'selected' => 'all',
-            'fields' => ['status' => 'invalid-status-type']
+            'fields'   => ['status' => 'invalid-status-type'],
         ])->assertInvalid(['fields.status']);
     }
 
@@ -145,12 +145,12 @@ class ActionTest extends TestCase
 
         Post::factory(2)->create([
             'author_id' => $user->id,
-            'status' => 'draft',
+            'status'    => 'draft',
         ]);
 
         $batchId = $this->post('actions/posts/set-status', [
             'selected' => 'all',
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->json('id');
 
         $data = $this->get("actions/posts/set-status/$batchId")
@@ -175,12 +175,12 @@ class ActionTest extends TestCase
 
         Post::factory(2)->create([
             'author_id' => $user->id,
-            'status' => 'draft',
+            'status'    => 'draft',
         ]);
 
         $batchId = $this->post('actions/posts/set-status', [
             'selected' => 'all',
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->json('id');
 
         $data = $this->get("actions/posts/set-status/$batchId")
@@ -214,7 +214,7 @@ class ActionTest extends TestCase
 
         $this->post('actions/posts/set-status', [
             'selected' => 'all',
-            'fields' => ['status' => 'active']
+            'fields'   => ['status' => 'active'],
         ])->assertForbidden();
     }
 }
