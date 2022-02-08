@@ -107,7 +107,7 @@ class ActionTest extends TestCase
             [
                 'selected' => 'all',
                 'fields'   => ['status' => 'active'],
-                'query'    => ['author' => $user->id, 'sort-desc' => 'title', 'search' => 'Title']
+                'query'    => ['author' => $user->id, 'sort-desc' => 'title', 'search' => 'Title'],
             ]
         )->assertOk();
         $data = $response->json();

@@ -242,6 +242,7 @@ class Formation
      * Set given params.
      *
      * @param array $params
+     *
      * @return self
      */
     public function given($params = []): self
