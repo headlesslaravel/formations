@@ -39,7 +39,7 @@ class ActionController extends Controller
         $modelsQuery->cursor()
             ->each(function (Model $model) use ($batch, $currentAction, $validated) {
                 $batch->add(new $currentAction->job($model, $validated['fields']));
-        });
+            });
 
         return response()->json(['id' => $batch->id]);
     }

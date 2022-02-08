@@ -52,7 +52,8 @@ class ActionTest extends TestCase
         Post::factory(2)->create(['author_id' => $user->id]);
 
         $response = $this->post(
-            'actions/posts/set-status', ['selected' => $post->id, 'fields' => ['status' => 'active']]
+            'actions/posts/set-status',
+            ['selected' => $post->id, 'fields' => ['status' => 'active']]
         )->assertOk();
         $data = $response->json();
         $this->assertArrayHasKey('id', $data);
