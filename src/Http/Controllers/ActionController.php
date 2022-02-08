@@ -16,6 +16,10 @@ class ActionController extends Controller
             return redirect()->route('formation.index');
         }
 
+        if ($currentAction->ability) {
+            $this->check($currentAction->ability, $currentAction->formation->model);
+        }
+
         $rules = [];
         foreach ($currentAction->fields as $fieldName => $rule) {
             $rules['fields.'.$fieldName] = $rule;

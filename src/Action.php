@@ -15,8 +15,8 @@ class Action
     /** @var array */
     public $fields = [];
 
-    /** @var bool */
-    public $allowed = true;
+    /** @var string */
+    public $ability;
 
     /**
      * The formation object.
@@ -51,9 +51,9 @@ class Action
         return $this;
     }
 
-    public function can($ability, $arguments = []): self
+    public function can($ability): self
     {
-        $this->allowed = Gate::allows($ability, $arguments);
+        $this->ability = $ability;
 
         return $this;
     }

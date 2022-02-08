@@ -146,7 +146,7 @@ class PostFormation extends Formation
         return [
             Action::make('set-status')
                 ->job(SetStatus::class)
-                ->can('setStatus', Post::class)
+                ->can('setStatus')
                 ->fields(['status' => ['in:active,draft']]),
         ];
     }
