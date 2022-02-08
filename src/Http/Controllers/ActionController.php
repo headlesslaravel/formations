@@ -2,43 +2,35 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\LazyCollection;
 
 class ActionController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $action = $this->formationAction();
 
         if ($action->ability) {
-            $this->check($action->ability, $action->formation->model);
+            $this->check(
+                $action->ability,
+                $action->formation->model
+            );
         }
 
         $validated = $action->validate();
 
-        $query = $action->queryUsing(
+        $batch = $action->batch(
             $request->get('selected'),
-            $request->get('query', [])
+            $request->get('query', []),
+            $validated['fields'] ?? []
         );
-
-        $batch = Bus::batch([])
-            ->allowFailures()
-            ->dispatch();
-
-        $query->cursor()
-            ->chunk(1000)
-            ->each(function (LazyCollection $models) use ($batch, $action, $validated) {
-                foreach ($models as $model) {
-                    $batch->add(new $action->job($model, $validated['fields']));
-                }
-            });
 
         return response()->json(['id' => $batch->id]);
     }
 
-    public function progress($batchId)
+    public function progress($batchId): JsonResponse
     {
         $batch = Bus::findBatch($batchId);
 
@@ -46,11 +38,10 @@ class ActionController extends Controller
             return response()->json(['error' => 'Batch not found'], 404);
         }
 
-        $result = [];
-        $result['status'] = $batch->finished() ? 'complete' : 'in-progress';
-        $result['total'] = $batch->totalJobs;
-        $result['processed'] = $batch->processedJobs();
-
-        return response()->json($result);
+        return response()->json([
+            'status' => $batch->finished() ? 'complete' : 'in-progress',
+            'total' => $batch->totalJobs,
+            'processed' => $batch->processedJobs(),
+        ]);
     }
 }

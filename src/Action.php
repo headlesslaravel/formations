@@ -2,7 +2,9 @@
 
 namespace HeadlessLaravel\Formations;
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\LazyCollection;
 
 class Action
 {
@@ -54,6 +56,25 @@ class Action
         $this->formation = $formation;
 
         return $this;
+    }
+
+    public function batch($selected, array $parameters = [], array $fields = [])
+    {
+        $query = $this->queryUsing($selected, $parameters);
+
+        $batch = Bus::batch([])
+            ->allowFailures()
+            ->dispatch();
+
+        $query->cursor()
+            ->chunk(1000)
+            ->each(function (LazyCollection $models) use ($batch, $fields) {
+                foreach ($models as $model) {
+                    $batch->add(new $this->job($model, $fields));
+                }
+            });
+
+        return $batch;
     }
 
     public function validate(): array
