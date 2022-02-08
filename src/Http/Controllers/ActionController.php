@@ -22,7 +22,7 @@ class ActionController extends Controller
         }
         $validated = $request->validate($rules);
 
-        $modelIds = $request->get('selected', []);
+        $modelIds = $request->get('selected');
 
         $modelsQuery = $currentAction->formation->builder();
 
