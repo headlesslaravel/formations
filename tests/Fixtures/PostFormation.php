@@ -7,6 +7,7 @@ use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Picker;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
@@ -160,6 +161,7 @@ class PostFormation extends Formation
             Field::make('body')->rules(['required', 'min:2']),
             Field::make('author.name')->rules(['required', 'exists:users,name']),
             Field::make('category', 'category.title')->rules(['required', 'exists:categories,title']),
+            Field::make('Brand')->as(Picker::class),
         ];
     }
 

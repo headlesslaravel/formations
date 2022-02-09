@@ -16,6 +16,10 @@ class Field
 
     public $props;
 
+    public $type;
+
+    public $component;
+
     public $relation;
 
     public $relationColumn;
@@ -64,6 +68,20 @@ class Field
     public function props(array $props): self
     {
         $this->props = $props;
+
+        return $this;
+    }
+
+    public function as($type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function component($component): self
+    {
+        $this->component = $component;
 
         return $this;
     }

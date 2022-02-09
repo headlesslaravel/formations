@@ -20,8 +20,11 @@ class ImportTemplate implements WithHeadings
 
     public function headings(): array
     {
-        return collect($this->fields)->map(function (Field $field) {
-            return $field->key;
-        })->toArray();
+        return collect($this->fields)
+            ->filter(function (Field $field) {
+                return empty($field->type);
+            })->map(function (Field $field) {
+                return $field->key;
+            })->toArray();
     }
 }

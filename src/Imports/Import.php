@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Imports;
 
+use HeadlessLaravel\Formations\Field;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Mail\ImportSuccessMail;
 use Illuminate\Support\Collection;
@@ -71,7 +72,11 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
     {
         $rules = [];
 
+        /** @var Field $field */
         foreach ($this->fields as $field) {
+            if (!empty($field->type)) {
+                continue;
+            }
             $rules["*.$field->key"] = $field->rules;
         }
 
