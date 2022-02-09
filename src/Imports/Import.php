@@ -91,31 +91,31 @@ class Import implements ToCollection, WithHeadingRow, WithValidation, SkipsOnFai
     {
         $replacements = [];
 
-        /** @var Field[] $relations */
-        $relations = collect($this->fields)->filter(function (Field $field) {
+        /** @var Field[] $fields */
+        $fields = collect($this->fields)->filter(function (Field $field) {
             return $field->isRelation() && !$field->isMultiple();
         });
 
         // author, category, etc
-        foreach ($relations as $relation) {
-            $relationshipName = $relation->internal;
+        foreach ($fields as $field) {
+            $relationshipName = $field->relation;
 
             $relationship = app($this->model)->$relationshipName();
 
             $values = $rows
-                ->unique($relation->key)
-                ->pluck($relation->key)
+                ->unique($field->key)
+                ->pluck($field->key)
                 ->toArray();
 
             $models = $relationship->getModel()
-                ->whereIn($relation->relationColumn, $values)
+                ->whereIn($field->relationColumn, $values)
                 ->get();
 
-            $display = $relation->relationColumn;
+            $display = $field->relationColumn;
 
             foreach ($models as $model) {
                 $replacements[] = [
-                    'search_key'    => $relation->key, // author
+                    'search_key'    => $field->key, // author
                     'search_value'  => $model->$display, // frank
                     'replace_key'   => $relationship->getForeignKeyName(), // author_id
                     'replace_value' => $model->getKey(), // 1

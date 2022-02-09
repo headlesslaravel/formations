@@ -14,6 +14,10 @@ class Field
 
     public $rules;
 
+    public $props;
+
+    public $relation;
+
     public $relationColumn;
 
     public $multiple = false;
@@ -22,6 +26,7 @@ class Field
     {
         if (!is_null($internal) && str_contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
+            $this->relation = Str::beforeLast($internal, '.');
             $internal = Str::before($internal, '.');
         } elseif (is_null($internal) && Str::contains($key, '*')) {
             $this->multiple = true;
@@ -33,7 +38,7 @@ class Field
             $key = Str::before($key, '.');
         } elseif (is_null($internal) && str_contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
-            $internal = Str::before($key, '.');
+            $this->relation = Str::before($key, '.');
             $key = Str::before($key, '.');
         } elseif (is_null($internal) && Str::contains($key, ' ')) {
             $internal = Str::snake($key);
@@ -66,6 +71,13 @@ class Field
         return $this;
     }
 
+    public function props(array $props): self
+    {
+        $this->props = $props;
+
+        return $this;
+    }
+
     public function isRelation(): bool
     {
         return !is_null($this->relationColumn);
@@ -76,7 +88,7 @@ class Field
         return $this->multiple;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'key'      => $this->key,

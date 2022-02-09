@@ -2,8 +2,10 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Http\Resources\Resource;
+use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Manager;
+use HeadlessLaravel\Formations\Slice;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -64,7 +66,7 @@ class Controller extends BaseController
     {
         $method = $this->controllerMethod();
 
-        return !in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach']);
+        return !in_array($method, ['index', 'create', 'store', 'sync', 'attach', 'detach', 'progress']);
     }
 
     protected function resolveParentBinding()
@@ -132,6 +134,22 @@ class Controller extends BaseController
         return app($this->current['formation']);
     }
 
+    /**
+     * @return Slice|null
+     */
+    public function slice()
+    {
+        return app($this->current['formation'])->currentSlice();
+    }
+
+    /**
+     * @return Action|null
+     */
+    public function formationAction()
+    {
+        return app($this->current['formation'])->currentAction();
+    }
+
     public function formationWithPivot()
     {
         return $this->formation()->whereRelation(
@@ -173,6 +191,9 @@ class Controller extends BaseController
         return $this->terms('parent.camelPlural');
     }
 
+    /**
+     * @return Model|Builder
+     */
     public function model()
     {
         return app($this->formation()->model);
@@ -328,6 +349,10 @@ class Controller extends BaseController
 
         if ($this->shouldRedirect($type)) {
             return $this->redirect($type, $props);
+        }
+
+        if ($this->mode() === 'inertia' && Session::has('flash')) {
+            Inertia::share('flash', Session::get('flash'));
         }
 
         return match ($this->mode()) {
@@ -488,6 +513,13 @@ class Controller extends BaseController
             'type'    => $type,
             'message' => $message,
         ]);
+
+        if ($this->mode() === 'inertia') {
+            Inertia::share('flash', [
+                'type'    => $type,
+                'message' => $message,
+            ]);
+        }
     }
 
     protected function getTerms($resource)

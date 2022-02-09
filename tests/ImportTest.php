@@ -61,6 +61,8 @@ class ImportTest extends TestCase
 
     public function test_uploading_with_relations_with_default_import()
     {
+        Mail::fake();
+
         User::factory()->create(['name' => 'Susan']);
         User::factory()->create(['name' => 'Frank']);
         Category::factory()->create(['title' => 'Tech']);

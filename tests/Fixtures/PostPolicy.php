@@ -94,6 +94,18 @@ class PostPolicy
     }
 
     /**
+     * Determine whether the user can set status of the model.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function setStatus(User $user): bool
+    {
+        return $this->check($user, 'setStatus');
+    }
+
+    /**
      * Determine whether the user can perform ability.
      *
      * @param User   $user
