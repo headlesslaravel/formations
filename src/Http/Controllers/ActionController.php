@@ -2,60 +2,35 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\LazyCollection;
 
 class ActionController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        $currentAction = $this->formationAction();
+        $action = $this->formationAction();
 
-        if (!$currentAction) {
-            return redirect()->route('formation.index');
+        if ($action->ability) {
+            $this->check(
+                $action->ability,
+                $action->formation->model
+            );
         }
 
-        if ($currentAction->ability) {
-            $this->check($currentAction->ability, $currentAction->formation->model);
-        }
+        $validated = $action->validate();
 
-        $rules = [];
-        foreach ($currentAction->fields as $fieldName => $rule) {
-            $rules['fields.'.$fieldName] = $rule;
-        }
-        $validated = $request->validate($rules);
-
-        if ($query = $request->get('query')) {
-            $currentAction->formation->given($query);
-        }
-
-        $modelIds = $request->get('selected');
-
-        $modelsQuery = $currentAction->formation->builder();
-
-        if (is_int($modelIds)) {
-            $modelsQuery = $modelsQuery->where($this->model()->getKeyName(), $modelIds);
-        } elseif (is_array($modelIds)) {
-            $modelsQuery = $modelsQuery->whereIn($this->model()->getKeyName(), $modelIds);
-        }
-
-        $batch = Bus::batch([])
-            ->allowFailures()
-            ->dispatch();
-
-        $modelsQuery->cursor()
-            ->chunk(1000)
-            ->each(function (LazyCollection $models) use ($batch, $currentAction, $validated) {
-                foreach ($models as $model) {
-                    $batch->add(new $currentAction->job($model, $validated['fields']));
-                }
-            });
+        $batch = $action->batch(
+            $request->get('selected'),
+            $request->get('query', []),
+            $validated['fields'] ?? []
+        );
 
         return response()->json(['id' => $batch->id]);
     }
 
-    public function progress($batchId)
+    public function progress($batchId): JsonResponse
     {
         $batch = Bus::findBatch($batchId);
 
@@ -63,11 +38,10 @@ class ActionController extends Controller
             return response()->json(['error' => 'Batch not found'], 404);
         }
 
-        $result = [];
-        $result['status'] = $batch->finished() ? 'complete' : 'in-progress';
-        $result['total'] = $batch->totalJobs;
-        $result['processed'] = $batch->processedJobs();
-
-        return response()->json($result);
+        return response()->json([
+            'status'    => $batch->finished() ? 'complete' : 'in-progress',
+            'total'     => $batch->totalJobs,
+            'processed' => $batch->processedJobs(),
+        ]);
     }
 }

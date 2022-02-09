@@ -79,7 +79,7 @@ class TestCase extends Orchestra
             'name'        => 'User',
             'email'       => 'user@example.com',
             'password'    => '$2y$10$MTibKZXWRvtO2gWpfpsngOp6FQXWUhHPTF9flhsaPdWvRtsyMUlC2',
-            'permissions' => json_encode(['viewAny', 'view', 'create', 'update', 'delete', 'restore', 'forceDelete']),
+            'permissions' => json_encode(['viewAny', 'view', 'create', 'update', 'delete', 'restore', 'forceDelete', 'setStatus']),
         ]);
 
         $this->actingAs($user);
