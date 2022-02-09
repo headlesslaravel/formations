@@ -20,5 +20,5 @@ abstract class FieldType
         $this->field = $field;
     }
 
-    public abstract function render();
+    abstract public function render();
 }
