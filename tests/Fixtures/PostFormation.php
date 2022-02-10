@@ -6,7 +6,7 @@ use HeadlessLaravel\Finders\Filter;
 use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Action;
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;

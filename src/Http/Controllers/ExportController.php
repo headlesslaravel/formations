@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Http\Controllers;
 
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Rules\ValidColumns;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

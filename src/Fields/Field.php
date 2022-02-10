@@ -1,7 +1,8 @@
 <?php
 
-namespace HeadlessLaravel\Formations;
+namespace HeadlessLaravel\Formations\Fields;
 
+use HeadlessLaravel\Formations\Formation;
 use Illuminate\Support\Str;
 
 class Field
@@ -12,20 +13,43 @@ class Field
 
     public $label;
 
+    public $component;
+
     public $rules;
 
-    public $props;
+    public $props = [];
 
     public $relation;
 
     public $relationColumn;
 
+    public $formation;
+
+    public $model;
+
+    public function render(Formation $formation, string $method): self
+    {
+        $this->formation = $formation;
+
+        $this->model = app($formation->model);
+
+        if (method_exists($this, $method)) {
+            $this->$method();
+        }
+
+        foreach ($this->props as $key => $value) {
+            $this->props[$key] = value($value);
+        }
+
+        return $this;
+    }
+
     public function init($key, $internal = null): self
     {
-        if (!is_null($internal) && str_contains($internal, '.')) {
+        if (!is_null($internal) && Str::contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
             $this->relation = Str::beforeLast($internal, '.');
-        } elseif (is_null($internal) && str_contains($key, '.')) {
+        } elseif (is_null($internal) && Str::contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
             $this->relation = Str::before($key, '.');
             $this->internal = $key;
@@ -42,9 +66,20 @@ class Field
         return $this;
     }
 
-    public static function make($key, $internal = null): self
+    public static function make($key, $internal = null): static
     {
-        return (new self())->init($key, $internal);
+        $field = new static();
+
+        $field->init($key, $internal);
+
+        return $field;
+    }
+
+    public function component($component): self
+    {
+        $this->component = $component;
+
+        return $this;
     }
 
     public function label(string $label): self
@@ -63,7 +98,7 @@ class Field
 
     public function props(array $props): self
     {
-        $this->props = $props;
+        $this->props = array_merge($props, $this->props);
 
         return $this;
     }

@@ -7,6 +7,7 @@ use HeadlessLaravel\Finders\ApplySearch;
 use HeadlessLaravel\Finders\ApplySort;
 use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Exports\Export;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
 use HeadlessLaravel\Formations\Http\Controllers\PivotController;
 use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
@@ -496,23 +497,38 @@ class Formation
         return [];
     }
 
+    public function getRenderedIndexFields(): array
+    {
+        return collect($this->index())->map->render($this, 'index')->toArray();
+    }
+
+    public function getRenderedCreateFields(): array
+    {
+        return collect($this->create())->map->render($this, 'create')->toArray();
+    }
+
+    public function getRenderedEditFields(): array
+    {
+        return collect($this->edit())->map->render($this, 'edit')->toArray();
+    }
+
     public function rulesForIndexing(): array
     {
-        return collect($this->index())->flatMap(function ($field) {
+        return collect($this->getRenderedIndexFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForCreating(): array
     {
-        return collect($this->create())->flatMap(function ($field) {
+        return collect($this->getRenderedCreateFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForUpdating(): array
     {
-        return collect($this->edit())->flatMap(function ($field) {
+        return collect($this->getRenderedEditFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
