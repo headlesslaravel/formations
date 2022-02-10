@@ -116,4 +116,14 @@ class Field
             'rules'    => $this->rules,
         ];
     }
+
+    public function meta(): array
+    {
+        return [
+            'display'      => (string) $this->key,
+            'key'          => $this->internal,
+            'component'    => $this->component,
+            'props'        => $this->props,
+        ];
+    }
 }

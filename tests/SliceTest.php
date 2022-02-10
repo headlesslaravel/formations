@@ -39,10 +39,10 @@ class SliceTest extends TestCase
         $this->assertInstanceOf(Response::class, $index);
         $slices = $view->getData()['page']['props']['headless']['slices'];
         $this->assertCount(4, $slices);
-        $this->assertEquals('active-posts', $slices[0]['link']);
-        $this->assertEquals('inactive-posts', $slices[1]['link']);
-        $this->assertEquals('my-posts', $slices[2]['link']);
-        $this->assertEquals('active-posts-sort-title-desc', $slices[3]['link']);
+        $this->assertEquals('http://localhost/posts/active-posts', $slices[0]['link']);
+        $this->assertEquals('http://localhost/posts/inactive-posts', $slices[1]['link']);
+        $this->assertEquals('http://localhost/posts/my-posts', $slices[2]['link']);
+        $this->assertEquals('http://localhost/posts/active-posts-sort-title-desc', $slices[3]['link']);
     }
 
     public function test_formation_slice_using_current_auth_user_as_post_author()
