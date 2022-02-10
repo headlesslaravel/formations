@@ -4,9 +4,9 @@ namespace HeadlessLaravel\Formations\Fields;
 
 class Select extends Field
 {
-    public function options($options)
+    public function options($options): self
     {
-        $this->props(['options' => $options]);
+        return $this->props(['options' => $options]);
     }
 
     public function index()

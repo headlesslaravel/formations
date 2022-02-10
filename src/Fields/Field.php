@@ -37,6 +37,10 @@ class Field
             $this->$method();
         }
 
+        foreach ($this->props as $key => $value) {
+            $this->props[$key] = value($value);
+        }
+
         return $this;
     }
 

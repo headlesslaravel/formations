@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Fields\Picker;
+use HeadlessLaravel\Formations\Fields\Select;
 use HeadlessLaravel\Formations\Fields\Text;
 use HeadlessLaravel\Formations\Fields\Textarea;
 use HeadlessLaravel\Formations\Formation;
@@ -46,6 +47,30 @@ class FieldsTest extends TestCase
         $this->assertEquals('10', $index[0]->props['limit']);
     }
 
+    public function test_select_field_type()
+    {
+        $index = (new SelectFormation())->getRenderedIndexFields();
+        $create = (new SelectFormation())->getRenderedCreateFields();
+        $edit = (new SelectFormation())->getRenderedEditFields();
+
+        $this->assertCount(3, $index);
+        $this->assertCount(3, $create);
+        $this->assertCount(3, $edit);
+
+        $this->assertEquals('Flat Status', $create[0]->key);
+        $this->assertEquals('active', $create[0]->props['options'][0]);
+        $this->assertEquals('draft', $create[0]->props['options'][1]);
+
+        $this->assertEquals('Key Status', $create[1]->key);
+        $this->assertEquals('Active', $create[1]->props['options']['active']);
+        $this->assertEquals('Draft', $create[1]->props['options']['draft']);
+
+        $this->assertEquals('Callable Status', $create[2]->key);
+        $this->assertEquals('Active', $create[2]->props['options']['active']);
+        $this->assertEquals('Draft', $create[2]->props['options']['draft']);
+
+    }
+
     public function test_picker_field_type()
     {
         $index = (new PickerFormation())->getRenderedIndexFields();
@@ -87,6 +112,34 @@ class TextareaFormation extends Formation
         return [
             Textarea::make('Bio')->rows(10),
             Textarea::make('Description'),
+        ];
+    }
+}
+
+class SelectFormation extends Formation
+{
+    public $model = Post::class;
+
+    public function fields(): array
+    {
+        return [
+            Select::make('Flat Status')->options([
+                'active',
+                'draft',
+            ]),
+
+            Select::make('Key Status')->options([
+                'active' => 'Active',
+                'draft' => 'Draft',
+            ]),
+
+            Select::make('Callable Status')->options(function() {
+                return [
+                    'active' => 'Active',
+                    'draft' => 'Draft',
+                ];
+            }),
+
         ];
     }
 }
