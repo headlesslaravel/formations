@@ -68,7 +68,6 @@ class FieldsTest extends TestCase
         $this->assertEquals('Callable Status', $create[2]->key);
         $this->assertEquals('Active', $create[2]->props['options']['active']);
         $this->assertEquals('Draft', $create[2]->props['options']['draft']);
-
     }
 
     public function test_picker_field_type()
@@ -130,13 +129,13 @@ class SelectFormation extends Formation
 
             Select::make('Key Status')->options([
                 'active' => 'Active',
-                'draft' => 'Draft',
+                'draft'  => 'Draft',
             ]),
 
-            Select::make('Callable Status')->options(function() {
+            Select::make('Callable Status')->options(function () {
                 return [
                     'active' => 'Active',
-                    'draft' => 'Draft',
+                    'draft'  => 'Draft',
                 ];
             }),
 
