@@ -375,7 +375,7 @@ class Formation
         $meta = [
             'resource'          => $this->resourceName(),
             'resource_singular' => Str::singular($this->resourceName()),
-            'fields' => collect($fields)->map->meta()->toArray(),
+            'fields'            => collect($fields)->map->meta()->toArray(),
         ];
 
         if ($type === 'index') {
