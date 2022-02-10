@@ -33,7 +33,7 @@ class Field
 
         $this->model = app($formation->model);
 
-        if(method_exists($this, $method)) {
+        if (method_exists($this, $method)) {
             $this->$method();
         }
 

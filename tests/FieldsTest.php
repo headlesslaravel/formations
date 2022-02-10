@@ -2,7 +2,6 @@
 
 namespace HeadlessLaravel\Formations\Tests;
 
-use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Fields\Picker;
 use HeadlessLaravel\Formations\Fields\Textarea;
 use HeadlessLaravel\Formations\Formation;
@@ -15,7 +14,7 @@ class FieldsTest extends TestCase
     {
         parent::setUp();
 
-        Route::get('/picker', function() {})->name('pickers.index');
+        Route::get('/picker', function () {})->name('pickers.index');
     }
 
     public function test_textarea_field_type()
