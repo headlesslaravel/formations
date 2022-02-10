@@ -11,7 +11,7 @@ class Textarea extends Field
 
     public function index()
     {
-        $this->component('Text');
+        $this->component('Textarea');
 
         $this->props(['limit' => 10]);
     }

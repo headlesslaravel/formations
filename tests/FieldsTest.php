@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Fields\Picker;
+use HeadlessLaravel\Formations\Fields\Text;
 use HeadlessLaravel\Formations\Fields\Textarea;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
@@ -17,6 +18,17 @@ class FieldsTest extends TestCase
         Route::get('/picker', function () {})->name('pickers.index');
     }
 
+    public function test_text_field_type()
+    {
+        $index = (new TextFormation())->getRenderedIndexFields();
+        $create = (new TextFormation())->getRenderedCreateFields();
+        $edit = (new TextFormation())->getRenderedEditFields();
+
+        $this->assertEquals('Text', $index[0]->component);
+        $this->assertEquals('Text', $create[0]->component);
+        $this->assertEquals('Text', $edit[0]->component);
+    }
+
     public function test_textarea_field_type()
     {
         $index = (new TextareaFormation())->getRenderedIndexFields();
@@ -25,9 +37,13 @@ class FieldsTest extends TestCase
 
         $this->assertCount(2, $index);
         $this->assertCount(2, $create);
-        $this->assertEquals(10, $create[0]->props['rows']);
-        $this->assertEquals(5, $create[1]->props['rows']);
         $this->assertCount(2, $edit);
+        $this->assertEquals(10, $create[0]->props['rows']); // overridden in formation
+        $this->assertEquals(5, $create[1]->props['rows']); // set in the field
+        $this->assertEquals('Textarea', $index[0]->component);
+        $this->assertEquals('Textarea', $create[0]->component);
+        $this->assertEquals('Textarea', $edit[0]->component);
+        $this->assertEquals('10', $index[0]->props['limit']);
     }
 
     public function test_picker_field_type()
@@ -47,6 +63,18 @@ class FieldsTest extends TestCase
         $this->assertCount(1, $edit);
         $this->assertEquals('required', $edit[0]->rules[0]);
         $this->assertEquals('exists:posts,id', $edit[0]->rules[1]);
+    }
+}
+
+class TextFormation extends Formation
+{
+    public $model = Post::class;
+
+    public function fields(): array
+    {
+        return [
+            Text::make('Title'),
+        ];
     }
 }
 
