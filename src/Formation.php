@@ -497,38 +497,38 @@ class Formation
         return [];
     }
 
-    public function getResolvedIndexFields(): array
+    public function getRenderedIndexFields(): array
     {
         return collect($this->index())->map->render($this, 'index')->toArray();
     }
 
-    public function getResolvedCreateFields(): array
+    public function getRenderedCreateFields(): array
     {
         return collect($this->create())->map->render($this, 'create')->toArray();
     }
 
-    public function getResolvedEditFields(): array
+    public function getRenderedEditFields(): array
     {
         return collect($this->edit())->map->render($this, 'edit')->toArray();
     }
 
     public function rulesForIndexing(): array
     {
-        return collect($this->getResolvedIndexFields())->flatMap(function ($field) {
+        return collect($this->getRenderedIndexFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForCreating(): array
     {
-        return collect($this->getResolvedCreateFields())->flatMap(function ($field) {
+        return collect($this->getRenderedCreateFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForUpdating(): array
     {
-        return collect($this->getResolvedEditFields())->flatMap(function ($field) {
+        return collect($this->getRenderedEditFields())->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }

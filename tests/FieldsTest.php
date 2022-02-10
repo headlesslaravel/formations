@@ -20,9 +20,9 @@ class FieldsTest extends TestCase
 
     public function test_textarea_field_type()
     {
-        $index = (new TextareaFormation())->getResolvedIndexFields();
-        $create = (new TextareaFormation())->getResolvedCreateFields();
-        $edit = (new TextareaFormation())->getResolvedEditFields();
+        $index = (new TextareaFormation())->getRenderedIndexFields();
+        $create = (new TextareaFormation())->getRenderedCreateFields();
+        $edit = (new TextareaFormation())->getRenderedEditFields();
 
         $this->assertCount(2, $index);
         $this->assertCount(2, $create);
@@ -33,9 +33,9 @@ class FieldsTest extends TestCase
 
     public function test_picker_field_type()
     {
-        $index = (new PickerFormation())->getResolvedIndexFields();
-        $create = (new PickerFormation())->getResolvedCreateFields();
-        $edit = (new PickerFormation())->getResolvedEditFields();
+        $index = (new PickerFormation())->getRenderedIndexFields();
+        $create = (new PickerFormation())->getRenderedCreateFields();
+        $edit = (new PickerFormation())->getRenderedEditFields();
 
         $this->assertCount(1, $index);
         $this->assertNull($index[0]->rules);
