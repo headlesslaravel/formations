@@ -42,6 +42,7 @@ class FieldsTest extends TestCase
         $this->assertCount(1, $create);
         $this->assertEquals('required', $create[0]->rules[0]);
         $this->assertEquals('exists:posts,id', $create[0]->rules[1]);
+        $this->assertEquals('http://localhost/picker', $create[0]->props['url']);
 
         $this->assertCount(1, $edit);
         $this->assertEquals('required', $edit[0]->rules[0]);
