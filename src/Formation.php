@@ -375,49 +375,13 @@ class Formation
         $meta = [
             'resource'          => $this->resourceName(),
             'resource_singular' => Str::singular($this->resourceName()),
+            'fields'            => collect($fields)->map->meta()->toArray(),
         ];
 
         if ($type === 'index') {
-            $formatted = [];
-
-            foreach ($fields as $field) {
-                if ($field->key == $field->internal) {
-                    $formatted[] = $field->key;
-                } else {
-                    $formatted[] = "$field->internal:$field->key";
-                }
-            }
-
             $meta['sort'] = collect($this->sort())->pluck('key')->toArray();
-
-            $meta['fields'] = $formatted;
-
-            $meta['filters'] = collect($this->filters())->reject->hidden->map(function ($filter) {
-                return [
-                    'key'       => $filter->publicKey,
-                    'display'   => $filter->getDisplay(),
-                    'component' => $filter->component,
-                    'props'     => $filter->props,
-                    'modifiers' => $filter->modifiers,
-                ];
-            })->toArray();
-
-            $meta['slices'] = collect($this->slices())->map(function (Slice $slice) {
-                return array_merge([
-                    'display'   => $slice->key,
-                    'link'      => $slice->internal,
-                ], $slice->filters);
-            })->toArray();
-        }
-
-        if ($type === 'create' || $type === 'edit') {
-            $formatted = [];
-
-            foreach ($fields as $field) {
-                $formatted[] = "$field->internal:$field->key";
-            }
-
-            $meta['fields'] = $formatted;
+            $meta['filters'] = collect($this->filters())->reject->hidden->map->meta()->toArray();
+            $meta['slices'] = collect($this->slices())->map->setFormation($this)->map->meta()->toArray();
         }
 
         return $meta;
