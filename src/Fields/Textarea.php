@@ -11,15 +11,13 @@ class Textarea extends Field
 
     public function index()
     {
-        $this->component('Textarea');
+        $this->component('Text');
 
         $this->props(['limit' => 10]);
     }
 
     public function create()
     {
-        $this->rules(['required']);
-
         $this->component('Textarea');
 
         $this->props(['rows' => 5]);
@@ -27,8 +25,6 @@ class Textarea extends Field
 
     public function edit()
     {
-        $this->rules(['required']);
-
         $this->component('Textarea');
 
         $this->props(['rows' => 5]);

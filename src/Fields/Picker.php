@@ -11,29 +11,22 @@ class Picker extends Field
 
     public function create()
     {
-        $this->rules(['required', $this->existsRule()]);
-
         $this->component('Picker');
 
-        $this->props(['url' => $this->getFormationUrl()]);
+        $this->props(['url' => $this->formation->url('index')]);
     }
 
     public function edit()
     {
-        $this->rules(['required', $this->existsRule()]);
-
         $this->component('Picker');
 
-        $this->props(['url' => $this->getFormationUrl()]);
+        $this->props(['url' => $this->formation->url('index')]);
     }
 
-    private function getFormationUrl(): string
+    public function exists(): self
     {
-        return route($this->formation->guessResourceName().'.index');
-    }
-
-    private function existsRule(): string
-    {
-        return "exists:{$this->model->getTable()},{$this->model->getKeyName()}"; // exists:users,id
+        return $this->whenRendering(function () {
+            $this->rules(["exists:{$this->model->getTable()},{$this->model->getKeyName()}"]); // exists:users,id
+        });
     }
 }
