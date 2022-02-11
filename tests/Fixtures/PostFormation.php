@@ -7,7 +7,9 @@ use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Action;
 use HeadlessLaravel\Formations\Fields\Field;
+use HeadlessLaravel\Formations\Fields\Picker;
 use HeadlessLaravel\Formations\Fields\Select;
+use HeadlessLaravel\Formations\Fields\Textarea;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
@@ -177,10 +179,12 @@ class PostFormation extends Formation
     {
         return [
             Field::make('Title')->rules(['required', 'min:10']),
-            Field::make('Author', 'author_id')->rules(['exists:users,id']),
-            Select::make('Status')->options(function () {
+            Textarea::make('Body')->rules(['nullable', 'min:10']),
+            Picker::make('Author', 'author_id')->rules(['exists:users,id']),
+            Select::make('Status')->options(function() {
                 return ['active', 'draft'];
             }),
+            Field::make('Length')->rules(['nullable', 'min:10']),
         ];
     }
 }

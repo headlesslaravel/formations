@@ -15,7 +15,7 @@ class Field
 
     public $component = 'Text';
 
-    public $rules;
+    public $rules = [];
 
     public $props = [];
 
@@ -23,9 +23,13 @@ class Field
 
     public $relationColumn;
 
+    public $sortable = false;
+
     public $formation;
 
     public $model;
+
+    protected $rendering = [];
 
     public function render(Formation $formation, string $method): self
     {
@@ -40,6 +44,30 @@ class Field
         foreach ($this->props as $key => $value) {
             $this->props[$key] = value($value);
         }
+
+        foreach ($this->rendering as $callback) {
+            $callback();
+        }
+
+        if($method === 'index') {
+            $this->rules = [];
+        }
+
+        if(!$this->sortable) {
+            $hasSortDefinition = collect($this->formation->sort())
+                ->filter(function($sort) {
+                    return $sort->internal === $this->internal;
+                })->count();
+
+            $this->sortable($hasSortDefinition);
+        }
+
+        return $this;
+    }
+
+    public function whenRendering(callable $callable): self
+    {
+        $this->rendering[] = $callable;
 
         return $this;
     }
@@ -91,7 +119,7 @@ class Field
 
     public function rules($rules): self
     {
-        $this->rules = $rules;
+        $this->rules = array_merge($rules, $this->rules);
 
         return $this;
     }
@@ -117,6 +145,13 @@ class Field
         ];
     }
 
+    public function sortable(bool $sortable = true): self
+    {
+        $this->sortable = $sortable;
+
+        return $this;
+    }
+
     public function meta(): array
     {
         return [
@@ -124,6 +159,7 @@ class Field
             'key'          => $this->internal,
             'component'    => $this->component,
             'props'        => $this->props,
+            'sortable'     => $this->sortable,
         ];
     }
 }

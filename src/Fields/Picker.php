@@ -11,8 +11,6 @@ class Picker extends Field
 
     public function create()
     {
-        $this->rules(['required', $this->existsRule()]);
-
         $this->component('Picker');
 
         $this->props(['url' => $this->formation->url('index')]);
@@ -20,15 +18,15 @@ class Picker extends Field
 
     public function edit()
     {
-        $this->rules(['required', $this->existsRule()]);
-
         $this->component('Picker');
 
         $this->props(['url' => $this->formation->url('index')]);
     }
 
-    private function existsRule(): string
+    public function exists(): self
     {
-        return "exists:{$this->model->getTable()},{$this->model->getKeyName()}"; // exists:users,id
+        return $this->whenRendering(function() {
+            $this->rules(["exists:{$this->model->getTable()},{$this->model->getKeyName()}"]); // exists:users,id
+        });
     }
 }

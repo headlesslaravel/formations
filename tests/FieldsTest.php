@@ -41,7 +41,7 @@ class FieldsTest extends TestCase
         $this->assertCount(2, $edit);
         $this->assertEquals(10, $create[0]->props['rows']); // overridden in formation
         $this->assertEquals(5, $create[1]->props['rows']); // set in the field
-        $this->assertEquals('Textarea', $index[0]->component);
+        $this->assertEquals('Text', $index[0]->component);
         $this->assertEquals('Textarea', $create[0]->component);
         $this->assertEquals('Textarea', $edit[0]->component);
         $this->assertEquals('10', $index[0]->props['limit']);
@@ -77,16 +77,16 @@ class FieldsTest extends TestCase
         $edit = (new PickerFormation())->getRenderedEditFields();
 
         $this->assertCount(1, $index);
-        $this->assertNull($index[0]->rules);
+        $this->assertEmpty($index[0]->rules);
 
         $this->assertCount(1, $create);
-        $this->assertEquals('required', $create[0]->rules[0]);
-        $this->assertEquals('exists:posts,id', $create[0]->rules[1]);
+        $this->assertCount(1, $create[0]->rules);
+        $this->assertEquals('exists:posts,id', $create[0]->rules[0]);
         $this->assertEquals('http://localhost/picker', $create[0]->props['url']);
 
         $this->assertCount(1, $edit);
-        $this->assertEquals('required', $edit[0]->rules[0]);
-        $this->assertEquals('exists:posts,id', $edit[0]->rules[1]);
+        $this->assertCount(1, $edit[0]->rules);
+        $this->assertEquals('exists:posts,id', $edit[0]->rules[0]);
     }
 }
 
@@ -150,7 +150,7 @@ class PickerFormation extends Formation
     public function fields(): array
     {
         return [
-            Picker::make('Author'),
+            Picker::make('Author')->exists(),
         ];
     }
 }
