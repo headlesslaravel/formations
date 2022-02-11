@@ -7,7 +7,6 @@ use HeadlessLaravel\Finders\ApplySearch;
 use HeadlessLaravel\Finders\ApplySort;
 use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Exports\Export;
-use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
 use HeadlessLaravel\Formations\Http\Controllers\PivotController;
 use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
@@ -370,7 +369,7 @@ class Formation
         ];
     }
 
-    public function url($method):string
+    public function url($method): string
     {
         return route($this->route($method));
     }
@@ -379,7 +378,7 @@ class Formation
     {
         $prefix = Arr::get(optional(Route::current())->action, 'prefix');
 
-        if($prefix) {
+        if ($prefix) {
             return "$prefix.".$this->guessResourceName().".$method";
         }
 

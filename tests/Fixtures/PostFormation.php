@@ -178,7 +178,7 @@ class PostFormation extends Formation
         return [
             Field::make('Title')->rules(['required', 'min:10']),
             Field::make('Author', 'author_id')->rules(['exists:users,id']),
-            Select::make('Status')->options(function() {
+            Select::make('Status')->options(function () {
                 return ['active', 'draft'];
             }),
         ];
