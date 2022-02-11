@@ -25,7 +25,7 @@ class Picker extends Field
 
     public function exists(): self
     {
-        return $this->whenRendering(function() {
+        return $this->whenRendering(function () {
             $this->rules(["exists:{$this->model->getTable()},{$this->model->getKeyName()}"]); // exists:users,id
         });
     }

@@ -49,13 +49,13 @@ class Field
             $callback();
         }
 
-        if($method === 'index') {
+        if ($method === 'index') {
             $this->rules = [];
         }
 
-        if(!$this->sortable) {
+        if (!$this->sortable) {
             $hasSortDefinition = collect($this->formation->sort())
-                ->filter(function($sort) {
+                ->filter(function ($sort) {
                     return $sort->internal === $this->internal;
                 })->count();
 

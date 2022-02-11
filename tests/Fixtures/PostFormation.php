@@ -181,7 +181,7 @@ class PostFormation extends Formation
             Field::make('Title')->rules(['required', 'min:10']),
             Textarea::make('Body')->rules(['nullable', 'min:10']),
             Picker::make('Author', 'author_id')->rules(['exists:users,id']),
-            Select::make('Status')->options(function() {
+            Select::make('Status')->options(function () {
                 return ['active', 'draft'];
             }),
             Field::make('Length')->rules(['nullable', 'min:10']),
