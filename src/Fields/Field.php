@@ -13,7 +13,7 @@ class Field
 
     public $label;
 
-    public $component;
+    public $component = 'Text';
 
     public $rules;
 

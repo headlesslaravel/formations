@@ -16,11 +16,19 @@ class Timestamp extends Field
 
     public function create()
     {
-        $this->component('DateTime');
+        $this->component('Text');
+
+        $this->props([
+            'type' => 'datetime-local',
+        ]);
     }
 
     public function edit()
     {
-        $this->component('DateTime');
+        $this->component('Text');
+
+        $this->props([
+            'type' => 'datetime-local',
+        ]);
     }
 }

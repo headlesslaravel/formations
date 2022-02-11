@@ -15,7 +15,7 @@ class Picker extends Field
 
         $this->component('Picker');
 
-        $this->props(['url' => $this->getFormationUrl()]);
+        $this->props(['url' => $this->formation->url('index')]);
     }
 
     public function edit()
@@ -24,12 +24,7 @@ class Picker extends Field
 
         $this->component('Picker');
 
-        $this->props(['url' => $this->getFormationUrl()]);
-    }
-
-    private function getFormationUrl(): string
-    {
-        return route($this->formation->guessResourceName().'.index');
+        $this->props(['url' => $this->formation->url('index')]);
     }
 
     private function existsRule(): string
