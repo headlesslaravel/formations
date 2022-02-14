@@ -6,7 +6,10 @@ use HeadlessLaravel\Finders\Filter;
 use HeadlessLaravel\Finders\Search;
 use HeadlessLaravel\Finders\Sort;
 use HeadlessLaravel\Formations\Action;
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
+use HeadlessLaravel\Formations\Fields\Picker;
+use HeadlessLaravel\Formations\Fields\Select;
+use HeadlessLaravel\Formations\Fields\Textarea;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Slice;
 use HeadlessLaravel\Formations\Tests\Fixtures\Jobs\SetStatus;
@@ -173,19 +176,16 @@ class PostFormation extends Formation
         ];
     }
 
-    public function create(): array
+    public function fields(): array
     {
         return [
-            Field::make('title')->rules(['required']),
-            Field::make('author_id')->rules(['exists:users,id']),
-        ];
-    }
-
-    public function edit(): array
-    {
-        return [
-            Field::make('title')->rules(['required', 'min:10']),
-            Field::make('author_id')->rules(['exists:users,id']),
+            Field::make('Title')->rules(['required', 'min:10']),
+            Textarea::make('Body')->rules(['nullable', 'min:10']),
+            Picker::make('Author', 'author_id')->rules(['exists:users,id']),
+            Select::make('Status')->options(function () {
+                return ['active', 'draft'];
+            }),
+            Field::make('Length')->rules(['nullable', 'min:10']),
         ];
     }
 }

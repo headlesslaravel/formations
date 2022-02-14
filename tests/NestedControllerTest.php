@@ -81,7 +81,7 @@ class NestedControllerTest extends TestCase
 
         $response = $this->post("authors/$author->id/posts/new", [
             'title' => 'Blog title',
-        ]);
+        ])->assertCreated();
 
         $response->assertJsonPath('author.id', $author->id);
         $this->assertEquals('Blog title', Post::first()->title);

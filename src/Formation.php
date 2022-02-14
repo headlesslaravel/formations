@@ -17,7 +17,9 @@ use HeadlessLaravel\Formations\Imports\Import;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
@@ -367,56 +369,36 @@ class Formation
         ];
     }
 
-    public function meta($type): array
+    public function url($method): string
     {
-        $fields = $this->$type();
+        return route($this->route($method));
+    }
+
+    public function route($method): string
+    {
+        $prefix = Arr::get(optional(Route::current())->action, 'prefix');
+
+        if ($prefix) {
+            return "$prefix.".$this->guessResourceName().".$method";
+        }
+
+        return $this->guessResourceName().'.'.$method;
+    }
+
+    public function meta($method): array
+    {
+        $fields = $this->fieldsRendered((array) $this->$method(), $method);
 
         $meta = [
             'resource'          => $this->resourceName(),
             'resource_singular' => Str::singular($this->resourceName()),
+            'fields'            => collect($fields)->map->meta()->toArray(),
         ];
 
-        if ($type === 'index') {
-            $formatted = [];
-
-            foreach ($fields as $field) {
-                if ($field->key == $field->internal) {
-                    $formatted[] = $field->key;
-                } else {
-                    $formatted[] = "$field->internal:$field->key";
-                }
-            }
-
+        if ($method === 'index') {
             $meta['sort'] = collect($this->sort())->pluck('key')->toArray();
-
-            $meta['fields'] = $formatted;
-
-            $meta['filters'] = collect($this->filters())->reject->hidden->map(function ($filter) {
-                return [
-                    'key'       => $filter->publicKey,
-                    'display'   => $filter->getDisplay(),
-                    'component' => $filter->component,
-                    'props'     => $filter->props,
-                    'modifiers' => $filter->modifiers,
-                ];
-            })->toArray();
-
-            $meta['slices'] = collect($this->slices())->map(function (Slice $slice) {
-                return array_merge([
-                    'display'   => $slice->key,
-                    'link'      => $slice->internal,
-                ], $slice->filters);
-            })->toArray();
-        }
-
-        if ($type === 'create' || $type === 'edit') {
-            $formatted = [];
-
-            foreach ($fields as $field) {
-                $formatted[] = "$field->internal:$field->key";
-            }
-
-            $meta['fields'] = $formatted;
+            $meta['filters'] = collect($this->filters())->reject->hidden->map->meta()->toArray();
+            $meta['slices'] = collect($this->slices())->map->setFormation($this)->map->meta()->toArray();
         }
 
         return $meta;
@@ -430,10 +412,7 @@ class Formation
     public function fields(): array
     {
         return [
-            Field::make('Id', 'id'),
             //
-            Field::make('Created', 'created_at'),
-            Field::make('Updated', 'updated_at'),
         ];
     }
 
@@ -454,7 +433,7 @@ class Formation
      */
     public function show(): array
     {
-        return $this->index();
+        return $this->fields();
     }
 
     /**
@@ -496,23 +475,43 @@ class Formation
         return [];
     }
 
+    public function getRenderedIndexFields(): \Illuminate\Support\Collection
+    {
+        return $this->fieldsRendered($this->index(), 'index');
+    }
+
+    public function getRenderedCreateFields(): \Illuminate\Support\Collection
+    {
+        return $this->fieldsRendered($this->create(), 'create');
+    }
+
+    public function getRenderedEditFields(): \Illuminate\Support\Collection
+    {
+        return $this->fieldsRendered($this->edit(), 'edit');
+    }
+
+    public function fieldsRendered(array $fields, $method): \Illuminate\Support\Collection
+    {
+        return collect($fields)->map->render($this, $method);
+    }
+
     public function rulesForIndexing(): array
     {
-        return collect($this->index())->flatMap(function ($field) {
+        return $this->getRenderedIndexFields()->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForCreating(): array
     {
-        return collect($this->create())->flatMap(function ($field) {
+        return $this->getRenderedCreateFields()->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }
 
     public function rulesForUpdating(): array
     {
-        return collect($this->edit())->flatMap(function ($field) {
+        return $this->getRenderedEditFields()->flatMap(function ($field) {
             return [$field->internal => $field->rules ?? 'nullable'];
         })->toArray();
     }

@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 class Slice
@@ -137,5 +138,19 @@ class Slice
         $this->formation = $formation;
 
         return $this;
+    }
+
+    private function getRoute(): string
+    {
+        return $this->formation->guessResourceName().'.slices.'.$this->internal;
+    }
+
+    public function meta(): array
+    {
+        return [
+            'display'   => $this->key,
+            'link'      => route($this->getRoute()),
+            'active'    => Route::currentRouteName() == $this->getRoute(),
+        ];
     }
 }
