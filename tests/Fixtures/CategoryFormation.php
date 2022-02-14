@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Tests\Fixtures;
 
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Formation;
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Category;
 

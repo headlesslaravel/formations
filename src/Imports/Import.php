@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Imports;
 
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Mail\ImportErrorsMail;
 use HeadlessLaravel\Formations\Mail\ImportSuccessMail;
 use Illuminate\Support\Collection;

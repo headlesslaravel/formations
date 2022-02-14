@@ -2,7 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Exports;
 
-use HeadlessLaravel\Formations\Field;
+use HeadlessLaravel\Formations\Fields\Field;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
