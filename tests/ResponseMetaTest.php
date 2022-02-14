@@ -51,10 +51,7 @@ class ResponseMetaTest extends TestCase
         $this->assertEquals('Text', $fields[0]['component']);
         $this->assertEquals(true, $fields[0]['sortable']);
 
-        $this->assertEquals('Body', $fields[1]['display']);
-        $this->assertEquals('body', $fields[1]['key']);
-        $this->assertEquals('Text', $fields[1]['component']);
-        $this->assertEquals(true, $fields[1]['sortable']);
+        // Body Field excluded
 
         $this->assertEquals('Author', $fields[2]['display']);
         $this->assertEquals('author_id', $fields[2]['key']);
@@ -89,10 +86,6 @@ class ResponseMetaTest extends TestCase
         $this->assertEquals('Picker', $fields[2]['component']);
         $this->assertEquals(true, $fields[0]['sortable']);
 
-        $this->assertEquals('Status', $fields[3]['display']);
-        $this->assertEquals('status', $fields[3]['key']);
-        $this->assertEquals('Select', $fields[3]['component']);
-        $this->assertEquals('active', $fields[3]['props']['options'][0]);
-        $this->assertEquals(false, $fields[3]['sortable']);
+        // Status field excluded in edit
     }
 }

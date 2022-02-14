@@ -7,6 +7,7 @@ use HeadlessLaravel\Finders\ApplySearch;
 use HeadlessLaravel\Finders\ApplySort;
 use HeadlessLaravel\Formations\Exceptions\PageExceededException;
 use HeadlessLaravel\Formations\Exports\Export;
+use HeadlessLaravel\Formations\Fields\Field;
 use HeadlessLaravel\Formations\Http\Controllers\NestedController;
 use HeadlessLaravel\Formations\Http\Controllers\PivotController;
 use HeadlessLaravel\Formations\Http\Controllers\ResourceController;
@@ -387,7 +388,28 @@ class Formation
 
     public function meta($method): array
     {
-        $fields = $this->fieldsRendered((array) $this->$method(), $method);
+        $fields = (array) $this->$method();
+
+        $fields = collect($fields)->filter( function (Field $field) use ($method) {
+            if (!count($field->only) and !count($field->except)) {
+                return true;
+            }
+
+            if (count($field->only)) {
+                return in_array($method, $field->only);
+            }
+
+            if (count($field->except)) {
+                return !in_array($method, $field->except);
+            }
+
+            return false;
+        });
+
+        $fields = $this->fieldsRendered(
+            $fields->toArray(),
+            $method
+        );
 
         $meta = [
             'resource'          => $this->resourceName(),
@@ -463,7 +485,7 @@ class Formation
      */
     public function form(): array
     {
-        return collect($this->fields())->filter(function ($field) {
+        return collect($this->fields())->filter(function (Field $field) {
             return !in_array($field->internal, [
                 'id', 'created_at', 'updated_at', 'deleted_at',
             ]);
