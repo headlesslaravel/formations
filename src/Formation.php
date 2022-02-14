@@ -388,11 +388,19 @@ class Formation
     public function meta($method): array
     {
         $fields = $this->fieldsRendered((array) $this->$method(), $method);
+        $nestedFormations = collect($this->nested());
+        $nestedMeta = collect($nestedFormations)->map(function ($formation) use ($method) {
+            /** @var Formation $formationObj */
+            $formationObj = app($formation);
+
+            return $formationObj->meta($method);
+        })->toArray();
 
         $meta = [
             'resource'          => $this->resourceName(),
             'resource_singular' => Str::singular($this->resourceName()),
             'fields'            => collect($fields)->map->meta()->toArray(),
+            'nested'            => $nestedMeta,
         ];
 
         if ($method === 'index') {

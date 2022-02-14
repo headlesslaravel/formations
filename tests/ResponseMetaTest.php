@@ -3,6 +3,7 @@
 namespace HeadlessLaravel\Formations\Tests;
 
 use HeadlessLaravel\Formations\Tests\Fixtures\Models\Post;
+use Illuminate\View\View;
 use Inertia\Inertia;
 
 class ResponseMetaTest extends TestCase
@@ -38,6 +39,23 @@ class ResponseMetaTest extends TestCase
 
         $this->assertEquals('My Posts', $data['props']['headless']['slices'][2]['display']);
         $this->assertEquals('http://localhost/posts/my-posts', $data['props']['headless']['slices'][2]['link']);
+    }
+
+    public function test_inertia_index_nested_meta()
+    {
+        config()->set('headless-formations.mode', 'inertia');
+        Inertia::setRootView('testing::app');
+        request()->headers->set('X-Inertia', true);
+
+        /** @var View $view */
+        $view = $this->get('/authors')->getOriginalContent();
+
+        $data = $view->getData();
+        $nestedMeta = $data['page']['props']['headless']['nested'];
+
+        $this->assertCount(1, $nestedMeta);
+        $this->assertArrayHasKey('posts', $nestedMeta);
+        $this->assertEquals('posts', (string)$nestedMeta['posts']['resource']);
     }
 
     public function test_inertia_index_field_meta()
