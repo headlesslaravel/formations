@@ -55,7 +55,7 @@ class ResponseMetaTest extends TestCase
 
         $this->assertCount(1, $nestedMeta);
         $this->assertArrayHasKey('posts', $nestedMeta);
-        $this->assertEquals('posts', (string)$nestedMeta['posts']['resource']);
+        $this->assertEquals('posts', (string) $nestedMeta['posts']['resource']);
     }
 
     public function test_inertia_index_field_meta()
