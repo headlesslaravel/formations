@@ -433,7 +433,7 @@ class Formation
      */
     public function show(): array
     {
-        return $this->index();
+        return $this->fields();
     }
 
     /**
