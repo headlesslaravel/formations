@@ -390,7 +390,7 @@ class Formation
     {
         $fields = (array) $this->$method();
 
-        $fields = collect($fields)->filter( function (Field $field) use ($method) {
+        $fields = collect($fields)->filter(function (Field $field) use ($method) {
             if (!count($field->only) and !count($field->except)) {
                 return true;
             }
