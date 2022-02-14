@@ -404,6 +404,11 @@ class Formation
         return $meta;
     }
 
+    public function nested(): array
+    {
+        return [];
+    }
+
     /**
      * Define the fields all views.
      *

@@ -29,4 +29,11 @@ class AuthorFormation extends Formation
             Action::make('delete')->job(Delete::class),
         ];
     }
+
+    public function nested(): array
+    {
+        return [
+            'posts' => PostFormation::class,
+        ];
+    }
 }

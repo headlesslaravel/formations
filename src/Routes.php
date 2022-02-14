@@ -183,6 +183,8 @@ class Routes
             'routes'             => $routes,
         ]);
 
+        $this->registerNestedResources();
+
         return $routes;
     }
 
@@ -316,6 +318,23 @@ class Routes
             ['type' => 'restore', 'verb' => 'PUT', 'endpoint' => "$this->parent/{{$p}}/$this->resource/{{$r}}/restore"],
             ['type' => 'force-delete', 'verb' => 'DELETE', 'endpoint' => "$this->parent/{{$p}}/$this->resource/{{$r}}/force-delete"],
         ];
+    }
+
+    public function registerNestedResources()
+    {
+        $nestedResources = app($this->formation)->nested();
+
+        if (count($nestedResources)) {
+            foreach ($nestedResources as $routeKey => $nestedResource) {
+                /** @var Formation $nestedFormation */
+                $nestedFormation = app($nestedResource);
+                if (is_int($routeKey)) {
+                    $routeKey = $nestedFormation->guessResourceName();
+                }
+                static::formation($nestedResource)
+                    ->resource($this->resource.'.'.$routeKey)->create();
+            }
+        }
     }
 
     private function pivotEndpoints(): array

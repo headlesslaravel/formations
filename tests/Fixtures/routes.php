@@ -14,7 +14,6 @@ Route::seeker([
 
 Route::formation(PostFormation::class)->resource('posts');
 Route::formation(AuthorFormation::class)->resource('authors');
-Route::formation(PostFormation::class)->resource('authors.posts');
 
 Route::formation(TagFormation::class)
     ->resource('posts.tags')
