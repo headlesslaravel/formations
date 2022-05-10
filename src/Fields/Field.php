@@ -29,6 +29,10 @@ class Field
 
     public $model;
 
+    public $only = [];
+
+    public $except = [];
+
     protected $rendering = [];
 
     public function render(Formation $formation, string $method): self
@@ -120,6 +124,20 @@ class Field
     public function rules($rules): self
     {
         $this->rules = array_merge($rules, $this->rules);
+
+        return $this;
+    }
+
+    public function only($only = []): self
+    {
+        $this->only = $only;
+
+        return $this;
+    }
+
+    public function except($except = []): self
+    {
+        $this->except = $except;
 
         return $this;
     }
