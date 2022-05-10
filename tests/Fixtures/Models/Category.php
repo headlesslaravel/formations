@@ -18,4 +18,14 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function imported($row)
+    {
+        if (isset($row['posts'])) {
+            foreach ($row['posts'] as $post) {
+                $post['category_id'] = $this->id;
+                Post::create($post);
+            }
+        }
+    }
 }

@@ -66,4 +66,17 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+
+    public function imported($row)
+    {
+        if (isset($row['tags'])) {
+            $tags = [];
+
+            foreach ($row['tags'] as $tag) {
+                $tags[] = Tag::firstOrCreate(['title' => $tag])->id;
+            }
+
+            $this->tags()->sync($tags);
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace HeadlessLaravel\Formations\Exports;
 
+use HeadlessLaravel\Formations\Fields\Field;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -37,6 +38,7 @@ class Export implements FromCollection, WithHeadings
         foreach ($records as $record) {
             $resultRecord = [];
 
+            /** @var Field $field */
             foreach ($this->fields as $field) {
                 if ($field->isRelation()) {
                     $resultRecord[$field->key] = $record->{$field->relation}->{$field->relationColumn};

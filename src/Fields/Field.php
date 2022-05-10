@@ -31,6 +31,8 @@ class Field
 
     protected $rendering = [];
 
+    public $multiple = false;
+
     public function render(Formation $formation, string $method): self
     {
         $this->formation = $formation;
@@ -77,10 +79,17 @@ class Field
         if (!is_null($internal) && Str::contains($internal, '.')) {
             $this->relationColumn = Str::afterLast($internal, '.');
             $this->relation = Str::beforeLast($internal, '.');
+        } elseif (is_null($internal) && Str::contains($key, '*')) {
+            $this->multiple = true;
+            $this->relationColumn = Str::afterLast($key, '.');
+            if ($this->relationColumn === '*') {
+                $this->relationColumn = null;
+            }
+            $internal = Str::before($key, '.');
+            $key = Str::before($key, '.');
         } elseif (is_null($internal) && Str::contains($key, '.')) {
             $this->relationColumn = Str::afterLast($key, '.');
             $this->relation = Str::before($key, '.');
-            $this->internal = $key;
             $key = Str::before($key, '.');
         } elseif (is_null($internal) && Str::contains($key, ' ')) {
             $internal = Str::snake($key);
@@ -134,6 +143,11 @@ class Field
     public function isRelation(): bool
     {
         return !is_null($this->relationColumn);
+    }
+
+    public function isMultiple(): bool
+    {
+        return $this->multiple;
     }
 
     public function toArray(): array

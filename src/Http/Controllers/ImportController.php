@@ -6,6 +6,7 @@ use HeadlessLaravel\Formations\Exports\ImportTemplate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 
 class ImportController
 {
@@ -23,6 +24,7 @@ class ImportController
 
         $formation = app(Route::current()->parameter('formation'));
 
+        HeadingRowFormatter::default('none');
         $importable = $formation->importable();
         $importable->import(Request::file('file'));
         $importable->confirmation();
